@@ -1,7 +1,10 @@
 import Link from "next/link";
 import styles from "./page.module.css";
+import { fetchAPI } from "../lib/strapi";
+import SearchBar from "../components/SearchBar";
 
-const destinations = [
+// Fallback data while CMS is empty
+const defaultDestinations = [
   { name: "Zanzibar", slug: "zanzibar", tagline: "Spice Island Paradise", image: "/destinations/zanzibar.jpg" },
   { name: "Dar es Salaam", slug: "dar-es-salaam", tagline: "The Harbour of Peace", image: "/destinations/dar.jpg" },
   { name: "Serengeti", slug: "serengeti", tagline: "The Endless Plains", image: "/destinations/serengeti.jpg" },
@@ -90,31 +93,42 @@ const quickLinks = [
   { icon: "💡", label: "Tips", href: "/guides/category/tips" },
 ];
 
-export default function Home() {
+export default async function Home() {
+  // Test Strapi Connection by fetching articles
+  const articlesRes = await fetchAPI("/articles", {
+    populate: "*",
+    pagination: { limit: 3 }
+  });
+
+  const destinationsRes = await fetchAPI("/destinations", {
+    populate: "*"
+  });
+
+  const cmsDestinations = destinationsRes?.data?.length ? destinationsRes.data : [];
+  const cmsArticles = articlesRes?.data?.length ? articlesRes.data : [];
+
+  // Log to server console to verify connection
+  console.log("Strapi Status:", {
+    articlesFound: cmsArticles.length,
+    destinationsFound: cmsDestinations.length
+  });
+
+  // Strapi 5 Flat Response Format Update
+  const destinations = cmsDestinations.length > 0
+    ? cmsDestinations.map((d: any) => ({
+      name: d.name,
+      slug: d.slug,
+      tagline: d.description || "The ultimate tropical paradise",
+      // Handling image: Strapi 5 response might return image object directly or inside 'url' depending on populate
+      image: d.heroImage?.url
+        ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://cms-production-219a.up.railway.app"}${d.heroImage.url}`
+        : "/destinations/zanzibar.jpg"
+    }))
+    : defaultDestinations;
+
   return (
     <div className={styles.page}>
       {/* Navigation */}
-      <header className={styles.header}>
-        <nav className={styles.nav}>
-          <Link href="/" className={styles.logo}>
-            <span className={styles.logoIcon}>✦</span>
-            NYOTA TRAVEL
-          </Link>
-          <div className={styles.navLinks}>
-            <Link href="/tanzania">Tanzania</Link>
-            <Link href="/tanzania/zanzibar">Zanzibar</Link>
-            <Link href="/tours">Tours</Link>
-            <Link href="/guides">Guides</Link>
-            <Link href="/hotels">Hotels</Link>
-          </div>
-          <div className={styles.navActions}>
-            <button className={styles.langSwitch}>EN</button>
-            <Link href="/tours" className="btn btn-primary">
-              Book a Tour
-            </Link>
-          </div>
-        </nav>
-      </header>
 
       {/* Hero Section */}
       <section className={styles.hero}>
@@ -131,14 +145,7 @@ export default function Home() {
             Your ultimate guide to East Africa's hidden gems, pristine beaches,
             and unforgettable adventures.
           </p>
-          <div className={styles.heroSearch}>
-            <input
-              type="text"
-              placeholder="Where do you want to explore?"
-              className={styles.searchInput}
-            />
-            <button className="btn btn-primary">Explore</button>
-          </div>
+          <SearchBar />
           <div className={styles.quickLinks}>
             {quickLinks.map((link) => (
               <Link key={link.label} href={link.href} className={styles.quickLink}>
@@ -163,7 +170,7 @@ export default function Home() {
             </Link>
           </div>
           <div className={styles.destinationsGrid}>
-            {destinations.map((dest) => (
+            {destinations.map((dest: any) => (
               <Link
                 key={dest.slug}
                 href={`/tanzania/${dest.slug}`}
@@ -282,56 +289,6 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className={styles.footer}>
-        <div className="container">
-          <div className={styles.footerGrid}>
-            <div className={styles.footerBrand}>
-              <Link href="/" className={styles.logo}>
-                <span className={styles.logoIcon}>✦</span>
-                NYOTA TRAVEL
-              </Link>
-              <p>
-                East Africa's trusted travel resource. Powered by local experts
-                and powered by Nyota Creative.
-              </p>
-              <div className={styles.footerSocial}>
-                <a href="#">📘</a>
-                <a href="#">📸</a>
-                <a href="#">🐦</a>
-                <a href="#">📺</a>
-              </div>
-            </div>
-            <div className={styles.footerLinks}>
-              <h4>Destinations</h4>
-              <Link href="/tanzania/zanzibar">Zanzibar</Link>
-              <Link href="/tanzania/dar-es-salaam">Dar es Salaam</Link>
-              <Link href="/tanzania/serengeti">Serengeti</Link>
-              <Link href="/tanzania">All Destinations</Link>
-            </div>
-            <div className={styles.footerLinks}>
-              <h4>Travel Guides</h4>
-              <Link href="/guides/category/beaches">Beaches</Link>
-              <Link href="/guides/category/food">Food & Drink</Link>
-              <Link href="/guides/category/culture">Culture</Link>
-              <Link href="/guides/category/tips">Travel Tips</Link>
-            </div>
-            <div className={styles.footerLinks}>
-              <h4>Company</h4>
-              <Link href="/about">About Us</Link>
-              <Link href="/contact">Contact</Link>
-              <Link href="/privacy">Privacy Policy</Link>
-              <Link href="/terms">Terms of Service</Link>
-            </div>
-          </div>
-          <div className={styles.footerBottom}>
-            <p>© {new Date().getFullYear()} Nyota Travel. A Nyota Creative project.</p>
-            <div className={styles.footerLang}>
-              <button>🇬🇧 English</button>
-              <button>🇹🇿 Kiswahili</button>
-            </div>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

@@ -13,6 +13,7 @@ const tours = [
         title: "Serengeti Migration Safari",
         duration: "5 Days",
         price: "$2,450",
+        // Valid Unsplash ID for Safari/Serengeti
         image: "https://images.unsplash.com/photo-1516426122078-c23e76319801?q=80&w=2668&auto=format&fit=crop",
         slug: "serengeti-migration"
     },
@@ -21,7 +22,8 @@ const tours = [
         title: "Zanzibar Spice Tour",
         duration: "Half Day",
         price: "$45",
-        image: "https://images.unsplash.com/photo-1663660507303-346747d79b0c?q=80&w=2600&auto=format&fit=crop",
+        // Valid Unsplash ID for Spices/Market
+        image: "https://images.unsplash.com/photo-1596040033229-a9821ebd058d?q=80&w=2670&auto=format&fit=crop",
         slug: "zanzibar-spice-tour-half-day"
     },
     {
@@ -29,7 +31,7 @@ const tours = [
         title: "Kilimanjaro Machame Route",
         duration: "7 Days",
         price: "$1,890",
-        image: "https://images.unsplash.com/photo-1650669344464-9be1a7620bc2?q=80&w=2664&auto=format&fit=crop",
+        image: "https://images.unsplash.com/photo-1589412227181-06798e285888?q=80&w=2670&auto=format&fit=crop",
         slug: "kilimanjaro-machame"
     }
 ];
@@ -37,18 +39,20 @@ const tours = [
 export default function ToursPage() {
     return (
         <main className={styles.main}>
-            <header className={styles.header}>
-                <div className={styles.container}>
-                    <h1 className={styles.title}>Experience Tanzania</h1>
-                    <p className={styles.subtitle}>Curated expert-led tours and adventures.</p>
+            {/* Reusing hero styles from global module */}
+            <header className={styles.hero} style={{ minHeight: "50vh" }}>
+                <div className={styles.heroOverlay} />
+                <div className={styles.heroContent}>
+                    <h1>Experience Tanzania</h1>
+                    <p className={styles.heroSubtitle}>Curated expert-led tours and adventures.</p>
                 </div>
             </header>
 
-            <section className={styles.section}>
-                <div className={styles.container}>
-                    <div className={styles.grid}>
+            <section className={styles.section} style={{ padding: "4rem 0" }}>
+                <div className="container">
+                    <div className={styles.toursGrid}>
                         {tours.map((tour) => (
-                            <Link href={`/tours/${tour.slug}`} key={tour.id} className={styles.card}>
+                            <Link href={`/tours/${tour.slug}`} key={tour.id} className={styles.card} style={{ borderRadius: "1rem", overflow: "hidden", display: "flex", flexDirection: "column", boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}>
                                 <div style={{ position: 'relative', height: '250px' }}>
                                     <Image
                                         src={tour.image}
@@ -57,14 +61,13 @@ export default function ToursPage() {
                                         style={{ objectFit: 'cover' }}
                                     />
                                 </div>
-                                <div className={styles.cardContent}>
-                                    <div className={styles.meta}>
+                                <div style={{ padding: "1.5rem", flex: 1, display: "flex", flexDirection: "column" }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", color: "#666", fontSize: "0.875rem", marginBottom: "0.5rem" }}>
                                         <span>{tour.duration}</span>
-                                        <span>•</span>
-                                        <span>From {tour.price}</span>
+                                        <span style={{ fontWeight: "bold", color: "var(--color-ocean)" }}>{tour.price}</span>
                                     </div>
-                                    <h3 className={styles.cardTitle}>{tour.title}</h3>
-                                    <span className={styles.link}>View Itinerary →</span>
+                                    <h3 style={{ fontSize: "1.25rem", marginBottom: "1rem" }}>{tour.title}</h3>
+                                    <span className="btn btn-secondary" style={{ marginTop: "auto", textAlign: "center" }}>View Itinerary →</span>
                                 </div>
                             </Link>
                         ))}

@@ -168,24 +168,22 @@
   color: var(--color-white);
 }
 
-/* Section Header */
-.sectionHeader {
+/* Breadcrumb */
+.breadcrumb {
   display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: var(--space-lg);
-  flex-wrap: wrap;
-  gap: var(--space-sm);
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--color-slate);
 }
 
-.sectionLabel {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+.breadcrumb a {
   color: var(--color-ocean);
-  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
 }
 
 /* Destinations */

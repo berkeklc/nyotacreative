@@ -1,0 +1,295 @@
+.tourPage {
+    background-color: var(--color-white);
+    min-height: 100vh;
+}
+
+.hero {
+    position: relative;
+    height: 60vh;
+    min-height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-white);
+    text-align: center;
+    overflow: hidden;
+}
+
+.heroOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3) 0%, rgba(0, 0, 0, 0.7) 100%);
+    z-index: 1;
+}
+
+.heroImage {
+    object-fit: cover;
+    z-index: 0;
+}
+
+.heroContent {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    padding: 0 var(--space-md);
+}
+
+.heroContent h1 {
+    color: var(--color-white);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    margin-bottom: var(--space-sm);
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+.breadcrumb {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    margin-bottom: var(--space-md);
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.breadcrumb a:hover {
+    color: var(--color-white);
+}
+
+.tourMeta {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin-top: var(--space-md);
+}
+
+.metaItem {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-weight: 500;
+}
+
+.contentGrid {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 4rem;
+    margin: 4rem auto;
+}
+
+@media (max-width: 1024px) {
+    .contentGrid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+.overview h2 {
+    margin-bottom: 2rem;
+    font-size: 2rem;
+    position: relative;
+}
+
+.overview h2::after {
+    content: "";
+    position: absolute;
+    bottom: -0.5rem;
+    left: 0;
+    width: 3rem;
+    height: 3px;
+    background-color: var(--color-sunset);
+}
+
+.overview p {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--color-slate);
+    margin-bottom: 3rem;
+}
+
+.includesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+}
+
+.includeCard {
+    background-color: var(--color-sand);
+    padding: 1.5rem;
+    border-radius: var(--radius-lg);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform var(--transition-base);
+}
+
+.includeCard:hover {
+    transform: translateY(-5px);
+}
+
+.includeIcon {
+    font-size: 2rem;
+}
+
+.includeText strong {
+    display: block;
+    font-size: 1rem;
+    color: var(--color-charcoal);
+}
+
+.includeText span {
+    font-size: 0.875rem;
+    color: var(--color-slate);
+}
+
+.sidebar {
+    position: sticky;
+    top: 100px;
+    align-self: start;
+}
+
+.bookingCard {
+    background-color: var(--color-white);
+    padding: 2.5rem;
+    border-radius: var(--radius-xl);
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.1);
+    border: 1px solid var(--color-sand-dark);
+}
+
+.priceHeader {
+    margin-bottom: 2rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--color-sand-dark);
+}
+
+.priceLabel {
+    font-size: 0.875rem;
+    color: var(--color-slate);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 600;
+}
+
+.priceValue {
+    font-size: 3rem;
+    font-weight: 700;
+    color: var(--color-ocean);
+    line-height: 1;
+    margin-top: 0.5rem;
+}
+
+.formGroup {
+    margin-bottom: 1.25rem;
+}
+
+.formGroup label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--color-charcoal);
+}
+
+.formGroup input,
+.formGroup textarea {
+    width: 100%;
+    padding: 0.875rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: var(--radius-md);
+    font-size: 1rem;
+    transition: border-color var(--transition-fast);
+}
+
+.formGroup input:focus,
+.formGroup textarea:focus {
+    outline: none;
+    border-color: var(--color-ocean);
+    box-shadow: 0 0 0 3px rgba(13, 115, 119, 0.1);
+}
+
+.submitBtn {
+    width: 100%;
+    padding: 1.25rem;
+    font-size: 1.125rem;
+    font-weight: 700;
+    margin-top: 1rem;
+    background-color: var(--color-ocean);
+    color: var(--color-white);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all var(--transition-base);
+}
+
+.submitBtn:hover:not(:disabled) {
+    background-color: var(--color-ocean-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(13, 115, 119, 0.2);
+}
+
+.submitBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+.successState {
+    text-align: center;
+    padding: 2rem 0;
+}
+
+.successIcon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+.itinerary {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    position: relative;
+}
+
+.itinerary::before {
+    content: "";
+    position: absolute;
+    left: 30px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background-color: var(--color-sand-dark);
+    z-index: 0;
+}
+
+.itineraryItem {
+    display: flex;
+    gap: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+.dayBadge {
+    min-width: 60px;
+    height: 60px;
+    background-color: var(--color-ocean);
+    color: var(--color-white);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.875rem;
+    box-shadow: 0 4px 10px rgba(13, 115, 119, 0.3);
+}
+
+.itineraryContent h4 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-charcoal);
+}
+
+.itineraryContent p {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-slate);
+    margin-bottom: 0;
+}
