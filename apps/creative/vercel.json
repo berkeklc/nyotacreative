@@ -1,7 +1,6 @@
 {
-    "buildCommand": "cd ../.. && npm run build --filter=@nyota/creative",
-    "devCommand": "cd ../.. && npm run dev --filter=@nyota/creative",
-    "installCommand": "cd ../.. && npm install",
+    "buildCommand": "npm run build --filter=@nyota/creative",
+    "devCommand": "npm run dev --filter=@nyota/creative",
     "framework": "nextjs",
-    "outputDirectory": ".next"
+    "outputDirectory": "apps/creative/.next"
 }
