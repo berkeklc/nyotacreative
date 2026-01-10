@@ -1,0 +1,40 @@
+{
+    "kind": "collectionType",
+    "collectionName": "team_members",
+    "info": {
+        "singularName": "team-member",
+        "pluralName": "team-members",
+        "displayName": "Team Member",
+        "description": "Agency team members"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "attributes": {
+        "name": {
+            "type": "string",
+            "required": true
+        },
+        "role": {
+            "type": "string",
+            "required": true
+        },
+        "avatar": {
+            "type": "media",
+            "allowedTypes": [
+                "images"
+            ]
+        },
+        "bio": {
+            "type": "richtext"
+        },
+        "order": {
+            "type": "integer",
+            "default": 0
+        },
+        "socialLinks": {
+            "type": "component",
+            "component": "shared.social-links"
+        }
+    }
+}
