@@ -1,0 +1,23 @@
+{
+    "collectionName": "components_shared_itinerary_item",
+    "info": {
+        "displayName": "Itinerary Item",
+        "description": "Tour itinerary stop"
+    },
+    "attributes": {
+        "time": {
+            "type": "string",
+            "required": true
+        },
+        "title": {
+            "type": "string",
+            "required": true
+        },
+        "description": {
+            "type": "text"
+        },
+        "location": {
+            "type": "string"
+        }
+    }
+}

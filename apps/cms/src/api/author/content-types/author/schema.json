@@ -1,0 +1,50 @@
+{
+    "kind": "collectionType",
+    "collectionName": "authors",
+    "info": {
+        "singularName": "author",
+        "pluralName": "authors",
+        "displayName": "Author",
+        "description": "Content authors and local experts"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "attributes": {
+        "name": {
+            "type": "string",
+            "required": true
+        },
+        "slug": {
+            "type": "uid",
+            "targetField": "name",
+            "required": true
+        },
+        "avatar": {
+            "type": "media",
+            "allowedTypes": [
+                "images"
+            ]
+        },
+        "bio": {
+            "type": "richtext"
+        },
+        "expertise": {
+            "type": "json"
+        },
+        "isLocalExpert": {
+            "type": "boolean",
+            "default": false
+        },
+        "socialLinks": {
+            "type": "component",
+            "component": "shared.social-links"
+        },
+        "articles": {
+            "type": "relation",
+            "relation": "oneToMany",
+            "target": "api::article.article",
+            "mappedBy": "author"
+        }
+    }
+}

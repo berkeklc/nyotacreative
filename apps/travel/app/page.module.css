@@ -1,0 +1,568 @@
+.page {
+  min-height: 100vh;
+}
+
+/* Header */
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: var(--color-white);
+  box-shadow: var(--shadow-sm);
+}
+
+.nav {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--space-sm) var(--space-md);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-md);
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--color-ocean);
+}
+
+.logoIcon {
+  color: var(--color-sunset);
+}
+
+.navLinks {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.navLinks a {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-charcoal);
+}
+
+.navLinks a:hover {
+  color: var(--color-ocean);
+}
+
+.navActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.langSwitch {
+  padding: 0.5rem 0.75rem;
+  background: transparent;
+  border: 1px solid var(--color-sand-dark);
+  border-radius: var(--radius-sm);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+/* Hero */
+.hero {
+  position: relative;
+  min-height: 80vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: calc(var(--space-xl) + 60px) var(--space-md) var(--space-xl);
+  background: linear-gradient(135deg,
+      var(--color-ocean) 0%,
+      var(--color-ocean-dark) 50%,
+      var(--color-forest) 100%);
+  text-align: center;
+}
+
+.heroOverlay {
+  position: absolute;
+  inset: 0;
+  background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.05)"/></svg>');
+  background-size: 30px 30px;
+}
+
+.heroContent {
+  position: relative;
+  max-width: 800px;
+}
+
+.heroBadge {
+  display: inline-block;
+  margin-bottom: var(--space-md);
+}
+
+.hero h1 {
+  color: var(--color-white);
+  margin-bottom: var(--space-md);
+}
+
+.heroHighlight {
+  color: var(--color-sunset-light);
+}
+
+.heroSubtitle {
+  font-size: 1.25rem;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: var(--space-lg);
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.heroSearch {
+  display: flex;
+  gap: 0;
+  max-width: 500px;
+  margin: 0 auto var(--space-lg);
+  background-color: var(--color-white);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+}
+
+.searchInput {
+  flex: 1;
+  padding: 1rem 1.25rem;
+  border: none;
+  font-size: 1rem;
+  outline: none;
+}
+
+.heroSearch .btn {
+  border-radius: 0;
+  padding-left: 2rem;
+  padding-right: 2rem;
+}
+
+.quickLinks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-xs);
+}
+
+.quickLink {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background-color: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-md);
+  color: var(--color-white);
+  font-size: 0.875rem;
+  font-weight: 500;
+  backdrop-filter: blur(4px);
+  transition: all var(--transition-fast);
+}
+
+.quickLink:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: var(--color-white);
+}
+
+/* Section Header */
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: var(--space-lg);
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.sectionLabel {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-ocean);
+  margin-bottom: 0.5rem;
+}
+
+/* Destinations */
+.destinations {
+  background-color: var(--color-sand);
+}
+
+.destinationsGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+}
+
+.destinationCard {
+  position: relative;
+  aspect-ratio: 3/4;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  background: linear-gradient(135deg, var(--color-ocean), var(--color-forest));
+}
+
+.destinationCard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, transparent 50%);
+  z-index: 1;
+}
+
+.destinationImage {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  transition: transform var(--transition-base);
+}
+
+.destinationCard:hover .destinationImage {
+  transform: scale(1.1);
+}
+
+.destinationInfo {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: var(--space-md);
+  z-index: 2;
+  color: var(--color-white);
+}
+
+.destinationInfo h3 {
+  color: var(--color-white);
+  font-size: 1.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.destinationInfo p {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.875rem;
+}
+
+/* Tours */
+.tours {
+  background-color: var(--color-white);
+}
+
+.toursGrid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-md);
+}
+
+.tourCard {
+  display: flex;
+  flex-direction: column;
+}
+
+.tourImage {
+  position: relative;
+  height: 200px;
+  background: linear-gradient(135deg, var(--color-sunset-light), var(--color-sunset));
+}
+
+.tourImage .badge {
+  position: absolute;
+  top: var(--space-sm);
+  left: var(--space-sm);
+}
+
+.tourContent {
+  padding: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.tourMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.75rem;
+  color: var(--color-slate);
+  margin-bottom: 0.5rem;
+}
+
+.tourContent h3 {
+  font-size: 1rem;
+  margin-bottom: auto;
+}
+
+.tourFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: var(--space-md);
+}
+
+.tourPrice {
+  font-size: 0.875rem;
+  color: var(--color-slate);
+}
+
+.tourPrice strong {
+  font-size: 1.25rem;
+  color: var(--color-charcoal);
+}
+
+.tourFooter .btn {
+  padding: 0.5rem 1rem;
+  font-size: 0.75rem;
+}
+
+/* Guides */
+.guides {
+  background-color: var(--color-sand);
+}
+
+.guidesGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-md);
+}
+
+.guideCard {
+  display: flex;
+  flex-direction: column;
+}
+
+.guideImage {
+  height: 200px;
+  background: linear-gradient(135deg, var(--color-ocean), var(--color-ocean-dark));
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+
+.guideContent {
+  padding: var(--space-md);
+}
+
+.guideCategory {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--color-ocean);
+}
+
+.guideContent h3 {
+  margin: 0.5rem 0;
+  font-size: 1.125rem;
+}
+
+.guideContent h3 a:hover {
+  color: var(--color-ocean);
+}
+
+.guideContent p {
+  font-size: 0.875rem;
+  margin-bottom: var(--space-sm);
+}
+
+.guideMeta {
+  display: flex;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--color-slate);
+}
+
+/* Newsletter */
+.newsletter {
+  padding: var(--space-xl) var(--space-md);
+  background: linear-gradient(135deg, var(--color-sunset), var(--color-sunset-light));
+  text-align: center;
+}
+
+.newsletterContent {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.newsletterContent h2 {
+  color: var(--color-white);
+  margin-bottom: 0.5rem;
+}
+
+.newsletterContent p {
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: var(--space-md);
+}
+
+.newsletterForm {
+  display: flex;
+  gap: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.newsletterForm input {
+  flex: 1;
+  padding: 1rem;
+  border: none;
+  font-size: 1rem;
+  outline: none;
+}
+
+.newsletterForm .btn {
+  border-radius: 0;
+}
+
+.newsletterNote {
+  display: block;
+  margin-top: var(--space-sm);
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Footer */
+.footer {
+  background-color: var(--color-charcoal);
+  color: var(--color-white);
+  padding: var(--space-xl) 0 var(--space-md);
+}
+
+.footer .logo {
+  color: var(--color-white);
+}
+
+.footerGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr 1fr;
+  gap: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.footerBrand p {
+  margin-top: var(--space-sm);
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.875rem;
+}
+
+.footerSocial {
+  display: flex;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+}
+
+.footerSocial a {
+  font-size: 1.25rem;
+}
+
+.footerLinks {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footerLinks h4 {
+  color: var(--color-white);
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.footerLinks a {
+  font-size: 0.875rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.footerLinks a:hover {
+  color: var(--color-sunset-light);
+}
+
+.footerBottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--space-md);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footerBottom p {
+  color: rgba(255, 255, 255, 0.6);
+  font-size: 0.875rem;
+}
+
+.footerLang {
+  display: flex;
+  gap: var(--space-xs);
+}
+
+.footerLang button {
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: var(--radius-sm);
+  color: var(--color-white);
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.footerLang button:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+  .destinationsGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .toursGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .guidesGrid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .footerGrid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .navLinks {
+    display: none;
+  }
+
+  .destinationsGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .toursGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .guidesGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .heroSearch {
+    flex-direction: column;
+  }
+
+  .heroSearch .btn {
+    border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  }
+
+  .footerGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .footerBottom {
+    flex-direction: column;
+    gap: var(--space-sm);
+    text-align: center;
+  }
+}

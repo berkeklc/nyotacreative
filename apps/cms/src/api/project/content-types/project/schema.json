@@ -1,0 +1,84 @@
+{
+    "kind": "collectionType",
+    "collectionName": "projects",
+    "info": {
+        "singularName": "project",
+        "pluralName": "projects",
+        "displayName": "Project",
+        "description": "Agency case studies and portfolio projects"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "attributes": {
+        "title": {
+            "type": "string",
+            "required": true
+        },
+        "slug": {
+            "type": "uid",
+            "targetField": "title",
+            "required": true
+        },
+        "client": {
+            "type": "string",
+            "required": true
+        },
+        "heroImage": {
+            "type": "media",
+            "allowedTypes": [
+                "images"
+            ],
+            "required": true
+        },
+        "gallery": {
+            "type": "media",
+            "allowedTypes": [
+                "images",
+                "videos"
+            ],
+            "multiple": true
+        },
+        "videoShowcase": {
+            "type": "media",
+            "allowedTypes": [
+                "videos"
+            ]
+        },
+        "excerpt": {
+            "type": "text"
+        },
+        "challenge": {
+            "type": "richtext"
+        },
+        "solution": {
+            "type": "richtext"
+        },
+        "results": {
+            "type": "richtext"
+        },
+        "testimonial": {
+            "type": "component",
+            "component": "shared.testimonial"
+        },
+        "services": {
+            "type": "relation",
+            "relation": "manyToMany",
+            "target": "api::service.service"
+        },
+        "industry": {
+            "type": "string"
+        },
+        "completedAt": {
+            "type": "date"
+        },
+        "featured": {
+            "type": "boolean",
+            "default": false
+        },
+        "seoMetadata": {
+            "type": "component",
+            "component": "shared.seo"
+        }
+    }
+}
