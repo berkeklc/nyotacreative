@@ -1,6 +1,7 @@
 {
-    "buildCommand": "npm run build --filter=@nyota/travel",
-    "devCommand": "npm run dev --filter=@nyota/travel",
+    "buildCommand": "cd ../.. && npm run build --filter=@nyota/travel",
+    "installCommand": "cd ../.. && npm install",
+    "devCommand": "cd ../.. && npm run dev --filter=@nyota/travel",
     "framework": "nextjs",
-    "outputDirectory": "apps/travel/.next"
+    "outputDirectory": ".next"
 }
