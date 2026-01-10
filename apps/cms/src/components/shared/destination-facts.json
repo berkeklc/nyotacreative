@@ -1,0 +1,28 @@
+{
+    "collectionName": "components_shared_destination_facts",
+    "info": {
+        "displayName": "Destination Facts",
+        "icon": "globe",
+        "description": "Quick facts for destination pages"
+    },
+    "attributes": {
+        "population": {
+            "type": "string"
+        },
+        "language": {
+            "type": "string"
+        },
+        "currency": {
+            "type": "string"
+        },
+        "bestTimeToVisit": {
+            "type": "string"
+        },
+        "timezone": {
+            "type": "string"
+        },
+        "avgTemperature": {
+            "type": "string"
+        }
+    }
+}

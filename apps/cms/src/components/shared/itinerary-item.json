@@ -2,6 +2,7 @@
     "collectionName": "components_shared_itinerary_item",
     "info": {
         "displayName": "Itinerary Item",
+        "icon": "calendar",
         "description": "Tour itinerary stop"
     },
     "attributes": {
