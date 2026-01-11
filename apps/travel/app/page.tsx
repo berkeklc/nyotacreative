@@ -33,54 +33,31 @@ export default async function Home() {
   const cmsDestinations = destinationsRes?.data || [];
   const cmsTours = toursRes?.data || [];
 
-  const destinations = cmsDestinations.length > 0
-    ? cmsDestinations.map((d: any) => ({
-      name: d.name,
-      slug: d.slug,
-      tagline: d.description?.slice(0, 100) + "..." || "The ultimate tropical paradise",
-      image: getStrapiMedia(d.heroImage?.url)
-    }))
-    : defaultDestinations;
+  const destinations = cmsDestinations.map((d: any) => ({
+    name: d.name,
+    slug: d.slug,
+    tagline: d.description?.slice(0, 100) + "..." || "Explore the wild heart of Tanzania",
+    image: getStrapiMedia(d.heroImage?.url)
+  }));
 
-  const tours = cmsTours.length > 0
-    ? cmsTours.map((t: any) => ({
-      title: t.name, // Strapi tours use 'name' per schema
-      slug: t.slug,
-      duration: t.duration || "Full Day",
-      price: t.priceAdult || 99, // Strapi uses priceAdult
-      rating: 4.9,
-      reviews: 12,
-      image: getStrapiMedia(t.heroImage?.url) // Strapi tours use 'heroImage'
-    }))
-    : defaultTours;
+  const tours = cmsTours.map((t: any) => ({
+    title: t.name,
+    slug: t.slug,
+    duration: t.duration || "Bespoke",
+    price: t.priceAdult || 0,
+    rating: 4.9,
+    reviews: t.reviews || 8,
+    image: getStrapiMedia(t.heroImage?.url)
+  }));
 
-  const articles = cmsArticles.length > 0
-    ? cmsArticles.map((a: any) => ({
-      title: a.title,
-      slug: a.slug,
-      category: a.category?.replace('-', ' ') || "Travel Tip",
-      author: "Nyota Editor",
-      date: new Date(a.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
-      image: getStrapiMedia(a.heroImage?.url) // Articles use 'heroImage'
-    }))
-    : [
-      {
-        title: "Best Beaches in Zanzibar: Complete 2026 Guide",
-        slug: "best-beaches-zanzibar-2026",
-        category: "Beaches",
-        author: "Sarah Mwangi",
-        date: "Jan 8, 2026",
-        image: null
-      },
-      {
-        title: "Where to Eat in Stone Town: Local's Guide",
-        slug: "where-to-eat-stone-town",
-        category: "Food & Drink",
-        author: "Ahmed Hassan",
-        date: "Jan 5, 2026",
-        image: null
-      }
-    ];
+  const articles = cmsArticles.map((a: any) => ({
+    title: a.title,
+    slug: a.slug,
+    category: a.category?.replace('-', ' ') || "Local Insight",
+    author: a.author?.name || "Nyota Team",
+    date: new Date(a.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+    image: getStrapiMedia(a.heroImage?.url)
+  }));
 
   return (
     <div className={styles.page}>
