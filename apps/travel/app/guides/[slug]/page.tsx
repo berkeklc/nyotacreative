@@ -4,6 +4,7 @@ import styles from "../../page.module.css";
 import { fetchAPI } from "../../../lib/strapi";
 
 interface GuideContent {
+    slug?: string;
     title: string;
     content: string;
     category: string;
