@@ -11,22 +11,29 @@ export default async function TanzaniaPage() {
     // 1. Fetch Tanzania Destination data with cities
     const destinationRes = await fetchAPI("/destinations", {
         filters: { slug: "tanzania" },
-        populate: {
-            heroImage: "*",
-            cities: {
-                populate: ["heroImage", "tours", "attractions"]
-            },
-            quickFacts: "*"
-        }
+        populate: ["heroImage", "cities", "cities.heroImage", "cities.tours", "cities.attractions", "quickFacts"]
     });
 
-    const tanzania = destinationRes.data?.[0];
+    const tanzania = destinationRes?.data?.[0];
 
-    const destinationName = tanzania?.name || "Tanzania";
-    const description = tanzania?.description || "From the snow-capped peak of Kilimanjaro to the pristine beaches of Zanzibar, Tanzania offers unforgettable adventures.";
-    const heroImage = getStrapiMedia(tanzania?.heroImage?.url) || "/hero-safari.jpg";
+    // Fallback if destination not found or API error
+    if (!tanzania) {
+        return (
+            <div className={styles.page}>
+                <main style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
+                    <h2>Destination data unavailable</h2>
+                    <p>We're having trouble reaching our servers. Please try again later.</p>
+                    <Link href="/" className="btn btn-secondary" style={{ marginTop: '2rem' }}>Back to Home</Link>
+                </main>
+            </div>
+        );
+    }
 
-    const rawFacts = tanzania?.quickFacts;
+    const destinationName = tanzania.name || "Tanzania";
+    const description = tanzania.description || "From the snow-capped peak of Kilimanjaro to the pristine beaches of Zanzibar, Tanzania offers unforgettable adventures.";
+    const heroImage = getStrapiMedia(tanzania.heroImage?.url) || "/hero-safari.jpg";
+
+    const rawFacts = tanzania.quickFacts;
     const quickFacts = [
         { label: "Capital", value: "Dodoma", icon: "🏙️" },
         { label: "Language", value: rawFacts?.language || "Swahili, English", icon: "🗣️" },
@@ -34,12 +41,12 @@ export default async function TanzaniaPage() {
         { label: "Best Time", value: rawFacts?.bestTimeToVisit || "June - Oct", icon: "☀️" },
     ];
 
-    const displayCities = (tanzania?.cities || []).map((c: any) => ({
+    const displayCities = (tanzania.cities || []).map((c: any) => ({
         name: c.name,
         slug: c.slug,
         tagline: c.description?.slice(0, 100) + "..." || "Explore this beautiful region",
-        attractions: c.attractions?.length || 0,
-        tours: c.tours?.length || 0,
+        attractions: Array.isArray(c.attractions) ? c.attractions.length : (typeof c.attractions === 'object' && c.attractions?.data ? c.attractions.data.length : 0),
+        tours: Array.isArray(c.tours) ? c.tours.length : (typeof c.tours === 'object' && c.tours?.data ? c.tours.data.length : 0),
         image: getStrapiMedia(c.heroImage?.url)
     }));
 

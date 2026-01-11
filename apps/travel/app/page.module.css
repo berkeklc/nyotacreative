@@ -11,6 +11,8 @@
   overflow: hidden;
   padding: 80px var(--space-md);
   /* Tightened padding */
+  background-color: #f0ede4;
+  /* Better earthy fallback than black */
 }
 
 .heroImageBg {

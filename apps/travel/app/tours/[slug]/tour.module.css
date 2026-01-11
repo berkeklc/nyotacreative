@@ -13,6 +13,8 @@
     color: var(--color-white);
     text-align: center;
     overflow: hidden;
+    background-color: var(--color-charcoal);
+    /* Fallback to charcoal if image blank */
 }
 
 .heroOverlay {

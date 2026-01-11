@@ -21,13 +21,7 @@ export default async function TourPage({ params }: { params: Promise<{ slug: str
 
     const res = await fetchAPI("/tours", {
         filters: { slug: { $eq: slug } },
-        populate: {
-            heroImage: "*",
-            gallery: "*",
-            city: "*",
-            itinerary: "*",
-            seoMetadata: "*"
-        }
+        populate: ["heroImage", "gallery", "city", "itinerary", "seoMetadata"]
     });
 
     const tour = res.data?.[0];
@@ -79,16 +73,16 @@ export default async function TourPage({ params }: { params: Promise<{ slug: str
                             <h2>Experience Overview</h2>
                             <p style={{ whiteSpace: 'pre-wrap' }}>{tour.description}</p>
 
-                            {tour.highlights && (
+                            {Array.isArray(tour.highlights) && tour.highlights.length > 0 && (
                                 <>
                                     <h3 style={{ marginTop: "3rem", marginBottom: "1.5rem" }}>Trip Highlights</h3>
                                     <div className={styles.includesGrid}>
-                                        {(tour.highlights as any[]).map((highlight, idx) => (
+                                        {tour.highlights.map((highlight: any, idx: number) => (
                                             <div key={idx} className={styles.includeCard}>
                                                 <span className={styles.includeIcon} aria-hidden="true">✨</span>
                                                 <div className={styles.includeText}>
                                                     <strong>Key Feature</strong>
-                                                    <span>{highlight}</span>
+                                                    <span>{typeof highlight === 'string' ? highlight : (highlight.title || "Elite Detail")}</span>
                                                 </div>
                                             </div>
                                         ))}
@@ -96,7 +90,7 @@ export default async function TourPage({ params }: { params: Promise<{ slug: str
                                 </>
                             )}
 
-                            {tour.itinerary && tour.itinerary.length > 0 && (
+                            {Array.isArray(tour.itinerary) && tour.itinerary.length > 0 && (
                                 <>
                                     <h3 style={{ marginTop: "4rem", marginBottom: "2rem" }}>Journey Itinerary</h3>
                                     <div className={styles.itinerary}>
@@ -104,7 +98,7 @@ export default async function TourPage({ params }: { params: Promise<{ slug: str
                                             <div key={idx} className={styles.itineraryItem}>
                                                 <div className={styles.dayBadge}>Day {item.dayNumber || (idx + 1)}</div>
                                                 <div className={styles.itineraryContent}>
-                                                    <h4>{item.title}</h4>
+                                                    <h4>{item.title || `Day ${idx + 1}`}</h4>
                                                     <p>{item.description}</p>
                                                 </div>
                                             </div>

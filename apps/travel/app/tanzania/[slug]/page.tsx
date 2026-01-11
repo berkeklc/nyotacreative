@@ -16,23 +16,14 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
 
     const data = await fetchAPI("/destinations", {
         filters: { slug: { $eq: slug } },
-        populate: {
-            heroImage: "*",
-            cities: {
-                populate: {
-                    tours: {
-                        populate: ["heroImage"]
-                    }
-                }
-            },
-            quickFacts: "*"
-        }
+        populate: ["heroImage", "cities", "cities.tours", "cities.tours.heroImage", "quickFacts"]
     });
 
     const destinationRaw = data?.data?.[0];
     if (!destinationRaw) return notFound();
 
     const destination = {
+        id: destinationRaw.id,
         name: destinationRaw.name,
         tagline: destinationRaw.description,
         heroImage: getStrapiMedia(destinationRaw.heroImage?.url) || "/hero-safari.jpg",
@@ -45,13 +36,13 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
     };
 
     // Flatten tours from cities
-    const relatedTours = destinationRaw.cities?.flatMap((city: any) =>
+    const relatedTours = (destinationRaw.cities || []).flatMap((city: any) =>
         (city.tours || []).map((t: any) => ({
             ...t,
             cityName: city.name,
             imageUrl: getStrapiMedia(t.heroImage?.url)
         }))
-    ).slice(0, 4) || [];
+    ).slice(0, 4);
 
     return (
         <div className={styles.page}>

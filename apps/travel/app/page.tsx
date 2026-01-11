@@ -24,9 +24,9 @@ const quickLinks = [
 
 export default async function Home() {
   const [articlesRes, destinationsRes, toursRes] = await Promise.all([
-    fetchAPI("/articles", { populate: "*", pagination: { limit: 3 }, sort: ["publishedAt:desc"] }),
-    fetchAPI("/destinations", { populate: "*" }),
-    fetchAPI("/tours", { populate: "*", pagination: { limit: 4 } })
+    fetchAPI("/articles", { populate: ["heroImage", "category", "author"], pagination: { limit: 3 }, sort: ["publishedAt:desc"] }),
+    fetchAPI("/destinations", { populate: ["heroImage"], pagination: { limit: 3 } }),
+    fetchAPI("/tours", { populate: ["heroImage", "city"], pagination: { limit: 4 } })
   ]);
 
   const cmsArticles = articlesRes?.data || [];
