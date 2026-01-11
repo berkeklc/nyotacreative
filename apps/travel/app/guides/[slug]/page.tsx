@@ -3,8 +3,18 @@ import { notFound } from "next/navigation";
 import styles from "../../page.module.css";
 import { fetchAPI } from "../../../lib/strapi";
 
+interface GuideContent {
+    title: string;
+    content: string;
+    category: string;
+    author: string;
+    date: string;
+    image?: string | null;
+    expertAdvice: string;
+}
+
 // Fallback guides
-const fallbackGuides = [
+const fallbackGuides: GuideContent[] = [
     {
         slug: "best-beaches-zanzibar-2026",
         title: "Best Beaches in Zanzibar: 2026 Guide",
@@ -13,8 +23,7 @@ const fallbackGuides = [
         author: "Sarah Mwangi",
         date: "Jan 8, 2026",
         expertAdvice: "Traveler Tip: Head to Kendwa Rocks on a Saturday for their famous beach party, or visit Nungwi Mnarani Aquarium to see the sea turtle conservation project."
-    },
-    // ... other fallback guides would be here, but let's focus on the structure
+    } as any, // Simple cast for fallback type compatibility
 ];
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
@@ -77,7 +86,7 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                             </header>
 
                             <section className={styles.guideArticle}>
-                                {guide.content.split('\n').map((para, i) => (
+                                {guide.content.split('\n').map((para: string, i: number) => (
                                     <p key={i}>{para}</p>
                                 ))}
                             </section>
