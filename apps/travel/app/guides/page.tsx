@@ -1,43 +1,30 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "../page.module.css";
 import { fetchAPI, getStrapiMedia } from "../../lib/strapi";
 
 const categories = ["All", "Beaches", "Food & Drink", "Travel Tips", "Safari", "Hotels", "Culture", "Transportation"];
 
-export default function GuidesPage() {
-    const [activeCategory, setActiveCategory] = useState("All");
-    const [guides, setGuides] = useState<any[]>([]);
-    const [loading, setLoading] = useState(true);
+export default async function GuidesPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
+    const params = await searchParams;
+    const activeCategory = params.category || "All";
 
-    useEffect(() => {
-        async function loadGuides() {
-            setLoading(true);
-            const res = await fetchAPI("/articles", {
-                populate: "*",
-                sort: ["publishedAt:desc"],
-                filters: activeCategory !== "All" ? {
-                    category: { $eq: activeCategory }
-                } : {}
-            });
+    const res = await fetchAPI("/articles", {
+        populate: "*",
+        sort: ["publishedAt:desc"],
+        filters: activeCategory !== "All" ? {
+            category: { $eq: activeCategory }
+        } : {}
+    });
 
-            if (res?.data) {
-                setGuides(res.data.map((g: any) => ({
-                    title: g.title,
-                    slug: g.slug,
-                    category: g.category || "General",
-                    author: "Nyota Editor",
-                    date: new Date(g.publishedAt).toLocaleDateString(),
-                    readTime: "8 min",
-                    image: getStrapiMedia(g.image?.url)
-                })));
-            }
-            setLoading(false);
-        }
-        loadGuides();
-    }, [activeCategory]);
+    const guides = res?.data ? res.data.map((g: any) => ({
+        title: g.title,
+        slug: g.slug,
+        category: g.category || "General",
+        author: "Nyota Editor",
+        date: new Date(g.publishedAt).toLocaleDateString(),
+        readTime: "8 min",
+        image: getStrapiMedia(g.image?.url)
+    })) : [];
 
     return (
         <div className={styles.page}>
@@ -59,19 +46,18 @@ export default function GuidesPage() {
                     <div className="container">
                         <div className={styles.categoryFilter}>
                             {categories.map((cat) => (
-                                <button
+                                <Link
                                     key={cat}
-                                    onClick={() => setActiveCategory(cat)}
+                                    href={cat === "All" ? "/guides" : `/guides?category=${encodeURIComponent(cat)}`}
                                     className={`${styles.categoryBtn} ${cat === activeCategory ? styles.active : ""}`}
+                                    style={{ textDecoration: 'none' }}
                                 >
                                     {cat}
-                                </button>
+                                </Link>
                             ))}
                         </div>
 
-                        {loading ? (
-                            <div style={{ textAlign: 'center', padding: '5rem', color: 'var(--color-slate)' }}>Loading guides...</div>
-                        ) : guides.length > 0 ? (
+                        {guides.length > 0 ? (
                             <div className={styles.guidesGrid}>
                                 {guides.map((guide) => (
                                     <article key={guide.slug} className={`${styles.guideCard} card`}>
@@ -90,7 +76,9 @@ export default function GuidesPage() {
                                 ))}
                             </div>
                         ) : (
-                            <div style={{ textAlign: 'center', padding: '5rem', color: 'var(--color-slate)' }}>No guides found in this category.</div>
+                            <div style={{ textAlign: 'center', padding: '5rem', color: 'var(--color-slate)' }}>
+                                {res?.data === null ? "Error connecting to Strapi. Please check your API token." : "No guides found in this category."}
+                            </div>
                         )}
                     </div>
                 </section>

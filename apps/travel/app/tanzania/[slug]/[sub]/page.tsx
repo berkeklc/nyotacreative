@@ -1,9 +1,9 @@
 import Link from "next/link";
-import styles from "../../../page.module.css";
+import styles from "../../page.module.css";
 
-export default async function DestinationSubPage({ params }: { params: Promise<{ destination: string, sub: string }> }) {
-    const { destination, sub } = await params;
-    const destName = destination.charAt(0).toUpperCase() + destination.slice(1);
+export default async function DestinationSubPage({ params }: { params: Promise<{ slug: string, sub: string }> }) {
+    const { slug, sub } = await params;
+    const destName = slug.charAt(0).toUpperCase() + slug.slice(1);
     const subName = sub.charAt(0).toUpperCase() + sub.slice(1);
 
     return (
