@@ -16,15 +16,18 @@ export default async function GuidesPage({ searchParams }: { searchParams: Promi
         } : {}
     });
 
-    const guides = res?.data ? res.data.map((g: any) => ({
-        title: g.title,
-        slug: g.slug,
-        category: g.category || "General",
-        author: "Nyota Editor",
-        date: new Date(g.publishedAt).toLocaleDateString(),
-        readTime: "8 min",
-        image: getStrapiMedia(g.image?.url)
-    })) : [];
+    const guides = (res?.data || []).map((g: any) => {
+        if (!g) return null;
+        return {
+            title: g.title || "Untitled Guide",
+            slug: g.slug || "untitiled",
+            category: g.category || "General",
+            author: "Nyota Editor",
+            date: g.publishedAt ? new Date(g.publishedAt).toLocaleDateString() : "Recently",
+            readTime: "8 min",
+            image: getStrapiMedia(g.image?.url)
+        };
+    }).filter(Boolean);
 
     return (
         <div className={styles.page}>
@@ -59,21 +62,23 @@ export default async function GuidesPage({ searchParams }: { searchParams: Promi
 
                         {guides.length > 0 ? (
                             <div className={styles.guidesGrid}>
-                                {guides.map((guide) => (
-                                    <article key={guide.slug} className={`${styles.guideCard} card`}>
-                                        <div className={styles.guideImage} style={{
-                                            backgroundImage: guide.image ? `url(${guide.image})` : 'none',
-                                            backgroundColor: 'var(--color-sand-dark)'
-                                        }} />
-                                        <div className={styles.guideContent}>
-                                            <span className={styles.guideCategory}>{guide.category}</span>
-                                            <h3><Link href={`/guides/${guide.slug}`}>{guide.title}</Link></h3>
-                                            <div className={styles.guideMeta}>
-                                                <span>{guide.author} • {guide.date}</span>
+                                {guides.map((guide: any) => {
+                                    if (!guide) return null;
+                                    const bgStyle = guide.image ? { backgroundImage: `url("${guide.image}")` } : { backgroundColor: 'var(--color-sand-dark)' };
+
+                                    return (
+                                        <article key={guide.slug || Math.random()} className={`${styles.guideCard} card`}>
+                                            <div className={styles.guideImage} style={bgStyle} />
+                                            <div className={styles.guideContent}>
+                                                <span className={styles.guideCategory}>{guide.category}</span>
+                                                <h3><Link href={`/guides/${guide.slug}`}>{guide.title}</Link></h3>
+                                                <div className={styles.guideMeta}>
+                                                    <span>{guide.author} • {guide.date}</span>
+                                                </div>
                                             </div>
-                                        </div>
-                                    </article>
-                                ))}
+                                        </article>
+                                    );
+                                })}
                             </div>
                         ) : (
                             <div style={{ textAlign: 'center', padding: '5rem', color: 'var(--color-slate)' }}>

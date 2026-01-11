@@ -13,7 +13,14 @@ export default async function GuideCategoryPage({ params }: { params: Promise<{ 
         }
     });
 
-    const guides = res?.data || [];
+    const guides = (res?.data || []).map((g: any) => {
+        if (!g) return null;
+        return {
+            ...g,
+            image: g.image?.url ? getStrapiMedia(g.image.url) : null,
+            publishedAt: g.publishedAt ? new Date(g.publishedAt).toLocaleDateString() : "Recently"
+        };
+    }).filter(Boolean);
 
     return (
         <div className={styles.page}>
@@ -39,14 +46,14 @@ export default async function GuideCategoryPage({ params }: { params: Promise<{ 
                                 {guides.map((guide: any) => (
                                     <article key={guide.slug} className={`${styles.guideCard} card`}>
                                         <div className={styles.guideImage} style={{
-                                            backgroundImage: guide.image?.url ? `url(${getStrapiMedia(guide.image.url)})` : 'none',
+                                            backgroundImage: guide.image ? `url("${guide.image}")` : 'none',
                                             backgroundColor: 'var(--color-sand-dark)'
                                         }} />
                                         <div className={styles.guideContent}>
                                             <span className={styles.guideCategory}>{guide.category}</span>
                                             <h3><Link href={`/guides/${guide.slug}`}>{guide.title}</Link></h3>
                                             <div className={styles.guideMeta}>
-                                                <span>By Nyota Editor • {new Date(guide.publishedAt).toLocaleDateString()}</span>
+                                                <span>By Nyota Editor • {guide.publishedAt}</span>
                                             </div>
                                         </div>
                                     </article>
