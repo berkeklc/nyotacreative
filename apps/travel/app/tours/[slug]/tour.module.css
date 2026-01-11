@@ -96,13 +96,13 @@
     left: 0;
     width: 3rem;
     height: 3px;
-    background-color: var(--color-sunset);
+    background-color: var(--color-terracotta);
 }
 
 .overview p {
     font-size: 1.125rem;
     line-height: 1.8;
-    color: var(--color-slate);
+    color: var(--color-charcoal);
     margin-bottom: 3rem;
 }
 
@@ -114,17 +114,19 @@
 }
 
 .includeCard {
-    background-color: var(--color-sand);
+    background-color: var(--color-white);
     padding: 1.5rem;
     border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     gap: 1rem;
     transition: transform var(--transition-base);
+    border: 1px solid var(--color-sand-dark);
 }
 
 .includeCard:hover {
     transform: translateY(-5px);
+    border-color: var(--color-terracotta);
 }
 
 .includeIcon {
@@ -173,7 +175,7 @@
 .priceValue {
     font-size: 3rem;
     font-weight: 700;
-    color: var(--color-ocean);
+    color: var(--color-terracotta);
     line-height: 1;
     margin-top: 0.5rem;
 }
@@ -194,7 +196,7 @@
 .formGroup textarea {
     width: 100%;
     padding: 0.875rem 1rem;
-    border: 1px solid #ddd;
+    border: 1px solid var(--color-sand-dark);
     border-radius: var(--radius-md);
     font-size: 1rem;
     transition: border-color var(--transition-fast);
@@ -203,8 +205,8 @@
 .formGroup input:focus,
 .formGroup textarea:focus {
     outline: none;
-    border-color: var(--color-ocean);
-    box-shadow: 0 0 0 3px rgba(13, 115, 119, 0.1);
+    border-color: var(--color-terracotta);
+    box-shadow: 0 0 0 3px rgba(192, 90, 62, 0.1);
 }
 
 .submitBtn {
@@ -213,7 +215,7 @@
     font-size: 1.125rem;
     font-weight: 700;
     margin-top: 1rem;
-    background-color: var(--color-ocean);
+    background-color: var(--color-terracotta);
     color: var(--color-white);
     border: none;
     border-radius: var(--radius-md);
@@ -222,9 +224,9 @@
 }
 
 .submitBtn:hover:not(:disabled) {
-    background-color: var(--color-ocean-dark);
+    background-color: #A34A31;
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(13, 115, 119, 0.2);
+    box-shadow: 0 10px 20px rgba(192, 90, 62, 0.2);
 }
 
 .submitBtn:disabled {
@@ -270,7 +272,7 @@
 .dayBadge {
     min-width: 60px;
     height: 60px;
-    background-color: var(--color-ocean);
+    background-color: var(--color-terracotta);
     color: var(--color-white);
     border-radius: 50%;
     display: flex;
@@ -278,7 +280,7 @@
     justify-content: center;
     font-weight: 700;
     font-size: 0.875rem;
-    box-shadow: 0 4px 10px rgba(13, 115, 119, 0.3);
+    box-shadow: 0 4px 10px rgba(192, 90, 62, 0.3);
 }
 
 .itineraryContent h4 {

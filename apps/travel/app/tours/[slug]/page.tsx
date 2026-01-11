@@ -109,10 +109,10 @@ export default function TourPage({ params }: { params: Promise<{ slug: string }>
                         <h1>{tour.title}</h1>
                         <div className={styles.tourMeta}>
                             <div className={styles.metaItem}>
-                                <span>⏱️</span> {tour.duration}
+                                <span aria-hidden="true">⏱️</span> {tour.duration}
                             </div>
                             <div className={styles.metaItem}>
-                                <span>⭐</span> {tour.rating} ({tour.reviews} reviews)
+                                <span aria-hidden="true">⭐</span> {tour.rating} ({tour.reviews} reviews)
                             </div>
                             <div className={styles.metaItem}>
                                 <span className="badge badge-featured">Premium Choice</span>
@@ -130,21 +130,21 @@ export default function TourPage({ params }: { params: Promise<{ slug: string }>
                             <h3 style={{ marginTop: "3rem", marginBottom: "1.5rem" }}>What's Included</h3>
                             <div className={styles.includesGrid}>
                                 <div className={styles.includeCard}>
-                                    <span className={styles.includeIcon}>🚙</span>
+                                    <span className={styles.includeIcon} aria-hidden="true">🚙</span>
                                     <div className={styles.includeText}>
                                         <strong>Transport</strong>
                                         <span>Luxury 4x4 Land Cruiser</span>
                                     </div>
                                 </div>
                                 <div className={styles.includeCard}>
-                                    <span className={styles.includeIcon}>🍱</span>
+                                    <span className={styles.includeIcon} aria-hidden="true">🍱</span>
                                     <div className={styles.includeText}>
                                         <strong>Meals</strong>
                                         <span>Full Board & Drinks</span>
                                     </div>
                                 </div>
                                 <div className={styles.includeCard}>
-                                    <span className={styles.includeIcon}>🦁</span>
+                                    <span className={styles.includeIcon} aria-hidden="true">🦁</span>
                                     <div className={styles.includeText}>
                                         <strong>Guide</strong>
                                         <span>Expert Naturalist</span>
@@ -209,8 +209,9 @@ export default function TourPage({ params }: { params: Promise<{ slug: string }>
                                 ) : (
                                     <form onSubmit={handleSubmit}>
                                         <div className={styles.formGroup}>
-                                            <label>Full Name</label>
+                                            <label htmlFor="name">Full Name</label>
                                             <input
+                                                id="name"
                                                 type="text"
                                                 required
                                                 placeholder="e.g. John Doe"
@@ -219,8 +220,9 @@ export default function TourPage({ params }: { params: Promise<{ slug: string }>
                                             />
                                         </div>
                                         <div className={styles.formGroup}>
-                                            <label>Email Address</label>
+                                            <label htmlFor="email">Email Address</label>
                                             <input
+                                                id="email"
                                                 type="email"
                                                 required
                                                 placeholder="e.g. john@example.com"
@@ -230,8 +232,9 @@ export default function TourPage({ params }: { params: Promise<{ slug: string }>
                                         </div>
                                         <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
                                             <div className={styles.formGroup}>
-                                                <label>Date</label>
+                                                <label htmlFor="date">Date</label>
                                                 <input
+                                                    id="date"
                                                     type="date"
                                                     required
                                                     value={formData.date}
@@ -239,8 +242,9 @@ export default function TourPage({ params }: { params: Promise<{ slug: string }>
                                                 />
                                             </div>
                                             <div className={styles.formGroup}>
-                                                <label>Travelers</label>
+                                                <label htmlFor="travelers">Travelers</label>
                                                 <input
+                                                    id="travelers"
                                                     type="number"
                                                     min="1"
                                                     required
@@ -254,7 +258,7 @@ export default function TourPage({ params }: { params: Promise<{ slug: string }>
                                             className={styles.submitBtn}
                                             disabled={status === "loading"}
                                         >
-                                            {status === "loading" ? "Processing..." : "Book This Tour"}
+                                            {status === "loading" ? "Processing..." : "Request Experience"}
                                         </button>
                                         {status === "error" && (
                                             <p style={{ color: "red", fontSize: "0.875rem", marginTop: "1rem", textAlign: "center" }}>

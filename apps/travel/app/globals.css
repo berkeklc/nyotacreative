@@ -1,19 +1,29 @@
 :root {
-  /* Warm travel color palette */
-  --color-ocean: #0d7377;
-  --color-ocean-dark: #095a5c;
-  --color-sunset: #e76f51;
-  --color-sunset-light: #f4a261;
-  --color-sand: #f8f4ec;
-  --color-sand-dark: #e9e1d1;
-  --color-forest: #2d6a4f;
-  --color-charcoal: #212529;
-  --color-slate: #495057;
+  /* Ethnic Safari & Earth Tone Palette */
+  --color-terracotta: #C05A3E;
+  /* Primary Action / Earthy Red */
+  --color-ochre: #D49B35;
+  /* Secondary Accent / Warm Gold */
+  --color-sage: #7C8A67;
+  /* Natural / Muted Green */
+  --color-sand: #F9F4E8;
+  /* Background / Warm Paper */
+  --color-sand-dark: #E6DFCF;
+  /* Border / Warm Stone */
+  --color-charcoal: #2C2C2C;
+  /* Primary Text / High Contrast */
+  --color-slate: #5A5A5A;
+  /* Secondary Text */
   --color-white: #ffffff;
 
   /* Typography */
-  --font-sans: var(--font-inter), system-ui, -apple-system, sans-serif;
-  --font-display: var(--font-outfit), system-ui, sans-serif;
+  --font-sans: var(--font-inter),
+    system-ui,
+    -apple-system,
+    sans-serif;
+  --font-display: var(--font-outfit),
+    system-ui,
+    sans-serif;
 
   /* Spacing */
   --space-xs: 0.5rem;
@@ -37,6 +47,15 @@
   /* Transitions */
   --transition-fast: 150ms ease;
   --transition-base: 300ms ease;
+
+  /* Premium Utilities */
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.5);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-terracotta);
+  outline-offset: 4px;
 }
 
 * {
@@ -95,7 +114,7 @@ a {
 }
 
 a:hover {
-  color: var(--color-ocean);
+  color: var(--color-terracotta);
 }
 
 /* Container */
@@ -126,14 +145,14 @@ a:hover {
 }
 
 .btn-primary {
-  background-color: var(--color-ocean);
+  background-color: var(--color-terracotta);
   color: var(--color-white);
 }
 
 .btn-primary:hover {
-  background-color: var(--color-ocean-dark);
+  background-color: #A34A31;
   transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 4px 12px rgba(192, 90, 62, 0.2);
 }
 
 .btn-secondary {
@@ -143,17 +162,19 @@ a:hover {
 }
 
 .btn-secondary:hover {
-  background-color: var(--color-sand);
-  border-color: var(--color-ocean);
+  background-color: var(--color-sand-dark);
+  border-color: var(--color-terracotta);
 }
 
 .btn-accent {
-  background-color: var(--color-sunset);
+  background-color: var(--color-ochre);
   color: var(--color-white);
+  border: 1px solid var(--color-ochre);
 }
 
 .btn-accent:hover {
-  background-color: #d45a3b;
+  background-color: var(--color-white);
+  color: var(--color-ochre);
 }
 
 /* Cards */
@@ -170,6 +191,18 @@ a:hover {
   transform: translateY(-4px);
 }
 
+.card-premium {
+  background: var(--color-white);
+  border: 1px solid var(--color-sand-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-premium:hover {
+  transform: translateY(-5px);
+  border-color: var(--color-terracotta);
+  box-shadow: var(--shadow-lg);
+}
+
 /* Badges */
 .badge {
   display: inline-flex;
@@ -184,22 +217,23 @@ a:hover {
 }
 
 .badge-featured {
-  background-color: var(--color-sunset-light);
+  background-color: var(--color-sand-dark);
   color: var(--color-charcoal);
+  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 .badge-local {
-  background-color: var(--color-forest);
+  background-color: var(--color-sage);
   color: var(--color-white);
 }
 
 /* Text colors */
 .text-ocean {
-  color: var(--color-ocean);
+  color: var(--color-terracotta);
 }
 
 .text-sunset {
-  color: var(--color-sunset);
+  color: var(--color-ochre);
 }
 
 .text-muted {
@@ -210,7 +244,7 @@ a:hover {
 .stars {
   display: inline-flex;
   gap: 2px;
-  color: var(--color-sunset-light);
+  color: var(--color-ochre);
 }
 
 /* Animations */
@@ -230,9 +264,70 @@ a:hover {
   animation: fadeInUp 0.6s ease forwards;
 }
 
+main>section {
+  opacity: 0;
+  animation: fadeInUp 0.8s ease forwards;
+}
+
+main>section:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+main>section:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+main>section:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+main>section:nth-child(4) {
+  animation-delay: 0.4s;
+}
+
+main>section:nth-child(5) {
+  animation-delay: 0.5s;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes glow {
+  0% {
+    box-shadow: 0 0 5px rgba(231, 111, 81, 0.2);
+  }
+
+  50% {
+    box-shadow: 0 0 20px rgba(231, 111, 81, 0.6);
+  }
+
+  100% {
+    box-shadow: 0 0 5px rgba(231, 111, 81, 0.2);
+  }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+.animate-glow {
+  animation: glow 2s ease-in-out infinite;
+}
+
 /* Selection */
 ::selection {
-  background-color: var(--color-ocean);
+  background-color: var(--color-terracotta);
   color: var(--color-white);
 }
 

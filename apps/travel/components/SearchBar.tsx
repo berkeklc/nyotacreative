@@ -56,7 +56,12 @@ export default function SearchBar() {
                 onChange={(e) => setQuery(e.target.value)}
                 onFocus={() => query.length >= 2 && setIsOpen(true)}
             />
-            <button className="btn btn-primary">Find</button>
+            <button className="btn btn-primary" style={{ display: "flex", alignItems: "center", gap: "0.75rem", boxShadow: "0 8px 20px rgba(192, 90, 62, 0.3)" }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8" /><path d="m21 21-4.3-4.3" />
+                </svg>
+                <span>Find Adventure</span>
+            </button>
 
             {isOpen && (
                 <div style={{
@@ -89,7 +94,7 @@ export default function SearchBar() {
                                     color: "inherit"
                                 }}
                             >
-                                <div style={{ fontWeight: "bold", color: "var(--color-ocean)" }}>{res.title}</div>
+                                <div style={{ fontWeight: "bold", color: "var(--color-terracotta)" }}>{res.title}</div>
                                 <div style={{ fontSize: "0.75rem", color: "#888" }}>{res.type.toUpperCase()}</div>
                             </Link>
                         ))

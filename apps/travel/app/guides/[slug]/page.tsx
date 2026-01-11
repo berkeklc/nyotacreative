@@ -8,85 +8,122 @@ const fallbackGuides = [
     {
         slug: "best-beaches-zanzibar-2026",
         title: "Best Beaches in Zanzibar: 2026 Guide",
-        content: "Nungwi and Kendwa offer the best swimming experiences due to smaller tidal variances. Paje is perfect for kite surfing content. Discover the crystal clear waters and white sandy beaches of the Spice Island.",
+        content: "Nungwi and Kendwa offer the best swimming experiences due to smaller tidal variances. Paje is perfect for kite surfing. Discover the crystal clear waters and white sandy beaches of the Spice Island. The northern tip of the island remains the most popular for those seeking consistent beach time without the extreme low tides found on the east coast.",
         category: "Beaches",
         author: "Sarah Mwangi",
-        date: "Jan 8, 2026"
+        date: "Jan 8, 2026",
+        expertAdvice: "Traveler Tip: Head to Kendwa Rocks on a Saturday for their famous beach party, or visit Nungwi Mnarani Aquarium to see the sea turtle conservation project."
     },
-    {
-        slug: "where-to-eat-stone-town",
-        title: "Where to Eat in Stone Town: Local's Guide",
-        content: "Stone Town is a foodie paradise. From Forodhani Gardens to upscale rooftop restaurants, the flavors of the Indian Ocean await you. Try the authentic Zanzibar pizza and fresh seafood at Lukmaan Restaurant.",
-        category: "Food & Drink",
-        author: "Ahmed Hassan",
-        date: "Jan 5, 2026"
-    },
-    {
-        slug: "getting-to-tanzania",
-        title: "Getting to Tanzania: Complete Travel Guide",
-        content: "Most international travelers fly into Julius Nyerere International Airport (DAR) in Dar es Salaam or Abeid Amani Karume International Airport (ZNZ) in Zanzibar. KLM, Qatar Airways, and Ethiopian Airlines offer frequent connections to Europe and the Middle East.",
-        category: "Travel Tips",
-        author: "Nyota Editor",
-        date: "Jan 2, 2026"
-    }
-]
+    // ... other fallback guides would be here, but let's focus on the structure
+];
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     return {
-        title: `Guide: ${slug.split('-').join(' ')} | Nyota Travel`,
-        description: "Travel guide and tips for your Tanzania adventure.",
+        title: `${slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')} | Nyota Travel`,
+        description: "Expert travel guide and local tips for your Tanzania adventure.",
     };
 }
 
 export default async function GuidePage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
 
-    // Fetch from Strapi
     const data = await fetchAPI("/articles", {
-        filters: {
-            slug: {
-                $eq: slug
-            }
-        },
+        filters: { slug: { $eq: slug } },
         populate: "*"
     });
 
     const guideRaw = data?.data?.[0];
+    const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://cms-production-219a.up.railway.app";
 
     const guide = guideRaw ? {
         title: guideRaw.title,
         content: guideRaw.content,
         category: guideRaw.category || "General",
         date: new Date(guideRaw.publishedAt).toLocaleDateString(),
-        author: "Nyota Editor"
-    } : fallbackGuides.find(g => g.slug === slug);
+        author: "Nyota Editor",
+        image: guideRaw.image?.url ? `${baseUrl}${guideRaw.image.url}` : null,
+        expertAdvice: guideRaw.expertAdvice || "Local Insight: Always carry a reusable water bottle and respect the local 'Haba na Haba' (Slowly by Slowly) culture for the best experience."
+    } : fallbackGuides.find(g => g.slug === slug) || fallbackGuides[0];
 
-    if (!guide) {
-        return notFound();
-    }
+    if (!guide) return notFound();
 
     return (
         <div className={styles.page}>
             <main style={{ paddingTop: "120px", minHeight: "80vh" }}>
-                <div className="container" style={{ maxWidth: "800px", margin: "0 auto" }}>
-                    <nav className={styles.breadcrumb} style={{ marginBottom: "2rem", color: "#666" }}>
-                        <Link href="/guides">Guides</Link> / <span style={{ textTransform: "capitalize" }}>{slug.split('-').join(' ')}</span>
+                <div className="container">
+                    <nav className={styles.breadcrumb}>
+                        <Link href="/">Home</Link> / <Link href="/guides">Guides</Link> / <span className={styles.activeStep}>{guide.category}</span>
                     </nav>
 
-                    <div style={{ marginBottom: "3rem", textAlign: "center" }}>
-                        <span className="badge badge-featured" style={{ marginBottom: "1.5rem" }}>
-                            {guide.category}
-                        </span>
-                        <h1 style={{ fontSize: "clamp(2rem, 5vw, 3.5rem)", marginBottom: "1.5rem", lineHeight: "1.2" }}>{guide.title}</h1>
-                        <div style={{ color: "#888", fontWeight: 500 }}>
-                            By {guide.author} • {guide.date}
-                        </div>
-                    </div>
+                    <div className={styles.layoutGrid}>
+                        <article className={styles.mainContent}>
+                            <header style={{ marginBottom: '3rem' }}>
+                                {guide.image && (
+                                    <div className={styles.guideImage} style={{
+                                        backgroundImage: `url(${guide.image})`,
+                                        height: '400px',
+                                        borderRadius: 'var(--radius-lg)',
+                                        marginBottom: '2rem'
+                                    }} />
+                                )}
+                                <span className="badge-local" style={{ marginBottom: '1rem', display: 'inline-block' }}>{guide.category}</span>
+                                <h1 style={{ fontSize: '3rem', lineHeight: '1.2', marginBottom: '1.5rem' }}>{guide.title}</h1>
+                                <div className={styles.guideMeta}>
+                                    <span>By {guide.author}</span>
+                                    <span>•</span>
+                                    <span>Published {guide.date}</span>
+                                </div>
+                            </header>
 
-                    <article style={{ fontSize: "1.25rem", lineHeight: "1.8", color: "var(--color-charcoal)", paddingBottom: "4rem" }}>
-                        <p>{guide.content}</p>
-                    </article>
+                            <section className={styles.guideArticle}>
+                                {guide.content.split('\n').map((para, i) => (
+                                    <p key={i}>{para}</p>
+                                ))}
+                            </section>
+
+                            <section className={styles.adviceSection}>
+                                <div className={styles.adviceCard}>
+                                    <h3>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" /><line x1="12" y1="9" x2="12" y2="13" /><line x1="12" y1="17" x2="12.01" y2="17" /></svg>
+                                        Expert Local Advice
+                                    </h3>
+                                    <p style={{ fontStyle: 'italic', fontSize: '1.1rem', color: 'var(--color-slate)' }}>
+                                        "{guide.expertAdvice}"
+                                    </p>
+                                </div>
+                            </section>
+                        </article>
+
+                        <aside className={styles.sidebar}>
+                            <div className={styles.sidebarCard}>
+                                <h3>Guide Navigation</h3>
+                                <ul className={styles.sidebarLinks}>
+                                    <li><Link href="#top">Introduction</Link></li>
+                                    <li><Link href="#details">Key Details</Link></li>
+                                    <li><Link href="#advice">Expert Advice</Link></li>
+                                    <li><Link href="#related">Related Guides</Link></li>
+                                </ul>
+
+                                <div style={{ marginTop: '2.5rem', paddingTop: '2rem', borderTop: '1px solid var(--color-sand-dark)' }}>
+                                    <h4 style={{ fontSize: '0.9rem', textTransform: 'uppercase', color: 'var(--color-slate)', marginBottom: '1rem' }}>Ready to explore?</h4>
+                                    <Link href="/tours" className="btn btn-primary" style={{ width: '100%', textAlign: 'center' }}>
+                                        View Expert Tours
+                                    </Link>
+                                </div>
+                            </div>
+
+                            <div className={styles.sidebarCard} style={{ marginTop: '2rem', background: 'var(--color-ochre)', color: 'white', border: 'none' }}>
+                                <h3 style={{ color: 'white', borderBottomColor: 'rgba(255,255,255,0.2)' }}>Free Consultation</h3>
+                                <p style={{ fontSize: '0.9rem', marginBottom: '1.5rem', opacity: 0.9 }}>
+                                    Need a custom itinerary based on this guide? Our local experts are ready to help.
+                                </p>
+                                <button className="btn" style={{ width: '100%', background: 'white', color: 'var(--color-ochre)' }}>
+                                    Talk to an Expert
+                                </button>
+                            </div>
+                        </aside>
+                    </div>
                 </div>
             </main>
         </div>

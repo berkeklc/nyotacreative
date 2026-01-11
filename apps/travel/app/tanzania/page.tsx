@@ -25,24 +25,6 @@ const quickFacts = [
 export default function TanzaniaPage() {
     return (
         <div className={styles.page}>
-            <header className={styles.header}>
-                <nav className={styles.nav}>
-                    <Link href="/" className={styles.logo}>
-                        <span className={styles.logoIcon}>✦</span>
-                        NYOTA TRAVEL
-                    </Link>
-                    <div className={styles.navLinks}>
-                        <Link href="/tanzania">Tanzania</Link>
-                        <Link href="/tanzania/zanzibar">Zanzibar</Link>
-                        <Link href="/tours">Tours</Link>
-                        <Link href="/guides">Guides</Link>
-                    </div>
-                    <div className={styles.navActions}>
-                        <Link href="/tours" className="btn btn-primary">Book a Tour</Link>
-                    </div>
-                </nav>
-            </header>
-
             <main style={{ paddingTop: "80px" }}>
                 {/* Hero */}
                 <section className={styles.hero} style={{ minHeight: "60vh" }}>
@@ -67,7 +49,7 @@ export default function TanzaniaPage() {
                         <div style={{ display: "flex", justifyContent: "space-around", flexWrap: "wrap", gap: "1rem" }}>
                             {quickFacts.map((fact) => (
                                 <div key={fact.label} style={{ textAlign: "center" }}>
-                                    <div style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "var(--color-ocean)", fontWeight: 600 }}>
+                                    <div style={{ fontSize: "0.75rem", textTransform: "uppercase", color: "var(--color-terracotta)", fontWeight: 600 }}>
                                         {fact.label}
                                     </div>
                                     <div style={{ fontSize: "1.125rem", fontWeight: 600, color: "var(--color-charcoal)" }}>
@@ -110,14 +92,6 @@ export default function TanzaniaPage() {
                     </div>
                 </section>
             </main>
-
-            <footer className={styles.footer}>
-                <div className="container">
-                    <div className={styles.footerBottom}>
-                        <p>© {new Date().getFullYear()} Nyota Travel. A Nyota Creative project.</p>
-                    </div>
-                </div>
-            </footer>
         </div>
     );
 }

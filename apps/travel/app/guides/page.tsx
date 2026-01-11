@@ -1,10 +1,8 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import styles from "../page.module.css";
-
-export const metadata = {
-    title: "Travel Guides | Nyota Travel",
-    description: "Expert travel guides for Tanzania and Zanzibar. Beaches, food, culture, safety tips and more.",
-};
 
 const guides = [
     { title: "Best Beaches in Zanzibar: Complete 2026 Guide", slug: "best-beaches-zanzibar-2026", category: "Beaches", author: "Sarah Mwangi", date: "Jan 8, 2026", readTime: "12 min" },
@@ -20,74 +18,59 @@ const guides = [
 const categories = ["All", "Beaches", "Food & Drink", "Travel Tips", "Safari", "Hotels", "Culture", "Transportation"];
 
 export default function GuidesPage() {
+    const [activeCategory, setActiveCategory] = useState("All");
+
+    const filteredGuides = activeCategory === "All"
+        ? guides
+        : guides.filter(guide => guide.category === activeCategory);
+
     return (
         <div className={styles.page}>
-            <header className={styles.header}>
-                <nav className={styles.nav}>
-                    <Link href="/" className={styles.logo}>
-                        <span className={styles.logoIcon}>✦</span>
-                        NYOTA TRAVEL
-                    </Link>
-                    <div className={styles.navLinks}>
-                        <Link href="/tanzania">Tanzania</Link>
-                        <Link href="/tanzania/zanzibar">Zanzibar</Link>
-                        <Link href="/tours">Tours</Link>
-                        <Link href="/guides">Guides</Link>
+            <main>
+                <section className={styles.hero} style={{ minHeight: '40vh', padding: '100px 0 60px' }}>
+                    <div className={styles.heroOverlay} />
+                    <div className="container">
+                        <div className={styles.heroContent} style={{ background: 'transparent', backdropFilter: 'none', boxShadow: 'none', textAlign: 'left', padding: 0 }}>
+                            <span className={styles.heroBadge}>Local Expertise</span>
+                            <h1 className={styles.heroTitle} style={{ color: 'var(--color-charcoal)' }}>Travel <span className={styles.heroHighlight}>Guides</span></h1>
+                            <p className={styles.heroSubtitle} style={{ marginLeft: 0 }}>
+                                Professional advice, local secrets, and essential tips for your Tanzanian adventure.
+                            </p>
+                        </div>
                     </div>
-                    <div className={styles.navActions}>
-                        <Link href="/tours" className="btn btn-primary">Book a Tour</Link>
-                    </div>
-                </nav>
-            </header>
+                </section>
 
-            <main style={{ paddingTop: "100px" }}>
                 <section className="section" style={{ background: "var(--color-sand)" }}>
                     <div className="container">
-                        <div className={styles.sectionHeader}>
-                            <div>
-                                <span className={styles.sectionLabel}>Resources</span>
-                                <h1>Travel Guides</h1>
-                                <p style={{ marginTop: "0.5rem", color: "var(--color-slate)" }}>
-                                    Expert tips and guides from local writers
-                                </p>
-                            </div>
-                        </div>
-
                         {/* Categories */}
-                        <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap", marginTop: "1.5rem" }}>
+                        <div className={styles.categoryFilter}>
                             {categories.map((cat) => (
                                 <button
                                     key={cat}
-                                    style={{
-                                        padding: "0.5rem 1rem",
-                                        border: "1px solid var(--color-ocean)",
-                                        borderRadius: "var(--radius-md)",
-                                        background: cat === "All" ? "var(--color-ocean)" : "transparent",
-                                        color: cat === "All" ? "white" : "var(--color-ocean)",
-                                        fontSize: "0.875rem",
-                                        cursor: "pointer",
-                                    }}
+                                    onClick={() => setActiveCategory(cat)}
+                                    className={`${styles.categoryBtn} ${cat === activeCategory ? styles.active : ""}`}
                                 >
                                     {cat}
                                 </button>
                             ))}
                         </div>
 
-                        <div className={styles.guidesGrid} style={{ marginTop: "2rem" }}>
-                            {guides.map((guide) => (
+                        <div className={styles.guidesGrid}>
+                            {filteredGuides.map((guide) => (
                                 <article key={guide.slug} className={`${styles.guideCard} card`}>
-                                    <div className={styles.guideImage} />
+                                    <div className={styles.guideImage} style={{
+                                        backgroundImage: `url(/images/guides/${guide.slug}.jpg)`,
+                                        backgroundColor: 'var(--color-sand-dark)'
+                                    }} />
                                     <div className={styles.guideContent}>
                                         <span className={styles.guideCategory}>{guide.category}</span>
                                         <h3>
                                             <Link href={`/guides/${guide.slug}`}>{guide.title}</Link>
                                         </h3>
                                         <div className={styles.guideMeta}>
-                                            <span>By {guide.author}</span>
+                                            <span>{guide.author}</span>
                                             <span>•</span>
-                                            <span>{guide.date}</span>
-                                            <span>•</span>
-                                            <span>{guide.readTime}</span>
+                                            <span>{guide.readTime} read</span>
                                         </div>
                                     </div>
                                 </article>
@@ -96,14 +79,6 @@ export default function GuidesPage() {
                     </div>
                 </section>
             </main>
-
-            <footer className={styles.footer}>
-                <div className="container">
-                    <div className={styles.footerBottom}>
-                        <p>© {new Date().getFullYear()} Nyota Travel. A Nyota Creative project.</p>
-                    </div>
-                </div>
-            </footer>
         </div>
     );
 }

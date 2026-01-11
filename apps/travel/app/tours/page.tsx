@@ -38,8 +38,7 @@ const tours = [
 
 export default function ToursPage() {
     return (
-        <main className={styles.main}>
-            {/* Reusing hero styles from global module */}
+        <div className={styles.page}>
             <header className={styles.hero} style={{ minHeight: "50vh" }}>
                 <div className={styles.heroOverlay} />
                 <div className={styles.heroContent}>
@@ -48,12 +47,12 @@ export default function ToursPage() {
                 </div>
             </header>
 
-            <section className={styles.section} style={{ padding: "4rem 0" }}>
+            <section className="section" style={{ background: "var(--color-sand)" }}>
                 <div className="container">
                     <div className={styles.toursGrid}>
                         {tours.map((tour) => (
-                            <Link href={`/tours/${tour.slug}`} key={tour.id} className={styles.card} style={{ borderRadius: "1rem", overflow: "hidden", display: "flex", flexDirection: "column", boxShadow: "0 4px 20px rgba(0,0,0,0.1)" }}>
-                                <div style={{ position: 'relative', height: '250px' }}>
+                            <Link href={`/tours/${tour.slug}`} key={tour.id} className={`${styles.tourCard} card`}>
+                                <div className={styles.tourImage}>
                                     <Image
                                         src={tour.image}
                                         alt={tour.title}
@@ -61,19 +60,21 @@ export default function ToursPage() {
                                         style={{ objectFit: 'cover' }}
                                     />
                                 </div>
-                                <div style={{ padding: "1.5rem", flex: 1, display: "flex", flexDirection: "column" }}>
-                                    <div style={{ display: "flex", justifyContent: "space-between", color: "#666", fontSize: "0.875rem", marginBottom: "0.5rem" }}>
+                                <div className={styles.tourContent}>
+                                    <div className={styles.tourMeta}>
                                         <span>{tour.duration}</span>
-                                        <span style={{ fontWeight: "bold", color: "var(--color-ocean)" }}>{tour.price}</span>
+                                        <span className={styles.tourPrice}>{tour.price}</span>
                                     </div>
-                                    <h3 style={{ fontSize: "1.25rem", marginBottom: "1rem" }}>{tour.title}</h3>
-                                    <span className="btn btn-secondary" style={{ marginTop: "auto", textAlign: "center" }}>View Itinerary →</span>
+                                    <h3>{tour.title}</h3>
+                                    <span className="btn btn-secondary full-width" style={{ marginTop: "auto", textAlign: "center" }}>
+                                        Explore Experience →
+                                    </span>
                                 </div>
                             </Link>
                         ))}
                     </div>
                 </div>
             </section>
-        </main>
+        </div>
     );
 }

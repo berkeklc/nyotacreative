@@ -20,7 +20,7 @@ const featuredTours = [
     rating: 4.9,
     reviews: 128,
     image: "/tours/spice-tour.jpg",
-    badge: "Best Seller",
+    badge: null,
   },
   {
     title: "Stone Town Walking Tour",
@@ -40,7 +40,7 @@ const featuredTours = [
     rating: 4.7,
     reviews: 89,
     image: "/tours/prison-island.jpg",
-    badge: "Popular",
+    badge: null,
   },
   {
     title: "Safari Blue Day Trip",
@@ -50,7 +50,7 @@ const featuredTours = [
     rating: 4.9,
     reviews: 312,
     image: "/tours/safari-blue.jpg",
-    badge: "Top Rated",
+    badge: null,
   },
 ];
 
@@ -85,12 +85,60 @@ const latestGuides = [
 ];
 
 const quickLinks = [
-  { icon: "🏝️", label: "Beaches", href: "/tanzania/zanzibar/beaches" },
-  { icon: "🦁", label: "Safari", href: "/guides/tanzania-safari" },
-  { icon: "🍽️", label: "Food", href: "/guides/category/food" },
-  { icon: "🏨", label: "Hotels", href: "/hotels" },
-  { icon: "✈️", label: "Getting There", href: "/guides/getting-to-tanzania" },
-  { icon: "💡", label: "Tips", href: "/guides/category/tips" },
+  {
+    label: "Beaches",
+    href: "/tanzania/zanzibar/beaches",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M2 20h20" /><path d="M12 20a10 10 0 0 1-10-10C2 5.58 5.58 2 10 2s8 3.58 8 8c0 4.42-3.58 10-8 10z" /><path d="M12 2v20" /><path d="m4.93 10.93 14.14 0" />
+      </svg>
+    )
+  },
+  {
+    label: "Safari",
+    href: "/guides/tanzania-safari",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 11h18" /><path d="M4 11V9a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2" /><path d="M6 11v4a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2v-4" /><circle cx="7.5" cy="18.5" r="1.5" /><circle cx="16.5" cy="18.5" r="1.5" />
+      </svg>
+    )
+  },
+  {
+    label: "Food",
+    href: "/guides/category/food",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2" /><path d="M7 2v20" /><path d="M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7" />
+      </svg>
+    )
+  },
+  {
+    label: "Hotels",
+    href: "/hotels",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 21h18" /><path d="M5 21V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v14" /><path d="M9 21V11a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v10" />
+      </svg>
+    )
+  },
+  {
+    label: "Getting There",
+    href: "/guides/getting-to-tanzania",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 2L11 13" /><path d="M22 2l-7 20-4-9-9-4 20-7z" />
+      </svg>
+    )
+  },
+  {
+    label: "Tips",
+    href: "/guides/category/tips",
+    icon: (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A5 5 0 0 0 8 8c0 1.3.5 2.6 1.5 3.5.8.8 1.3 1.5 1.5 2.5" /><path d="M9 18h6" /><path d="M10 22h4" />
+      </svg>
+    )
+  }
 ];
 
 export default async function Home() {
@@ -132,18 +180,17 @@ export default async function Home() {
 
       {/* Hero Section */}
       <section className={styles.hero}>
+        <div className={styles.heroImageBg} style={{ backgroundImage: "url('/hero-safari.jpg')" }} />
         <div className={styles.heroOverlay} />
         <div className={styles.heroContent}>
           <span className={styles.heroBadge}>
-            <span className="badge badge-local">🌍 Local Experts</span>
+            The Pulse of East Africa
           </span>
-          <h1>
-            Discover <span className={styles.heroHighlight}>Tanzania</span>
-            <br />& Zanzibar
+          <h1 className={styles.heroTitle}>
+            Bespoke <span className={styles.heroHighlight}>Safaris</span> & Coastal Escapes
           </h1>
           <p className={styles.heroSubtitle}>
-            Your ultimate guide to East Africa's hidden gems, pristine beaches,
-            and unforgettable adventures.
+            Expertly curated journeys through Tanzania's wild heart and Zanzibar's turquoise shores.
           </p>
           <SearchBar />
           <div className={styles.quickLinks}>
@@ -158,7 +205,7 @@ export default async function Home() {
       </section>
 
       {/* Destinations Grid */}
-      <section className={`${styles.destinations} section`}>
+      <section className={`${styles.destinations} section animate-fade-in-up`}>
         <div className="container">
           <div className={styles.sectionHeader}>
             <div>
@@ -188,12 +235,12 @@ export default async function Home() {
       </section>
 
       {/* Featured Tours */}
-      <section className={`${styles.tours} section`}>
+      <section className={`${styles.tours} section animate-fade-in-up`}>
         <div className="container">
           <div className={styles.sectionHeader}>
             <div>
-              <span className={styles.sectionLabel}>Book Now</span>
-              <h2>Popular Tours & Experiences</h2>
+              <span className={styles.sectionLabel}>Recommendations</span>
+              <h2>Recommended Experiences</h2>
             </div>
             <Link href="/tours" className="btn btn-secondary">
               All Tours →
@@ -220,7 +267,7 @@ export default async function Home() {
                       From <strong>${tour.price}</strong>
                     </span>
                     <Link href={`/tours/${tour.slug}`} className="btn btn-accent">
-                      Book Now
+                      Explore Experience
                     </Link>
                   </div>
                 </div>
@@ -230,8 +277,37 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Why Choose Us */}
+      <section className={`${styles.whyUs} section animate-fade-in-up`}>
+        <div className="container">
+          <div className={styles.sectionHeader}>
+            <div>
+              <span className={styles.sectionLabel}>Trust</span>
+              <h2>Why Travel With Us?</h2>
+            </div>
+          </div>
+          <div className={styles.whyUsGrid}>
+            <div className={styles.whyUsItem}>
+              <span className={styles.whyUsIcon}>🐆</span>
+              <h3>Expert Local Guides</h3>
+              <p>Born and raised in Tanzania, our guides know every hidden trail and secret beach.</p>
+            </div>
+            <div className={styles.whyUsItem}>
+              <span className={styles.whyUsIcon}>🛡️</span>
+              <h3>Safe & Secure</h3>
+              <p>Your safety is our priority. We use vetted transport and hand-picked accommodations.</p>
+            </div>
+            <div className={styles.whyUsItem}>
+              <span className={styles.whyUsIcon}>💎</span>
+              <h3>Premium Quality</h3>
+              <p>We believe in quality over quantity. Every tour is curated for a lifetime experience.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Latest Guides */}
-      <section className={`${styles.guides} section`}>
+      <section className={`${styles.guides} section animate-fade-in-up`}>
         <div className="container">
           <div className={styles.sectionHeader}>
             <div>
