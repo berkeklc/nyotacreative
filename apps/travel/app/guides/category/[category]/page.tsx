@@ -28,63 +28,59 @@ export default async function GuideCategoryPage({ params }: { params: Promise<{ 
 
     return (
         <div className={styles.page}>
-            <main>
-                <section className={styles.hero} style={{ minHeight: '30vh', padding: '120px 0 60px' }}>
-                    <div className={styles.heroOverlay} />
-                    <div className="container">
-                        <div className={styles.heroContent} style={{ background: 'transparent', backdropFilter: 'none', boxShadow: 'none', textAlign: 'left', padding: 0 }}>
-                            <span className={styles.heroBadge} style={{ background: 'rgba(192, 90, 62, 0.1)', color: 'var(--color-terracotta)', padding: '0.4rem 0.8rem', borderRadius: '100px', fontWeight: 700, fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                                {catName} Collection
-                            </span>
-                            <h1 className={styles.heroTitle} style={{ color: 'var(--color-charcoal)', marginTop: '1rem', fontSize: '3.5rem' }}>
-                                <span className={styles.heroHighlight}>{catName}</span> Tips
-                            </h1>
-                        </div>
-                    </div>
-                </section>
+            <main style={{ paddingTop: '100px', background: "var(--color-sand)" }}>
+                <div className="container" style={{ paddingTop: '2rem' }}>
+                    <nav className={styles.breadcrumb} style={{ marginBottom: '4rem' }}>
+                        <Link href="/" style={{ color: 'var(--color-slate)', textDecoration: 'none' }}>Home</Link>
+                        <span style={{ margin: '0 0.75rem', color: 'rgba(0,0,0,0.1)' }}>/</span>
+                        <Link href="/guides" style={{ color: 'var(--color-slate)', textDecoration: 'none' }}>Guides</Link>
+                        <span style={{ margin: '0 0.75rem', color: 'rgba(0,0,0,0.1)' }}>/</span>
+                        <span style={{ color: 'var(--color-terracotta)', fontWeight: 800 }}>{catName}</span>
+                    </nav>
 
-                <section className="section" style={{ background: "var(--color-sand)" }}>
-                    <div className="container">
-                        <div style={{ marginBottom: '3rem' }}>
-                            <Link href="/guides" style={{ color: 'var(--color-terracotta)', fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
-                                Back to All Guides
+                    <header style={{ marginBottom: '5rem', maxWidth: '800px' }}>
+                        <span className={styles.guideCategory} style={{ fontSize: '0.9rem', marginBottom: '1.5rem' }}>{catName} Collection</span>
+                        <h1 style={{ fontSize: '4.5rem', fontWeight: 900, lineHeight: '1.1', marginBottom: '2rem', color: 'var(--color-charcoal)', letterSpacing: '-0.03em' }}>
+                            Local insights for <span style={{ color: 'var(--color-terracotta)' }}>{catName}</span>
+                        </h1>
+                        <p style={{ fontSize: '1.25rem', color: 'var(--color-slate)', lineHeight: '1.6' }}>
+                            Discover expert tips and curated guides specifically for your {catName.toLowerCase()} adventure in Tanzania.
+                        </p>
+                    </header>
+
+                    {guides.length > 0 ? (
+                        <div className={styles.guidesGrid} style={{ marginBottom: '6rem' }}>
+                            {guides.map((guide: any) => {
+                                if (!guide) return null;
+                                return (
+                                    <article key={guide.slug} className={styles.guideCard}>
+                                        <div className={styles.guideImage} style={{ backgroundImage: `url("${guide.image}")` }} />
+                                        <div className={styles.guideContent}>
+                                            <span className={styles.guideCategory}>{guide.category}</span>
+                                            <h3><Link href={`/guides/${guide.slug}`}>{guide.title}</Link></h3>
+                                            <div className={styles.guideMeta}>
+                                                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                                    <div style={{ width: '32px', height: '32px', borderRadius: '50%', background: 'var(--color-charcoal)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.7rem', fontWeight: 800 }}>NY</div>
+                                                    <span style={{ fontWeight: 700, color: 'var(--color-charcoal)' }}>{guide.author}</span>
+                                                </div>
+                                                <span style={{ fontSize: '0.8rem', opacity: 0.6 }}>{guide.date}</span>
+                                            </div>
+                                        </div>
+                                    </article>
+                                );
+                            })}
+                        </div>
+                    ) : (
+                        <div style={{ textAlign: 'center', padding: '10rem 0', color: 'var(--color-slate)' }}>
+                            <div style={{ fontSize: '4rem', marginBottom: '1.5rem' }}>🦁</div>
+                            <h3 style={{ fontSize: '2rem', fontWeight: 800, color: 'var(--color-charcoal)' }}>No {catName} guides found yet</h3>
+                            <p style={{ fontSize: '1.1rem' }}>We are currently crafting new expert insights for this category.</p>
+                            <Link href="/guides" className="btn btn-primary" style={{ marginTop: '2rem', display: 'inline-block', borderRadius: '100px', padding: '1rem 2rem' }}>
+                                Explore Other Guides
                             </Link>
                         </div>
-
-                        {guides.length > 0 ? (
-                            <div className={styles.guidesGrid}>
-                                {guides.map((guide: any) => {
-                                    if (!guide) return null;
-                                    const bgStyle = guide.image ? { backgroundImage: `url("${guide.image}")` } : { backgroundColor: 'var(--color-sand-dark)' };
-
-                                    return (
-                                        <article key={guide.slug} className={styles.guideCard}>
-                                            <div className={styles.guideImage} style={bgStyle} />
-                                            <div className={styles.guideContent}>
-                                                <span className={styles.guideCategory}>{guide.category}</span>
-                                                <h3><Link href={`/guides/${guide.slug}`}>{guide.title}</Link></h3>
-                                                <div className={styles.guideMeta}>
-                                                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                                                        <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'var(--color-terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.6rem' }}>NY</div>
-                                                        {guide.author}
-                                                    </span>
-                                                    <span>•</span>
-                                                    <span>{guide.date}</span>
-                                                </div>
-                                            </div>
-                                        </article>
-                                    );
-                                })}
-                            </div>
-                        ) : (
-                            <div style={{ textAlign: 'center', padding: '5rem', color: 'var(--color-slate)' }}>
-                                <h3>No {catName} guides found.</h3>
-                                <p>We are currently updating our local insights for this category.</p>
-                            </div>
-                        )}
-                    </div>
-                </section>
+                    )}
+                </div>
             </main>
         </div>
     );

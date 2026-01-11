@@ -60,7 +60,7 @@ export default async function GuidesPage({ searchParams }: { searchParams: Promi
 
                 <section className="section" style={{ background: "var(--color-sand)", paddingTop: '0' }}>
                     <div className="container">
-                        <div className={styles.categoryFilter} style={{ marginTop: '-2.5rem', position: 'relative', zIndex: 10 }}>
+                        <div className={styles.categoryFilter} style={{ marginTop: '-2.2rem' }}>
                             {categories.map((cat) => (
                                 <Link
                                     key={cat.value}
