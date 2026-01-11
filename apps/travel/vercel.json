@@ -1,5 +1,5 @@
 {
-    "buildCommand": "cd ../.. && npm run build --filter=@nyota/travel",
+    "buildCommand": "cd ../.. && npx turbo run build --filter=@nyota/travel --filter=!cms",
     "installCommand": "cd ../.. && npm install",
     "devCommand": "cd ../.. && npm run dev --filter=@nyota/travel",
     "framework": "nextjs",
