@@ -54,14 +54,33 @@ export default async function Home() {
     }))
     : defaultTours;
 
-  const articles = cmsArticles.map((a: any) => ({
-    title: a.title,
-    slug: a.slug,
-    category: a.category || "Travel Tip",
-    author: "Nyota Editor",
-    date: new Date(a.publishedAt).toLocaleDateString(),
-    image: getStrapiMedia(a.image?.url)
-  }));
+  const articles = cmsArticles.length > 0
+    ? cmsArticles.map((a: any) => ({
+      title: a.title,
+      slug: a.slug,
+      category: a.category || "Travel Tip",
+      author: "Nyota Editor",
+      date: new Date(a.publishedAt).toLocaleDateString(),
+      image: getStrapiMedia(a.image?.url)
+    }))
+    : [
+      {
+        title: "Best Beaches in Zanzibar: Complete 2026 Guide",
+        slug: "best-beaches-zanzibar-2026",
+        category: "Beaches",
+        author: "Sarah Mwangi",
+        date: "Jan 8, 2026",
+        image: null
+      },
+      {
+        title: "Where to Eat in Stone Town: Local's Guide",
+        slug: "where-to-eat-stone-town",
+        category: "Food & Drink",
+        author: "Ahmed Hassan",
+        date: "Jan 5, 2026",
+        image: null
+      }
+    ];
 
   return (
     <div className={styles.page}>
@@ -140,6 +159,35 @@ export default async function Home() {
                 </div>
               </article>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section className={`${styles.whyUs} section`}>
+        <div className="container">
+          <div className={styles.sectionHeader}>
+            <div>
+              <span className={styles.sectionLabel}>Trust</span>
+              <h2>Why Travel With Us?</h2>
+            </div>
+          </div>
+          <div className={styles.whyUsGrid}>
+            <div className={styles.whyUsItem}>
+              <span className={styles.whyUsIcon}>🐆</span>
+              <h3>Expert Local Guides</h3>
+              <p>Born and raised in Tanzania, our guides know every hidden trail and secret beach.</p>
+            </div>
+            <div className={styles.whyUsItem}>
+              <span className={styles.whyUsIcon}>🛡️</span>
+              <h3>Safe & Secure</h3>
+              <p>Your safety is our priority. We use vetted transport and hand-picked accommodations.</p>
+            </div>
+            <div className={styles.whyUsItem}>
+              <span className={styles.whyUsIcon}>💎</span>
+              <h3>Premium Quality</h3>
+              <p>We believe in quality over quantity. Every tour is curated for a lifetime experience.</p>
+            </div>
           </div>
         </div>
       </section>
