@@ -37,20 +37,20 @@ export default async function Home() {
     ? cmsDestinations.map((d: any) => ({
       name: d.name,
       slug: d.slug,
-      tagline: d.description || "The ultimate tropical paradise",
+      tagline: d.description?.slice(0, 100) + "..." || "The ultimate tropical paradise",
       image: getStrapiMedia(d.heroImage?.url)
     }))
     : defaultDestinations;
 
   const tours = cmsTours.length > 0
     ? cmsTours.map((t: any) => ({
-      title: t.title,
+      title: t.name, // Strapi tours use 'name' per schema
       slug: t.slug,
       duration: t.duration || "Full Day",
-      price: t.price || 99,
+      price: t.priceAdult || 99, // Strapi uses priceAdult
       rating: 4.9,
       reviews: 12,
-      image: getStrapiMedia(t.image?.url)
+      image: getStrapiMedia(t.heroImage?.url) // Strapi tours use 'heroImage'
     }))
     : defaultTours;
 
@@ -58,10 +58,10 @@ export default async function Home() {
     ? cmsArticles.map((a: any) => ({
       title: a.title,
       slug: a.slug,
-      category: a.category || "Travel Tip",
+      category: a.category?.replace('-', ' ') || "Travel Tip",
       author: "Nyota Editor",
-      date: new Date(a.publishedAt).toLocaleDateString(),
-      image: getStrapiMedia(a.image?.url)
+      date: new Date(a.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      image: getStrapiMedia(a.heroImage?.url) // Articles use 'heroImage'
     }))
     : [
       {
