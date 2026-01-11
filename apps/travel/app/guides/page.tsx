@@ -1,28 +1,43 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "../page.module.css";
-
-const guides = [
-    { title: "Best Beaches in Zanzibar: Complete 2026 Guide", slug: "best-beaches-zanzibar-2026", category: "Beaches", author: "Sarah Mwangi", date: "Jan 8, 2026", readTime: "12 min" },
-    { title: "Where to Eat in Stone Town: Local's Guide", slug: "where-to-eat-stone-town", category: "Food & Drink", author: "Ahmed Hassan", date: "Jan 5, 2026", readTime: "8 min" },
-    { title: "Tanzania Safety Tips: Everything You Need to Know", slug: "tanzania-safety-tips", category: "Travel Tips", author: "James Kilonzo", date: "Jan 3, 2026", readTime: "10 min" },
-    { title: "Zanzibar Nightlife: Best Bars & Clubs", slug: "zanzibar-nightlife-guide", category: "Nightlife", author: "Zara Mbarouk", date: "Dec 28, 2025", readTime: "7 min" },
-    { title: "How to Get from Dar to Zanzibar: Complete Guide", slug: "dar-to-zanzibar-transport", category: "Transportation", author: "David Okello", date: "Dec 22, 2025", readTime: "6 min" },
-    { title: "Serengeti Safari: Planning Your Trip", slug: "serengeti-safari-planning", category: "Safari", author: "Sarah Mwangi", date: "Dec 18, 2025", readTime: "15 min" },
-    { title: "Best Hotels in Zanzibar for Every Budget", slug: "best-hotels-zanzibar", category: "Hotels", author: "Ahmed Hassan", date: "Dec 15, 2025", readTime: "11 min" },
-    { title: "Zanzibar Spice Tour: What to Expect", slug: "zanzibar-spice-tour-guide", category: "Culture", author: "James Kilonzo", date: "Dec 10, 2025", readTime: "8 min" },
-];
+import { fetchAPI, getStrapiMedia } from "../../lib/strapi";
 
 const categories = ["All", "Beaches", "Food & Drink", "Travel Tips", "Safari", "Hotels", "Culture", "Transportation"];
 
 export default function GuidesPage() {
     const [activeCategory, setActiveCategory] = useState("All");
+    const [guides, setGuides] = useState<any[]>([]);
+    const [loading, setLoading] = useState(true);
 
-    const filteredGuides = activeCategory === "All"
-        ? guides
-        : guides.filter(guide => guide.category === activeCategory);
+    useEffect(() => {
+        async function loadGuides() {
+            setLoading(true);
+            const res = await fetchAPI("/articles", {
+                populate: "*",
+                sort: ["publishedAt:desc"],
+                filters: activeCategory !== "All" ? {
+                    category: { $eq: activeCategory }
+                } : {}
+            });
+
+            if (res?.data) {
+                setGuides(res.data.map((g: any) => ({
+                    title: g.title,
+                    slug: g.slug,
+                    category: g.category || "General",
+                    author: "Nyota Editor",
+                    date: new Date(g.publishedAt).toLocaleDateString(),
+                    readTime: "8 min",
+                    image: getStrapiMedia(g.image?.url)
+                })));
+            }
+            setLoading(false);
+        }
+        loadGuides();
+    }, [activeCategory]);
 
     return (
         <div className={styles.page}>
@@ -42,7 +57,6 @@ export default function GuidesPage() {
 
                 <section className="section" style={{ background: "var(--color-sand)" }}>
                     <div className="container">
-                        {/* Categories */}
                         <div className={styles.categoryFilter}>
                             {categories.map((cat) => (
                                 <button
@@ -55,27 +69,29 @@ export default function GuidesPage() {
                             ))}
                         </div>
 
-                        <div className={styles.guidesGrid}>
-                            {filteredGuides.map((guide) => (
-                                <article key={guide.slug} className={`${styles.guideCard} card`}>
-                                    <div className={styles.guideImage} style={{
-                                        backgroundImage: `url(/images/guides/${guide.slug}.jpg)`,
-                                        backgroundColor: 'var(--color-sand-dark)'
-                                    }} />
-                                    <div className={styles.guideContent}>
-                                        <span className={styles.guideCategory}>{guide.category}</span>
-                                        <h3>
-                                            <Link href={`/guides/${guide.slug}`}>{guide.title}</Link>
-                                        </h3>
-                                        <div className={styles.guideMeta}>
-                                            <span>{guide.author}</span>
-                                            <span>•</span>
-                                            <span>{guide.readTime} read</span>
+                        {loading ? (
+                            <div style={{ textAlign: 'center', padding: '5rem', color: 'var(--color-slate)' }}>Loading guides...</div>
+                        ) : guides.length > 0 ? (
+                            <div className={styles.guidesGrid}>
+                                {guides.map((guide) => (
+                                    <article key={guide.slug} className={`${styles.guideCard} card`}>
+                                        <div className={styles.guideImage} style={{
+                                            backgroundImage: guide.image ? `url(${guide.image})` : 'none',
+                                            backgroundColor: 'var(--color-sand-dark)'
+                                        }} />
+                                        <div className={styles.guideContent}>
+                                            <span className={styles.guideCategory}>{guide.category}</span>
+                                            <h3><Link href={`/guides/${guide.slug}`}>{guide.title}</Link></h3>
+                                            <div className={styles.guideMeta}>
+                                                <span>{guide.author} • {guide.date}</span>
+                                            </div>
                                         </div>
-                                    </div>
-                                </article>
-                            ))}
-                        </div>
+                                    </article>
+                                ))}
+                            </div>
+                        ) : (
+                            <div style={{ textAlign: 'center', padding: '5rem', color: 'var(--color-slate)' }}>No guides found in this category.</div>
+                        )}
                     </div>
                 </section>
             </main>

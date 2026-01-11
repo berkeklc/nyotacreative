@@ -1,8 +1,17 @@
 import qs from "qs";
 
 export function getStrapiURL(path = "") {
-    return `${process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://cms-production-219a.up.railway.app"
-        }${path}`;
+    const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://cms-production-219a.up.railway.app";
+    // Remove trailing slash if present
+    const cleanBase = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
+    return `${cleanBase}${path}`;
+}
+
+export function getStrapiMedia(url: string | null | undefined) {
+    if (!url) return null;
+    // Return the URL as is if it's already a full URL or a relative path that we handle
+    if (url.startsWith("http") || url.startsWith("//")) return url;
+    return getStrapiURL(url);
 }
 
 export async function fetchAPI(path: string, urlParamsObject = {}, options = {}) {
