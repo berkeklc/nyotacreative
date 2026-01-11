@@ -1,31 +1,7 @@
 import Link from "next/link";
 import styles from "../../page.module.css";
-import { fetchAPI } from "../../../lib/strapi";
+import { fetchAPI, getStrapiMedia } from "../../../lib/strapi";
 import { notFound } from "next/navigation";
-
-// Fallback logic
-const fallbackDestinations: any = {
-    zanzibar: {
-        name: "Zanzibar",
-        tagline: "The Spice Island paradise. Turquoise waters, white sands, and a rich cultural heritage.",
-        facts: [
-            { label: "Best Time", value: "June to October" },
-            { label: "Currency", value: "Tanzanian Shilling (TZS)" },
-            { label: "Language", value: "Swahili & English" },
-            { label: "Time Zone", value: "EAT (UTC+3)" }
-        ]
-    },
-    serengeti: {
-        name: "Serengeti",
-        tagline: "Home of the Great Migration. Witness the raw beauty of the African savannah.",
-        facts: [
-            { label: "Best Time", value: "January to June" },
-            { label: "Key Wildlife", value: "The Big Five" },
-            { label: "Park Type", value: "National Park" },
-            { label: "Area", value: "14,750 km²" }
-        ]
-    }
-};
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
@@ -40,45 +16,62 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
 
     const data = await fetchAPI("/destinations", {
         filters: { slug: { $eq: slug } },
-        populate: "*"
+        populate: {
+            heroImage: "*",
+            cities: {
+                populate: {
+                    tours: {
+                        populate: ["heroImage"]
+                    }
+                }
+            },
+            quickFacts: "*"
+        }
     });
 
     const destinationRaw = data?.data?.[0];
-    const destination = destinationRaw ? {
+    if (!destinationRaw) return notFound();
+
+    const destination = {
         name: destinationRaw.name,
         tagline: destinationRaw.description,
-        heroImage: destinationRaw.heroImage?.url
-            ? `${process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://cms-production-219a.up.railway.app"}${destinationRaw.heroImage.url}`
-            : null,
+        heroImage: getStrapiMedia(destinationRaw.heroImage?.url) || "/hero-safari.jpg",
         facts: [
-            { label: "Category", value: "Destination" },
-            { label: "Region", value: "East Africa" }
+            { label: "Region", value: "East Africa" },
+            { label: "Best Time", value: destinationRaw.quickFacts?.bestTimeToVisit || "June - Oct" },
+            { label: "Currency", value: destinationRaw.quickFacts?.currency || "TZS" },
+            { label: "Language", value: destinationRaw.quickFacts?.language || "Swahili" }
         ]
-    } : fallbackDestinations[slug];
+    };
 
-    if (!destination) return notFound();
+    // Flatten tours from cities
+    const relatedTours = destinationRaw.cities?.flatMap((city: any) =>
+        (city.tours || []).map((t: any) => ({
+            ...t,
+            cityName: city.name,
+            imageUrl: getStrapiMedia(t.heroImage?.url)
+        }))
+    ).slice(0, 4) || [];
 
     return (
         <div className={styles.page}>
             <main>
-                <section className={styles.hero} style={{ minHeight: '60vh' }}>
+                <section className={styles.hero} style={{ minHeight: '65vh', backgroundImage: `url(${destination.heroImage})` }}>
                     <div className={styles.heroOverlay} />
-                    {destination.heroImage && (
-                        <div
-                            className={styles.heroImageBg}
-                            style={{ backgroundImage: `url(${destination.heroImage})` }}
-                        />
-                    )}
-                    <div className="container">
-                        <div className={styles.heroContent} style={{ textAlign: 'left', background: 'transparent', backdropFilter: 'none', boxShadow: 'none' }}>
-                            <nav className={styles.breadcrumb} style={{ color: 'white' }}>
-                                <Link href="/" style={{ color: 'rgba(255,255,255,0.8)' }}>Home</Link> / <Link href="/tanzania" style={{ color: 'rgba(255,255,255,0.8)' }}>Tanzania</Link> / <span style={{ color: 'white' }}>{destination.name}</span>
-                            </nav>
-                            <h1 className={styles.heroTitle} style={{ color: 'white', fontSize: '5rem' }}>{destination.name}</h1>
-                            <p className={styles.heroSubtitle} style={{ color: 'rgba(255,255,255,0.9)', marginLeft: 0, maxWidth: '600px' }}>
-                                {destination.tagline}
-                            </p>
-                        </div>
+                    <div className="container" style={{ position: 'relative', zIndex: 2 }}>
+                        <nav className={styles.breadcrumb} style={{ color: 'white', marginBottom: '2rem' }}>
+                            <Link href="/" style={{ color: 'rgba(255,255,255,0.8)' }}>Home</Link>
+                            <span style={{ margin: '0 0.5rem' }}>/</span>
+                            <Link href="/tanzania" style={{ color: 'rgba(255,255,255,0.8)' }}>Tanzania</Link>
+                            <span style={{ margin: '0 0.5rem' }}>/</span>
+                            <span style={{ color: 'white' }}>{destination.name}</span>
+                        </nav>
+                        <h1 className={styles.heroTitle} style={{ color: 'white', fontSize: 'clamp(3rem, 10vw, 5rem)', marginBottom: '1rem' }}>
+                            {destination.name}
+                        </h1>
+                        <p className={styles.heroSubtitle} style={{ color: 'rgba(255,255,255,0.95)', maxWidth: '650px', fontSize: '1.25rem' }}>
+                            {destination.tagline}
+                        </p>
                     </div>
                 </section>
 
@@ -86,46 +79,64 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
                     <div className={styles.layoutGrid}>
                         <div className={styles.mainContent}>
                             <section style={{ marginBottom: '4rem' }}>
-                                <span className={styles.sectionLabel}>Overview</span>
-                                <h2 style={{ fontSize: '2.5rem', marginBottom: '1.5rem' }}>About {destination.name}</h2>
-                                <p className={styles.descriptionText}>
-                                    {destination.tagline} Discover the local culture, explore hidden gems, and plan your perfect trip with Nyota Travel's expert recommendations for 2026.
-                                    Tanzania remains one of the world's most evocative destinations, offering a unique blend of adventure and relaxation.
+                                <span className={styles.sectionLabel}>The Essence of {destination.name}</span>
+                                <h2 style={{ fontSize: '2.5rem', marginBottom: '1.5rem', color: 'var(--color-charcoal)' }}>Travel Guide 2026</h2>
+                                <p className={styles.descriptionText} style={{ fontSize: '1.2rem', lineHeight: '1.8', color: 'var(--color-slate)' }}>
+                                    {destination.tagline} Beyond the initial welcome, {destination.name} reveals itself as a tapestry of unique landscapes and cultural depth.
+                                    Whether you are here for the serenity of nature or the vibrant local energy, our curated insights ensure an authentic journey.
                                 </p>
                             </section>
 
-                            <div className={styles.adviceCard} style={{ background: 'var(--color-sand)', borderLeftColor: 'var(--color-terracotta)' }}>
-                                <h3 style={{ color: 'var(--color-terracotta)' }}>Why visit {destination.name}?</h3>
-                                <p style={{ color: 'var(--color-slate)' }}>
-                                    It's a place where time slows down, and nature speaks the loudest. Whether you're tracking the Great Migration or wandering through the ancient alleys of Stone Town, the magic of this region is undeniable.
+                            <div className={styles.adviceCard} style={{ background: 'var(--color-sand)', padding: '2.5rem', borderRadius: '1rem', borderTop: '4px solid var(--color-terracotta)' }}>
+                                <h3 style={{ color: 'var(--color-terracotta)', marginBottom: '1rem' }}>Expert Perspective</h3>
+                                <p style={{ color: 'var(--color-charcoal)', fontSize: '1.1rem', fontStyle: 'italic' }}>
+                                    "{destination.name} is where the soul of East Africa truly breathes. It's not just a destination; it's a rhythm that stays with you long after you leave."
                                 </p>
                             </div>
 
-                            <section style={{ marginTop: '4rem' }}>
-                                <h3 style={{ marginBottom: '1.5rem' }}>Popular Experiences</h3>
-                                <div className={styles.toursGrid} style={{ gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
-                                    <div className="card-premium">
-                                        <h4>Guided Local Tours</h4>
-                                        <p style={{ fontSize: '0.9rem', color: 'var(--color-slate)' }}>Authentic encounters with local communities.</p>
+                            {relatedTours.length > 0 && (
+                                <section style={{ marginTop: '5rem' }}>
+                                    <div className={styles.sectionHeader}>
+                                        <div>
+                                            <span className={styles.sectionLabel}>Signature Experiences</span>
+                                            <h2>Popular in {destination.name}</h2>
+                                        </div>
                                     </div>
-                                    <div className="card-premium">
-                                        <h4>Signature Adventures</h4>
-                                        <p style={{ fontSize: '0.9rem', color: 'var(--color-slate)' }}>Hand-picked experiences by our travel experts.</p>
+                                    <div className={styles.toursGrid} style={{ marginTop: '2rem' }}>
+                                        {relatedTours.map((tour: any) => (
+                                            <Link href={`/tours/${tour.slug}`} key={tour.slug} className={`${styles.tourCard} card`}>
+                                                <div
+                                                    className={styles.tourImage}
+                                                    style={tour.imageUrl ? { backgroundImage: `url(${tour.imageUrl})` } : { backgroundColor: 'var(--color-sand-dark)' }}
+                                                />
+                                                <div className={styles.tourContent}>
+                                                    <div className={styles.tourMeta}>
+                                                        <span>⏱️ {tour.duration}</span>
+                                                        <span style={{ color: 'var(--color-terracotta)', fontWeight: 600 }}>{tour.cityName}</span>
+                                                    </div>
+                                                    <h3>{tour.name}</h3>
+                                                    <div className={styles.tourFooter}>
+                                                        <span>From <strong>${tour.priceAdult}</strong></span>
+                                                        <span className="btn btn-accent btn-sm">Details</span>
+                                                    </div>
+                                                </div>
+                                            </Link>
+                                        ))}
                                     </div>
-                                </div>
-                            </section>
+                                </section>
+                            )}
                         </div>
 
                         <aside className={styles.sidebar}>
-                            <div className={styles.sidebarCard}>
-                                <h3>Quick Facts</h3>
+                            <div className={styles.sidebarCard} style={{ background: 'white', padding: '2rem', borderRadius: '1rem', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', border: '1px solid var(--color-sand-dark)' }}>
+                                <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--color-sand-dark)', paddingBottom: '0.75rem' }}>Core Facts</h3>
                                 <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
                                     {destination.facts.map((fact: any, i: number) => (
                                         <div key={i}>
                                             <span style={{ display: 'block', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-slate)', fontWeight: 700, letterSpacing: '0.05em' }}>
                                                 {fact.label}
                                             </span>
-                                            <span style={{ fontSize: '1rem', color: 'var(--color-charcoal)', fontWeight: 500 }}>
+                                            <span style={{ fontSize: '1.05rem', color: 'var(--color-charcoal)', fontWeight: 500 }}>
                                                 {fact.value}
                                             </span>
                                         </div>
@@ -133,13 +144,13 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
                                 </div>
                             </div>
 
-                            <div className={styles.sidebarCard} style={{ marginTop: '2rem' }}>
-                                <h3>Contact an Advisor</h3>
-                                <p style={{ fontSize: '0.9rem', color: 'var(--color-slate)', marginBottom: '1.5rem' }}>
-                                    Planning a trip to {destination.name}? Let our local experts craft the perfect itinerary for you.
+                            <div className={styles.sidebarCard} style={{ marginTop: '2rem', background: 'var(--color-charcoal)', color: 'white', padding: '2rem', borderRadius: '1rem' }}>
+                                <h3 style={{ color: 'white' }}>Plan Your Adventure</h3>
+                                <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.7)', marginBottom: '1.5rem' }}>
+                                    Our travel advisors are ready to design a bespoke itinerary for your visit to {destination.name}.
                                 </p>
-                                <Link href="/contact" className="btn btn-primary" style={{ width: '100%', textAlign: 'center' }}>
-                                    Enquire Now
+                                <Link href="/contact" className="btn btn-accent" style={{ width: '100%', textAlign: 'center' }}>
+                                    Start Planning
                                 </Link>
                             </div>
                         </aside>
