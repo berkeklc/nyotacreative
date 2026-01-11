@@ -2,7 +2,16 @@ import Link from "next/link";
 import styles from "../page.module.css";
 import { fetchAPI, getStrapiMedia } from "../../lib/strapi";
 
-const categories = ["All", "Beaches", "Food & Drink", "Travel Tips", "Safari", "Hotels", "Culture", "Transportation"];
+const categories = [
+    { label: "All", value: "All" },
+    { label: "Beaches", value: "beaches" },
+    { label: "Food & Drink", value: "food-drink" },
+    { label: "Safari", value: "adventure" },
+    { label: "Travel Tips", value: "tips" },
+    { label: "Safety", value: "safety" },
+    { label: "Culture", value: "culture" },
+    { label: "Transport", value: "transportation" }
+];
 
 export default async function GuidesPage({ searchParams }: { searchParams: Promise<{ category?: string }> }) {
     const params = await searchParams;
@@ -21,41 +30,45 @@ export default async function GuidesPage({ searchParams }: { searchParams: Promi
         return {
             title: g.title || "Untitled Guide",
             slug: g.slug || "untitiled",
-            category: g.category || "General",
+            category: g.category?.replace('-', ' ') || "General",
             author: "Nyota Editor",
-            date: g.publishedAt ? new Date(g.publishedAt).toLocaleDateString() : "Recently",
-            readTime: "8 min",
-            image: getStrapiMedia(g.image?.url)
+            date: g.publishedAt ? new Date(g.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "Recently",
+            readTime: g.readTime ? `${g.readTime} min read` : "8 min read",
+            image: getStrapiMedia(g.heroImage?.url)
         };
     }).filter(Boolean);
 
     return (
         <div className={styles.page}>
             <main>
-                <section className={styles.hero} style={{ minHeight: '40vh', padding: '100px 0 60px' }}>
+                <section className={styles.hero} style={{ minHeight: '40vh', padding: '120px 0 60px' }}>
                     <div className={styles.heroOverlay} />
                     <div className="container">
                         <div className={styles.heroContent} style={{ background: 'transparent', backdropFilter: 'none', boxShadow: 'none', textAlign: 'left', padding: 0 }}>
-                            <span className={styles.heroBadge}>Local Expertise</span>
-                            <h1 className={styles.heroTitle} style={{ color: 'var(--color-charcoal)' }}>Travel <span className={styles.heroHighlight}>Guides</span></h1>
-                            <p className={styles.heroSubtitle} style={{ marginLeft: 0 }}>
-                                Professional advice, local secrets, and essential tips for your Tanzanian adventure.
+                            <span className={styles.heroBadge} style={{ background: 'rgba(192, 90, 62, 0.1)', color: 'var(--color-terracotta)', padding: '0.5rem 1rem', borderRadius: '100px', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                                Expert Insights
+                            </span>
+                            <h1 className={styles.heroTitle} style={{ color: 'var(--color-charcoal)', marginTop: '1.5rem' }}>
+                                Tanzanian <span className={styles.heroHighlight}>Guides</span>
+                            </h1>
+                            <p className={styles.heroSubtitle} style={{ marginLeft: 0, color: 'var(--color-slate)', fontSize: '1.25rem' }}>
+                                Professional advice, local secrets, and essential tips for your safari adventure.
                             </p>
                         </div>
                     </div>
                 </section>
 
-                <section className="section" style={{ background: "var(--color-sand)" }}>
+                <section className="section" style={{ background: "var(--color-sand)", paddingTop: '0' }}>
                     <div className="container">
-                        <div className={styles.categoryFilter}>
+                        <div className={styles.categoryFilter} style={{ marginTop: '-2.5rem', position: 'relative', zIndex: 10 }}>
                             {categories.map((cat) => (
                                 <Link
-                                    key={cat}
-                                    href={cat === "All" ? "/guides" : `/guides?category=${encodeURIComponent(cat)}`}
-                                    className={`${styles.categoryBtn} ${cat === activeCategory ? styles.active : ""}`}
+                                    key={cat.value}
+                                    href={cat.value === "All" ? "/guides" : `/guides?category=${cat.value}`}
+                                    className={`${styles.categoryBtn} ${activeCategory === cat.value ? styles.active : ""}`}
                                     style={{ textDecoration: 'none' }}
                                 >
-                                    {cat}
+                                    {cat.label}
                                 </Link>
                             ))}
                         </div>
@@ -67,13 +80,19 @@ export default async function GuidesPage({ searchParams }: { searchParams: Promi
                                     const bgStyle = guide.image ? { backgroundImage: `url("${guide.image}")` } : { backgroundColor: 'var(--color-sand-dark)' };
 
                                     return (
-                                        <article key={guide.slug || Math.random()} className={`${styles.guideCard} card`}>
+                                        <article key={guide.slug} className={styles.guideCard}>
                                             <div className={styles.guideImage} style={bgStyle} />
                                             <div className={styles.guideContent}>
                                                 <span className={styles.guideCategory}>{guide.category}</span>
                                                 <h3><Link href={`/guides/${guide.slug}`}>{guide.title}</Link></h3>
                                                 <div className={styles.guideMeta}>
-                                                    <span>{guide.author} • {guide.date}</span>
+                                                    <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                                                        <div style={{ width: '24px', height: '24px', borderRadius: '50%', background: 'var(--color-terracotta)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontSize: '0.6rem' }}>NY</div>
+                                                        {guide.author}
+                                                    </span>
+                                                    <span>•</span>
+                                                    <span>{guide.date}</span>
+                                                    <span style={{ marginLeft: 'auto', fontWeight: 600, color: 'var(--color-terracotta)' }}>{guide.readTime}</span>
                                                 </div>
                                             </div>
                                         </article>

@@ -314,43 +314,90 @@
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
   gap: var(--space-lg);
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2.5rem;
+}
+
+@media (max-width: 768px) {
+  .guidesGrid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .guideCard {
-  background: var(--color-white);
-  border-radius: var(--radius-lg);
-  overflow: hidden;
   display: flex;
   flex-direction: column;
-  box-shadow: var(--shadow-sm);
-  border: 1px solid var(--color-sand-dark);
+  height: 100%;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  background: var(--color-white);
+  border: 1px solid rgba(0, 0, 0, 0.03);
+}
+
+.guideCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.08);
 }
 
 .guideImage {
-  height: 220px;
+  aspect-ratio: 16/10;
   background-size: cover;
   background-position: center;
+  position: relative;
+}
+
+.guideImage::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 60%, rgba(0, 0, 0, 0.2));
 }
 
 .guideContent {
-  padding: var(--space-lg);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
 }
 
 .guideCategory {
-  color: var(--color-ochre);
-  font-weight: 700;
+  display: inline-block;
   font-size: 0.75rem;
+  font-weight: 700;
   text-transform: uppercase;
-  margin-bottom: 0.5rem;
-  display: block;
+  letter-spacing: 0.1em;
+  color: var(--color-terracotta);
+  margin-bottom: 0.75rem;
+}
+
+.guideCard h3 {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+  line-height: 1.3;
+  color: var(--color-charcoal);
+}
+
+.guideCard h3 a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.2s ease;
+}
+
+.guideCard h3 a:hover {
+  color: var(--color-terracotta);
 }
 
 .guideMeta {
   display: flex;
-  gap: 0.5rem;
-  font-size: 0.75rem;
+  align-items: center;
+  gap: 1rem;
+  font-size: 0.8125rem;
   color: var(--color-slate);
-  margin-top: 1.5rem;
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 .newsletter {
