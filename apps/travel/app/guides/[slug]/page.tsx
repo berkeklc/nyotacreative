@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import styles from "../../page.module.css";
-import { fetchAPI } from "../../../lib/strapi";
+import { fetchAPI, getStrapiMedia } from "../../../lib/strapi";
 
 interface GuideContent {
     slug?: string;
@@ -44,17 +44,17 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
     });
 
     const guideRaw = data?.data?.[0];
-    const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://cms-production-219a.up.railway.app";
 
+    // Safety check for content rendering - prevents 500 error if data structure is off
     const guide = guideRaw ? {
-        title: guideRaw.title,
-        content: guideRaw.content,
+        title: guideRaw.title || "Untitled Guide",
+        content: guideRaw.content || "",
         category: guideRaw.category || "General",
-        date: new Date(guideRaw.publishedAt).toLocaleDateString(),
+        date: guideRaw.publishedAt ? new Date(guideRaw.publishedAt).toLocaleDateString() : "Recently",
         author: "Nyota Editor",
-        image: guideRaw.image?.url ? `${baseUrl}${guideRaw.image.url}` : null,
-        expertAdvice: guideRaw.expertAdvice || "Local Insight: Always carry a reusable water bottle and respect the local 'Haba na Haba' (Slowly by Slowly) culture for the best experience."
-    } : fallbackGuides.find(g => g.slug === slug) || fallbackGuides[0];
+        image: getStrapiMedia(guideRaw.image?.url),
+        expertAdvice: guideRaw.expertAdvice || "Local Insight: Enjoy the journey 'Haba na Haba'."
+    } : fallbackGuides.find(g => g.slug === slug);
 
     if (!guide) return notFound();
 
@@ -87,9 +87,11 @@ export default async function GuidePage({ params }: { params: Promise<{ slug: st
                             </header>
 
                             <section className={styles.guideArticle}>
-                                {guide.content.split('\n').map((para: string, i: number) => (
+                                {guide.content ? guide.content.split('\n').map((para: string, i: number) => (
                                     <p key={i}>{para}</p>
-                                ))}
+                                )) : (
+                                    <p>Content is currently being updated by our advisors. Please check back shortly.</p>
+                                )}
                             </section>
 
                             <section className={styles.adviceSection}>

@@ -16,11 +16,16 @@ export function getStrapiMedia(url: string | null | undefined) {
 
 export async function fetchAPI(path: string, urlParamsObject = {}, options = {}) {
     try {
+        const token = process.env.STRAPI_API_TOKEN;
+        if (!token) {
+            console.error("STRAPI_API_TOKEN is missing in environment variables!");
+        }
+
         // Merge default and user options
         const mergedOptions = {
             headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
+                ...(token ? { Authorization: `Bearer ${token}` } : {}),
             },
             ...options,
         };
@@ -31,20 +36,21 @@ export async function fetchAPI(path: string, urlParamsObject = {}, options = {})
             `/api${path}`
         )}${queryString ? `?${queryString}` : ""}`;
 
+        console.log(`[Strapi] Fetching: ${requestUrl}`);
+
         // Trigger API call
         const response = await fetch(requestUrl, mergedOptions);
 
         // Handle response
         if (!response.ok) {
-            console.error(response.statusText);
-            console.warn("Strapi fetch failed, returning null");
-            return { data: null };
+            console.error(`Strapi fetch failed: ${response.status} ${response.statusText}`);
+            return { data: null, error: response.statusText };
         }
 
         const data = await response.json();
         return data;
     } catch (error) {
-        console.error(error);
-        return { data: null };
+        console.error("[Strapi] Fetch Error:", error);
+        return { data: null, error: "Internal Fetch Error" };
     }
 }

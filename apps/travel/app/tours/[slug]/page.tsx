@@ -98,6 +98,7 @@ export default function TourPage({ params }: { params: Promise<{ slug: string }>
                         fill
                         className={styles.heroImage}
                         priority
+                        sizes="100vw"
                     />
 
                     <div className={styles.heroContent}>
