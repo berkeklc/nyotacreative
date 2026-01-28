@@ -14,55 +14,97 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 export default async function DestinationPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
 
-    const data = await fetchAPI("/destinations", {
+    // Try destination first
+    let destinationRaw = null;
+    const destinationData = await fetchAPI("/destinations", {
         filters: { slug: { $eq: slug } },
         populate: ["heroImage", "cities", "cities.tours", "cities.tours.heroImage", "quickFacts"]
     });
+    destinationRaw = destinationData?.data?.[0];
 
-    const destinationRaw = data?.data?.[0];
-    if (!destinationRaw) return notFound();
+    // If not found, try city
+    let cityRaw = null;
+    if (!destinationRaw) {
+        const cityData = await fetchAPI("/cities", {
+            filters: { slug: { $eq: slug } },
+            populate: ["heroImage", "destination", "tours", "tours.heroImage", "attractions", "quickFacts"]
+        });
+        cityRaw = cityData?.data?.[0];
+    }
 
+    if (!destinationRaw && !cityRaw) return notFound();
+
+    // Handle both destination and city
+    const isCity = !!cityRaw;
+    const dataRaw = destinationRaw || cityRaw;
+    
+    // Strip HTML from richtext description
+    const descriptionRaw = dataRaw?.description || "";
+    const descriptionText = descriptionRaw ? String(descriptionRaw).replace(/<[^>]*>/g, '').trim() : "";
+    
+    const rawFacts = dataRaw?.quickFacts || (isCity && cityRaw?.destination?.quickFacts);
+    const facts = [
+        { label: "Language", value: rawFacts?.language || "" },
+        { label: "Currency", value: rawFacts?.currency || "" },
+        { label: "Best Time", value: rawFacts?.bestTimeToVisit || "" },
+        { label: "Population", value: rawFacts?.population || "" },
+        { label: "Timezone", value: rawFacts?.timezone || "" },
+        { label: "Avg Temperature", value: rawFacts?.avgTemperature || "" },
+    ].filter(fact => fact.value);
+    
     const destination = {
-        id: destinationRaw.id,
-        name: destinationRaw.name,
-        tagline: destinationRaw.description,
-        heroImage: getStrapiMedia(destinationRaw.heroImage?.url) || "/hero-safari.jpg",
-        facts: [
-            { label: "Region", value: "East Africa" },
-            { label: "Best Time", value: destinationRaw.quickFacts?.bestTimeToVisit || "June - Oct" },
-            { label: "Currency", value: destinationRaw.quickFacts?.currency || "TZS" },
-            { label: "Language", value: destinationRaw.quickFacts?.language || "Swahili" }
-        ]
+        id: dataRaw?.id,
+        name: dataRaw?.name || "",
+        tagline: descriptionText,
+        heroImage: getStrapiMedia(dataRaw?.heroImage?.url),
+        facts: facts
     };
 
-    // Flatten tours from cities
-    const relatedTours = (destinationRaw.cities || []).flatMap((city: any) =>
-        (city.tours || []).map((t: any) => ({
+    // Get related tours - from cities if destination, or directly if city
+    let relatedTours: any[] = [];
+    if (destinationRaw) {
+        relatedTours = (destinationRaw.cities || []).flatMap((city: any) =>
+            (city.tours || []).map((t: any) => ({
+                ...t,
+                cityName: city.name,
+                imageUrl: getStrapiMedia(t.heroImage?.url)
+            }))
+        ).slice(0, 4);
+    } else if (cityRaw) {
+        relatedTours = (cityRaw.tours || []).map((t: any) => ({
             ...t,
-            cityName: city.name,
+            cityName: cityRaw.name,
             imageUrl: getStrapiMedia(t.heroImage?.url)
-        }))
-    ).slice(0, 4);
+        })).slice(0, 4);
+    }
 
     return (
         <div className={styles.page}>
             <main>
-                <section className={styles.hero} style={{ minHeight: '65vh', backgroundImage: `url(${destination.heroImage})` }}>
+                <section className={styles.hero} style={{ minHeight: '65vh', backgroundImage: destination.heroImage ? `url(${destination.heroImage})` : undefined, backgroundColor: destination.heroImage ? undefined : 'var(--color-charcoal)' }}>
                     <div className={styles.heroOverlay} />
                     <div className="container" style={{ position: 'relative', zIndex: 2 }}>
                         <nav className={styles.breadcrumb} style={{ color: 'white', marginBottom: '2rem' }}>
                             <Link href="/" style={{ color: 'rgba(255,255,255,0.8)' }}>Home</Link>
                             <span style={{ margin: '0 0.5rem' }}>/</span>
                             <Link href="/tanzania" style={{ color: 'rgba(255,255,255,0.8)' }}>Tanzania</Link>
+                            {isCity && cityRaw?.destination && (
+                                <>
+                                    <span style={{ margin: '0 0.5rem' }}>/</span>
+                                    <span style={{ color: 'rgba(255,255,255,0.7)' }}>{cityRaw.destination.name}</span>
+                                </>
+                            )}
                             <span style={{ margin: '0 0.5rem' }}>/</span>
                             <span style={{ color: 'white' }}>{destination.name}</span>
                         </nav>
                         <h1 className={styles.heroTitle} style={{ color: 'white', fontSize: 'clamp(3rem, 10vw, 5rem)', marginBottom: '1rem' }}>
                             {destination.name}
                         </h1>
-                        <p className={styles.heroSubtitle} style={{ color: 'rgba(255,255,255,0.95)', maxWidth: '650px', fontSize: '1.25rem' }}>
-                            {destination.tagline}
-                        </p>
+                        {destination.tagline && (
+                            <p className={styles.heroSubtitle} style={{ color: 'rgba(255,255,255,0.95)', maxWidth: '650px', fontSize: '1.25rem' }}>
+                                {destination.tagline}
+                            </p>
+                        )}
                     </div>
                 </section>
 
@@ -72,18 +114,13 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
                             <section style={{ marginBottom: '4rem' }}>
                                 <span className={styles.sectionLabel}>The Essence of {destination.name}</span>
                                 <h2 style={{ fontSize: '2.5rem', marginBottom: '1.5rem', color: 'var(--color-charcoal)' }}>Travel Guide 2026</h2>
-                                <p className={styles.descriptionText} style={{ fontSize: '1.2rem', lineHeight: '1.8', color: 'var(--color-slate)' }}>
-                                    {destination.tagline} Beyond the initial welcome, {destination.name} reveals itself as a tapestry of unique landscapes and cultural depth.
-                                    Whether you are here for the serenity of nature or the vibrant local energy, our curated insights ensure an authentic journey.
-                                </p>
+                                {destination.tagline && (
+                                    <p className={styles.descriptionText} style={{ fontSize: '1.2rem', lineHeight: '1.8', color: 'var(--color-slate)' }}>
+                                        {destination.tagline}
+                                    </p>
+                                )}
                             </section>
 
-                            <div className={styles.adviceCard} style={{ background: 'var(--color-sand)', padding: '2.5rem', borderRadius: '1rem', borderTop: '4px solid var(--color-terracotta)' }}>
-                                <h3 style={{ color: 'var(--color-terracotta)', marginBottom: '1rem' }}>Expert Perspective</h3>
-                                <p style={{ color: 'var(--color-charcoal)', fontSize: '1.1rem', fontStyle: 'italic' }}>
-                                    "{destination.name} is where the soul of East Africa truly breathes. It's not just a destination; it's a rhythm that stays with you long after you leave."
-                                </p>
-                            </div>
 
                             {relatedTours.length > 0 && (
                                 <section style={{ marginTop: '5rem' }}>
@@ -121,18 +158,22 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
                         <aside className={styles.sidebar}>
                             <div className={styles.sidebarCard} style={{ background: 'white', padding: '2rem', borderRadius: '1rem', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', border: '1px solid var(--color-sand-dark)' }}>
                                 <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--color-sand-dark)', paddingBottom: '0.75rem' }}>Core Facts</h3>
-                                <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
-                                    {destination.facts.map((fact: any, i: number) => (
-                                        <div key={i}>
-                                            <span style={{ display: 'block', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-slate)', fontWeight: 700, letterSpacing: '0.05em' }}>
-                                                {fact.label}
-                                            </span>
-                                            <span style={{ fontSize: '1.05rem', color: 'var(--color-charcoal)', fontWeight: 500 }}>
-                                                {fact.value}
-                                            </span>
-                                        </div>
-                                    ))}
-                                </div>
+                                {destination.facts.length > 0 ? (
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                                        {destination.facts.map((fact: any, i: number) => (
+                                            <div key={i}>
+                                                <span style={{ display: 'block', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-slate)', fontWeight: 700, letterSpacing: '0.05em' }}>
+                                                    {fact.label}
+                                                </span>
+                                                <span style={{ fontSize: '1.05rem', color: 'var(--color-charcoal)', fontWeight: 500 }}>
+                                                    {fact.value}
+                                                </span>
+                                            </div>
+                                        ))}
+                                    </div>
+                                ) : (
+                                    <p style={{ color: 'var(--color-slate)', fontSize: '0.95rem' }}>No facts available at this time.</p>
+                                )}
                             </div>
 
                             <div className={styles.sidebarCard} style={{ marginTop: '2rem', background: 'var(--color-charcoal)', color: 'white', padding: '2rem', borderRadius: '1rem' }}>

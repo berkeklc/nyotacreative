@@ -11,7 +11,7 @@ export default function Footer() {
                     <div className={styles.footerBrand}>
                         <Link href="/" className={styles.logo} style={{ color: 'var(--color-white)' }}>
                             <span className={styles.logoIcon}>✦</span>
-                            NYOTA TRAVEL
+                            RUSHZANZIBAR
                         </Link>
                         <p>
                             Expert insight into Tanzania's wild heart and Zanzibar's turquoise horizons.
@@ -59,7 +59,7 @@ export default function Footer() {
                 </div>
 
                 <div className={styles.footerBottom}>
-                    <p>© {new Date().getFullYear()} Nyota Travel. A Nyota Creative project.</p>
+                    <p>© {new Date().getFullYear()} RushZanzibar. A RushZanzibar project.</p>
                     <div className={styles.footerLang}>
                         <button>
                             <span>🇬🇧</span> English

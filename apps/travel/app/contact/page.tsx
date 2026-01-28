@@ -2,7 +2,7 @@ import Link from "next/link";
 import styles from "../page.module.css";
 
 export const metadata = {
-    title: "Contact Us | Nyota Travel",
+    title: "Contact Us | RushZanzibar",
     description: "Get in touch with our Tanzanian travel experts for bespoke itinerary planning.",
 };
 
@@ -50,7 +50,7 @@ export default function ContactPage() {
                                     <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                                         <div>
                                             <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--color-slate)', fontWeight: 700, textTransform: 'uppercase' }}>Email</span>
-                                            <span style={{ fontSize: '1rem', fontWeight: 500 }}>hello@nyotatravel.com</span>
+                                            <span style={{ fontSize: '1rem', fontWeight: 500 }}>hello@rushzanzibar.com</span>
                                         </div>
                                         <div>
                                             <span style={{ display: 'block', fontSize: '0.75rem', color: 'var(--color-slate)', fontWeight: 700, textTransform: 'uppercase' }}>WhatsApp</span>

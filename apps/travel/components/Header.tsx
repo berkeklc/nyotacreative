@@ -37,7 +37,7 @@ export default function Header() {
             <nav className={styles.nav} aria-label="Main Navigation">
                 <Link href="/" className={styles.logo}>
                     <span className={styles.logoIcon}>✦</span>
-                    NYOTA TRAVEL
+                    RUSHZANZIBAR
                 </Link>
 
                 <button

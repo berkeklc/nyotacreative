@@ -216,12 +216,21 @@
   transition: all var(--transition-base);
 }
 
+.destinationCard:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.2);
+}
+
 .destinationImage {
   position: absolute;
   inset: 0;
   background-size: cover;
   background-position: center;
-  transition: transform 0.5s ease;
+  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.destinationCard:hover .destinationImage {
+  transform: scale(1.1);
 }
 
 .destinationInfo {
@@ -564,6 +573,7 @@
 
 .sidebarLinks a:hover {
   color: var(--color-terracotta);
+  background: rgba(192, 90, 62, 0.08);
   transform: translateX(5px);
 }
 

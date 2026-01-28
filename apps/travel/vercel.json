@@ -1,7 +1,7 @@
 {
-    "buildCommand": "cd ../.. && npx turbo run build --filter=@nyota/travel --filter=!cms",
+    "buildCommand": "cd ../.. && npx turbo run build --filter=@rushzanzibar/travel --filter=!cms",
     "installCommand": "cd ../.. && npm install",
-    "devCommand": "cd ../.. && npm run dev --filter=@nyota/travel",
+    "devCommand": "cd ../.. && npm run dev --filter=@rushzanzibar/travel",
     "framework": "nextjs",
     "outputDirectory": ".next"
 }

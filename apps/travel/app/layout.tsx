@@ -15,16 +15,17 @@ const outfit = Outfit({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://travel.nyota.com"),
+  metadataBase: new URL("https://rushzanzibar.com"),
   title: {
-    default: "Nyota Travel | Tanzania & Zanzibar Travel Guide 2026",
-    template: "%s | Nyota Travel",
+    default: "RushZanzibar | Tanzania & Zanzibar Travel Guide 2026",
+    template: "%s | RushZanzibar",
   },
   description:
-    "Your complete guide to Tanzania and Zanzibar. Discover beaches, tours, hotels, local tips, and hidden gems. Plan your East African adventure with local experts.",
+    "Your complete guide to Tanzania and Zanzibar with RushZanzibar. Discover beaches, tours, hotels, local tips, and hidden gems. Plan your East African adventure with local experts.",
   keywords: [
     "Tanzania travel",
     "Zanzibar guide",
+    "RushZanzibar",
     "Dar es Salaam",
     "African safari",
     "beach holidays",
@@ -33,11 +34,11 @@ export const metadata: Metadata = {
     "East Africa tourism",
   ],
   openGraph: {
-    title: "Nyota Travel | Tanzania & Zanzibar Travel Guide",
-    description: "Discover Tanzania and Zanzibar with local experts",
+    title: "RushZanzibar | Tanzania & Zanzibar Travel Guide",
+    description: "Discover Tanzania and Zanzibar with RushZanzibar local experts",
     type: "website",
     locale: "en_US",
-    siteName: "Nyota Travel",
+    siteName: "RushZanzibar",
   },
   twitter: {
     card: "summary_large_image",

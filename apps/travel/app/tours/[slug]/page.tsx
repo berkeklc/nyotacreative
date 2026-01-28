@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
     return {
         title: tour ? `${tour.name} | Nyota Travel` : "Tour Detail",
-        description: tour?.description?.slice(0, 160) || "Explore Tanzania's finest experiences.",
+        description: tour?.description ? String(tour.description).replace(/<[^>]*>/g, '').trim().slice(0, 160) : "",
     };
 }
 
@@ -27,22 +27,24 @@ export default async function TourPage({ params }: { params: Promise<{ slug: str
     const tour = res.data?.[0];
     if (!tour) return notFound();
 
-    const heroImage = getStrapiMedia(tour.heroImage?.url) || "/hero-safari.jpg";
+    const heroImage = getStrapiMedia(tour.heroImage?.url);
 
     return (
         <div className={styles.tourPage}>
             <main>
                 {/* Hero Section */}
-                <section className={styles.hero}>
+                <section className={styles.hero} style={{ backgroundColor: heroImage ? undefined : 'var(--color-charcoal)' }}>
                     <div className={styles.heroOverlay} />
-                    <Image
-                        src={heroImage}
-                        alt={tour.name}
-                        fill
-                        className={styles.heroImage}
-                        priority
-                        sizes="100vw"
-                    />
+                    {heroImage && (
+                        <Image
+                            src={heroImage}
+                            alt={tour.name || "Tour"}
+                            fill
+                            className={styles.heroImage}
+                            priority
+                            sizes="100vw"
+                        />
+                    )}
 
                     <div className={styles.heroContent}>
                         <nav className={styles.breadcrumb}>
@@ -52,17 +54,18 @@ export default async function TourPage({ params }: { params: Promise<{ slug: str
                         </nav>
                         <h1>{tour.name}</h1>
                         <div className={styles.tourMeta}>
-                            <div className={styles.metaItem}>
-                                <span aria-hidden="true">⏱️</span> {tour.duration}
-                            </div>
-                            <div className={styles.metaItem}>
-                                <span aria-hidden="true">⭐</span> 4.9 (Recent Guests)
-                            </div>
-                            <div className={styles.metaItem}>
-                                <span className="badge badge-featured" style={{ background: 'var(--color-terracotta)', padding: '0.2rem 0.8rem', borderRadius: '1rem', fontSize: '0.7rem' }}>
-                                    {tour.difficulty || "Moderate"}
-                                </span>
-                            </div>
+                            {tour.duration && (
+                                <div className={styles.metaItem}>
+                                    <span aria-hidden="true">⏱️</span> {tour.duration}
+                                </div>
+                            )}
+                            {tour.difficulty && (
+                                <div className={styles.metaItem}>
+                                    <span className="badge badge-featured" style={{ background: 'var(--color-terracotta)', padding: '0.2rem 0.8rem', borderRadius: '1rem', fontSize: '0.7rem' }}>
+                                        {tour.difficulty}
+                                    </span>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </section>
@@ -82,7 +85,7 @@ export default async function TourPage({ params }: { params: Promise<{ slug: str
                                                 <span className={styles.includeIcon} aria-hidden="true">✨</span>
                                                 <div className={styles.includeText}>
                                                     <strong>Key Feature</strong>
-                                                    <span>{typeof highlight === 'string' ? highlight : (highlight.title || "Elite Detail")}</span>
+                                                    <span>{typeof highlight === 'string' ? highlight : (highlight.title || "")}</span>
                                                 </div>
                                             </div>
                                         ))}
