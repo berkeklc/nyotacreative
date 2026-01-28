@@ -50,6 +50,17 @@ export default ({ env }) => {
     },
   };
 
+  console.log(`[DB-DEBUG] Using database client: ${client}`);
+  if (client === 'postgres') {
+    const dbUrl = env('DATABASE_URL');
+    console.log(`[DB-DEBUG] DATABASE_URL is ${dbUrl ? 'DEFINED' : 'UNDEFINED'}`);
+    if (dbUrl) {
+      console.log(`[DB-DEBUG] URL starts with: ${dbUrl.substring(0, 15)}...`);
+    } else {
+      console.log(`[DB-DEBUG] Host: ${env('DATABASE_HOST', 'localhost')}`);
+    }
+  }
+
   return {
     connection: {
       client,
