@@ -28,6 +28,11 @@ export default {
       let user = await strapi.db.query('admin::user').findOne({ where: { email } });
       const adminService = strapi.service('admin::user');
 
+      if (!adminService) {
+        log('CRITICAL: admin::user service not found!');
+        return;
+      }
+
       if (user) {
         log(`User ${email} exists (ID: ${user.id}). Attempting password reset...`);
         // We use the service update to ensure password hashing
