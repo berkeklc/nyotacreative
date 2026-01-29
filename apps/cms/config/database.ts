@@ -1,3 +1,4 @@
+import { parse } from 'pg-connection-string';
 import path from 'path';
 
 export default ({ env }) => {
@@ -22,26 +23,7 @@ export default ({ env }) => {
       },
       pool: { min: env.int('DATABASE_POOL_MIN', 2), max: env.int('DATABASE_POOL_MAX', 10) },
     },
-    postgres: {
-      connection: {
-        connectionString: env('DATABASE_URL'),
-        host: env('DATABASE_HOST', 'localhost'),
-        port: env.int('DATABASE_PORT', 5432),
-        database: env('DATABASE_NAME', 'strapi'),
-        user: env('DATABASE_USERNAME', 'strapi'),
-        password: env('DATABASE_PASSWORD', 'strapi'),
-        ssl: env.bool('DATABASE_SSL', false) && {
-          key: env('DATABASE_SSL_KEY', undefined),
-          cert: env('DATABASE_SSL_CERT', undefined),
-          ca: env('DATABASE_SSL_CA', undefined),
-          capath: env('DATABASE_SSL_CAPATH', undefined),
-          cipher: env('DATABASE_SSL_CIPHER', undefined),
-          rejectUnauthorized: env.bool('DATABASE_SSL_REJECT_UNAUTHORIZED', true),
-        },
-        schema: env('DATABASE_SCHEMA', 'public'),
-      },
-      pool: { min: env.int('DATABASE_POOL_MIN', 2), max: env.int('DATABASE_POOL_MAX', 10) },
-    },
+    postgres: {}, // Handled dynamically below
     sqlite: {
       connection: {
         filename: path.join(__dirname, '..', '..', env('DATABASE_FILENAME', '.tmp/data.db')),
@@ -50,22 +32,44 @@ export default ({ env }) => {
     },
   };
 
+  // Special handling for Postgres to support Railway/Heroku URL style
   if (client === 'postgres') {
     const dbUrl = env('DATABASE_URL');
-    console.log(`[DB-DEBUG] DATABASE_URL is ${dbUrl ? 'DEFINED' : 'UNDEFINED'}`);
+    console.log(`[DB-DEBUG] Configured for Postgres with URL.`);
 
-    // Parse the URL to see if it's external (simplified check)
+    let connectionConfig: any = {};
+
     if (dbUrl) {
-      console.log(`[DB-DEBUG] Configured for Postgres with URL.`);
+      try {
+        const parsed = parse(dbUrl);
+        console.log(`[DB-DEBUG] Parsed URL - Host: ${parsed.host}, DB: ${parsed.database}, User: ${parsed.user}`);
+        connectionConfig = {
+          host: parsed.host,
+          port: parsed.port ? parseInt(parsed.port) : 5432,
+          database: parsed.database,
+          user: parsed.user,
+          password: parsed.password,
+          ssl: { rejectUnauthorized: false }, // Explicitly set SSL here
+        };
+      } catch (err: any) {
+        console.error('[DB-DEBUG] Failed to parse DATABASE_URL:', err.message);
+      }
+    } else {
+      // Fallback to individual env vars if no URL
+      connectionConfig = {
+        host: env('DATABASE_HOST', 'localhost'),
+        port: env.int('DATABASE_PORT', 5432),
+        database: env('DATABASE_NAME', 'strapi'),
+        user: env('DATABASE_USERNAME', 'strapi'),
+        password: env('DATABASE_PASSWORD', 'strapi'),
+        ssl: { rejectUnauthorized: false },
+      };
     }
 
     return {
       connection: {
         client,
-        connection: {
-          connectionString: dbUrl,
-          ssl: { rejectUnauthorized: false }, // Crucial for many managed services
-        },
+        connection: connectionConfig,
         pool: {
           min: 0,
           max: env.int('DATABASE_POOL_MAX', 10),
