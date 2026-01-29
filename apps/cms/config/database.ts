@@ -50,15 +50,34 @@ export default ({ env }) => {
     },
   };
 
-  console.log(`[DB-DEBUG] Using database client: ${client}`);
   if (client === 'postgres') {
     const dbUrl = env('DATABASE_URL');
     console.log(`[DB-DEBUG] DATABASE_URL is ${dbUrl ? 'DEFINED' : 'UNDEFINED'}`);
+
+    // Parse the URL to see if it's external (simplified check)
     if (dbUrl) {
-      console.log(`[DB-DEBUG] URL starts with: ${dbUrl.substring(0, 15)}...`);
-    } else {
-      console.log(`[DB-DEBUG] Host: ${env('DATABASE_HOST', 'localhost')}`);
+      console.log(`[DB-DEBUG] Configured for Postgres with URL.`);
     }
+
+    return {
+      connection: {
+        client,
+        connection: {
+          connectionString: dbUrl,
+          ssl: { rejectUnauthorized: false }, // Crucial for many managed services
+        },
+        pool: {
+          min: 0,
+          max: env.int('DATABASE_POOL_MAX', 10),
+          acquireTimeoutMillis: 60000,
+          createTimeoutMillis: 30000,
+          idleTimeoutMillis: 30000,
+          reapIntervalMillis: 1000,
+          createRetryIntervalMillis: 100,
+        },
+        acquireConnectionTimeout: env.int('DATABASE_CONNECTION_TIMEOUT', 60000),
+      },
+    };
   }
 
   return {
