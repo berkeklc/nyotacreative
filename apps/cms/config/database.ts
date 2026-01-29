@@ -43,13 +43,21 @@ export default ({ env }) => {
       try {
         const parsed = parse(dbUrl);
         console.log(`[DB-DEBUG] Parsed URL - Host: ${parsed.host}, DB: ${parsed.database}, User: ${parsed.user}`);
+
+        // Railway internal connections MUST NOT have SSL enabled.
+        // External connections (e.g. from local dev) MUST have SSL enabled.
+        const isInternal = parsed.host && parsed.host.includes('railway.internal');
+        const sslConfig = isInternal ? false : { rejectUnauthorized: false };
+
+        console.log(`[DB-DEBUG] Host is ${isInternal ? 'INTERNAL' : 'EXTERNAL'}. SSL: ${JSON.stringify(sslConfig)}`);
+
         connectionConfig = {
           host: parsed.host,
           port: parsed.port ? parseInt(parsed.port) : 5432,
           database: parsed.database,
           user: parsed.user,
           password: parsed.password,
-          ssl: { rejectUnauthorized: false }, // Explicitly set SSL here
+          ssl: sslConfig,
         };
       } catch (err: any) {
         console.error('[DB-DEBUG] Failed to parse DATABASE_URL:', err.message);
