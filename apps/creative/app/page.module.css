@@ -46,37 +46,44 @@
 
 /* Hero */
 .hero {
-  min-height: 100vh;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
+  height: 100vh;
+  min-height: 600px;
+  max-height: 100vh;
+  display: flex;
   align-items: center;
-  padding: var(--space-xl) var(--space-md);
+  padding: 0 var(--space-lg);
   position: relative;
   overflow: hidden;
 }
 
 .heroContent {
-  max-width: 700px;
-  padding-right: var(--space-lg);
+  max-width: 600px;
+  padding: var(--space-xl) 0;
   animation: fadeIn 1s ease forwards;
+  position: relative;
+  z-index: 2;
 }
 
 .heroLabel {
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   letter-spacing: 0.3em;
   text-transform: uppercase;
   color: var(--color-gold);
-  margin-bottom: var(--space-md);
+  margin-bottom: var(--space-sm);
 }
 
 .heroTitle {
+  font-size: clamp(2.5rem, 6vw, 4.5rem);
+  line-height: 1.1;
   margin-bottom: var(--space-md);
 }
 
 .heroDescription {
+  font-size: clamp(0.95rem, 1.5vw, 1.1rem);
   color: rgba(250, 250, 250, 0.7);
   margin-bottom: var(--space-lg);
+  max-width: 500px;
 }
 
 .heroCtas {
@@ -88,18 +95,33 @@
 .heroVisual {
   position: absolute;
   top: 0;
-  right: 0;
-  width: 50%;
+  left: 0;
+  width: 100%;
   height: 100%;
-  z-index: -1;
+  z-index: 1;
 }
 
 .heroGradient {
   position: absolute;
   inset: 0;
-  background: radial-gradient(ellipse at 70% 50%,
-      rgba(201, 169, 98, 0.15) 0%,
-      transparent 60%);
+  background: radial-gradient(ellipse at 50% 50%,
+      rgba(201, 169, 98, 0.2) 0%,
+      transparent 70%);
+  animation: pulse 4s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
 }
 
 /* Section Label */
@@ -306,17 +328,21 @@
 /* Responsive */
 @media (max-width: 1024px) {
   .hero {
-    grid-template-columns: 1fr;
-    padding-top: var(--space-2xl);
+    height: 100vh;
+    padding: 0 var(--space-md);
   }
 
   .heroContent {
-    padding-right: 0;
+    max-width: 100%;
+    padding-top: 100px;
   }
 
-  .heroVisual {
-    width: 100%;
-    opacity: 0.5;
+  .heroTitle {
+    font-size: clamp(2rem, 8vw, 3rem);
+  }
+
+  .heroDescription {
+    font-size: 0.95rem;
   }
 
   .projectsGrid {

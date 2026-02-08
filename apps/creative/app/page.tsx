@@ -1,7 +1,10 @@
 import Link from "next/link";
 import styles from "./page.module.css";
+import { fetchAPI, getStrapiMedia } from "../lib/strapi";
+import HeroVisual from "../components/HeroVisual";
 
-const services = [
+// Fallback content if CMS is empty
+const fallbackServices = [
   { title: "Software Development", description: "Custom web & mobile solutions" },
   { title: "UI/UX Design", description: "Human-centered digital experiences" },
   { title: "Branding & Identity", description: "Strategic visual storytelling" },
@@ -10,7 +13,7 @@ const services = [
   { title: "Talent Collaboration", description: "Dancers, singers & creators" },
 ];
 
-const featuredProjects = [
+const fallbackProjects = [
   {
     title: "Nyota Travel",
     category: "Platform / Branding",
@@ -31,7 +34,58 @@ const featuredProjects = [
   },
 ];
 
-export default function Home() {
+async function getServices() {
+  try {
+    const response = await fetchAPI("/services", {
+      populate: ["icon"],
+      sort: ["order:asc"],
+      pagination: { limit: 6 },
+    });
+    return response?.data || [];
+  } catch (error) {
+    console.error("Failed to fetch services:", error);
+    return [];
+  }
+}
+
+async function getProjects() {
+  try {
+    const response = await fetchAPI("/projects", {
+      populate: ["heroImage", "services"],
+      filters: { featured: { $eq: true } },
+      pagination: { limit: 3 },
+    });
+    return response?.data || [];
+  } catch (error) {
+    console.error("Failed to fetch projects:", error);
+    return [];
+  }
+}
+
+export default async function Home() {
+  const [cmsServices, cmsProjects] = await Promise.all([
+    getServices(),
+    getProjects(),
+  ]);
+
+  // Use CMS data if available, fallback to static
+  const services = cmsServices.length > 0
+    ? cmsServices.map((s: any) => ({
+      title: s.name,
+      description: s.shortDescription || "",
+    }))
+    : fallbackServices;
+
+  const featuredProjects = cmsProjects.length > 0
+    ? cmsProjects.map((p: any) => ({
+      title: p.title,
+      category: p.services?.map((s: any) => s.name).join(" / ") || p.industry || "Project",
+      description: p.excerpt || "",
+      image: getStrapiMedia(p.heroImage?.url) || "/projects/placeholder.jpg",
+      slug: p.slug,
+    }))
+    : fallbackProjects;
+
   return (
     <div className={styles.page}>
       {/* Navigation */}
@@ -76,7 +130,7 @@ export default function Home() {
           </div>
         </div>
         <div className={styles.heroVisual}>
-          <div className={styles.heroGradient} />
+          <HeroVisual />
         </div>
       </section>
 
@@ -92,7 +146,7 @@ export default function Home() {
             </h2>
           </div>
           <div className={styles.servicesGrid}>
-            {services.map((service, index) => (
+            {services.map((service: any, index: number) => (
               <div
                 key={service.title}
                 className={styles.serviceCard}
@@ -121,7 +175,7 @@ export default function Home() {
             </h2>
           </div>
           <div className={styles.projectsGrid}>
-            {featuredProjects.map((project, index) => (
+            {featuredProjects.map((project: any, index: number) => (
               <article
                 key={project.title}
                 className={`${styles.projectCard} ${index === 0 ? styles.projectFeatured : ""}`}
@@ -130,6 +184,11 @@ export default function Home() {
                   <div
                     className={styles.projectImagePlaceholder}
                     data-project={project.title.toLowerCase().replace(" ", "-")}
+                    style={project.image && project.image !== "/projects/placeholder.jpg" ? {
+                      backgroundImage: `url(${project.image})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center"
+                    } : undefined}
                   />
                 </div>
                 <div className={styles.projectInfo}>
@@ -205,7 +264,7 @@ export default function Home() {
               <a href="https://linkedin.com/company/nyotacreative" target="_blank" rel="noopener noreferrer">
                 LinkedIn
               </a>
-              <a href="mailto:hello@nyota.com">hello@nyota.com</a>
+              <a href="mailto:nyotacreatives@gmail.com">nyotacreatives@gmail.com</a>
             </div>
           </div>
           <div className={styles.footerBottom}>

@@ -1,0 +1,70 @@
+{
+    "kind": "collectionType",
+    "collectionName": "inquiries",
+    "info": {
+        "singularName": "inquiry",
+        "pluralName": "inquiries",
+        "displayName": "Inquiry",
+        "description": "Form submissions from travel booking and contact forms"
+    },
+    "options": {
+        "draftAndPublish": false
+    },
+    "attributes": {
+        "type": {
+            "type": "enumeration",
+            "enum": [
+                "booking",
+                "contact"
+            ],
+            "required": true
+        },
+        "name": {
+            "type": "string",
+            "required": true
+        },
+        "email": {
+            "type": "email",
+            "required": true
+        },
+        "phone": {
+            "type": "string"
+        },
+        "company": {
+            "type": "string"
+        },
+        "tourSlug": {
+            "type": "string"
+        },
+        "tourTitle": {
+            "type": "string"
+        },
+        "travelDate": {
+            "type": "date"
+        },
+        "travelers": {
+            "type": "integer"
+        },
+        "message": {
+            "type": "text"
+        },
+        "status": {
+            "type": "enumeration",
+            "enum": [
+                "new",
+                "contacted",
+                "converted",
+                "closed"
+            ],
+            "default": "new"
+        },
+        "source": {
+            "type": "enumeration",
+            "enum": [
+                "travel",
+                "creative"
+            ],
+            "required": true
+        }
+    }
+}

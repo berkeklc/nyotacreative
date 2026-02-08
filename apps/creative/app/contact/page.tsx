@@ -1,12 +1,80 @@
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import styles from "../page.module.css";
 
-export const metadata = {
-    title: "Contact | Nyota Creative",
-    description: "Get in touch with Nyota Creative. Let's discuss your next project.",
-};
-
 export default function ContactPage() {
+    const [formData, setFormData] = useState({
+        name: "",
+        email: "",
+        company: "",
+        message: "",
+    });
+    const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+        setStatus("loading");
+
+        try {
+            const response = await fetch("/api/contact", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(formData),
+            });
+            if (!response.ok) throw new Error("Submission failed");
+            setStatus("success");
+            setFormData({ name: "", email: "", company: "", message: "" });
+        } catch (err) {
+            setStatus("error");
+            console.error("Contact form error:", err);
+        }
+    };
+
+    if (status === "success") {
+        return (
+            <div className={styles.page}>
+                <header className={styles.header}>
+                    <nav className={styles.nav}>
+                        <Link href="/" className={styles.logo}>
+                            NYOTA<span className={styles.logoAccent}>.</span>
+                        </Link>
+                        <div className={styles.navLinks}>
+                            <Link href="/work">Work</Link>
+                            <Link href="/services">Services</Link>
+                            <Link href="/about">About</Link>
+                            <Link href="/contact" className="btn btn-outline">
+                                Contact
+                            </Link>
+                        </div>
+                    </nav>
+                </header>
+                <main style={{ paddingTop: "120px", minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <div style={{ textAlign: "center", maxWidth: "500px" }}>
+                        <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>✨</div>
+                        <h2>Message Sent!</h2>
+                        <p style={{ color: "rgba(250,250,250,0.7)", marginBottom: "2rem" }}>
+                            Thank you for reaching out. Our team will get back to you within 24 hours.
+                        </p>
+                        <button onClick={() => setStatus("idle")} className="btn btn-outline">
+                            Send Another Message
+                        </button>
+                    </div>
+                </main>
+                <footer className={styles.footer}>
+                    <div className="container">
+                        <div className={styles.footerBottom}>
+                            <p className="text-muted">
+                                © {new Date().getFullYear()} Nyota Creative. All rights reserved.
+                            </p>
+                        </div>
+                    </div>
+                </footer>
+            </div>
+        );
+    }
+
     return (
         <div className={styles.page}>
             <header className={styles.header}>
@@ -38,7 +106,7 @@ export default function ContactPage() {
 
                             <div style={{ marginBottom: "2rem" }}>
                                 <h4 style={{ fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--color-gold)", marginBottom: "0.5rem" }}>Email</h4>
-                                <a href="mailto:hello@nyota.com" style={{ fontSize: "1.125rem" }}>hello@nyota.com</a>
+                                <a href="mailto:nyotacreatives@gmail.com" style={{ fontSize: "1.125rem" }}>nyotacreatives@gmail.com</a>
                             </div>
 
                             <div style={{ marginBottom: "2rem" }}>
@@ -64,12 +132,14 @@ export default function ContactPage() {
                         </div>
 
                         <div>
-                            <form style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
+                            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
                                 <div>
                                     <label style={{ display: "block", fontSize: "0.875rem", marginBottom: "0.5rem", color: "rgba(250,250,250,0.7)" }}>Name *</label>
                                     <input
                                         type="text"
                                         required
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                                         style={{
                                             width: "100%",
                                             padding: "1rem",
@@ -85,6 +155,8 @@ export default function ContactPage() {
                                     <input
                                         type="email"
                                         required
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                                         style={{
                                             width: "100%",
                                             padding: "1rem",
@@ -99,6 +171,8 @@ export default function ContactPage() {
                                     <label style={{ display: "block", fontSize: "0.875rem", marginBottom: "0.5rem", color: "rgba(250,250,250,0.7)" }}>Company</label>
                                     <input
                                         type="text"
+                                        value={formData.company}
+                                        onChange={(e) => setFormData({ ...formData, company: e.target.value })}
                                         style={{
                                             width: "100%",
                                             padding: "1rem",
@@ -114,6 +188,8 @@ export default function ContactPage() {
                                     <textarea
                                         required
                                         rows={5}
+                                        value={formData.message}
+                                        onChange={(e) => setFormData({ ...formData, message: e.target.value })}
                                         style={{
                                             width: "100%",
                                             padding: "1rem",
@@ -125,9 +201,19 @@ export default function ContactPage() {
                                         }}
                                     />
                                 </div>
-                                <button type="submit" className="btn btn-primary" style={{ alignSelf: "flex-start" }}>
-                                    Send Message
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary"
+                                    style={{ alignSelf: "flex-start" }}
+                                    disabled={status === "loading"}
+                                >
+                                    {status === "loading" ? "Sending..." : "Send Message"}
                                 </button>
+                                {status === "error" && (
+                                    <p style={{ color: "red", fontSize: "0.875rem" }}>
+                                        Something went wrong. Please try again.
+                                    </p>
+                                )}
                             </form>
                         </div>
                     </div>

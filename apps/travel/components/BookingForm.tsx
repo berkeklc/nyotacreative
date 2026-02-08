@@ -18,9 +18,16 @@ export default function BookingForm({ tourTitle, tourSlug }: { tourTitle: string
         setStatus("loading");
 
         try {
-            // This would normally go to your API route
-            // For now we simulate success
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            const response = await fetch("/api/book", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ...formData,
+                    tourSlug,
+                    tourTitle,
+                }),
+            });
+            if (!response.ok) throw new Error("Booking failed");
             setStatus("success");
             setFormData({ name: "", email: "", date: "", travelers: 1, message: "" });
         } catch (err) {

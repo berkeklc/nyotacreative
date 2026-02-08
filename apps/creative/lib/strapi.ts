@@ -5,6 +5,12 @@ export function getStrapiURL(path = "") {
         }${path}`;
 }
 
+export function getStrapiMedia(url: string | null | undefined) {
+    if (!url) return null;
+    if (url.startsWith("http") || url.startsWith("//")) return url;
+    return getStrapiURL(url);
+}
+
 export async function fetchAPI(path: string, urlParamsObject = {}, options = {}) {
     try {
         const mergedOptions = {

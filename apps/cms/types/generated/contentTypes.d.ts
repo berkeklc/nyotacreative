@@ -787,6 +787,51 @@ export interface ApiHotelHotel extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiInquiryInquiry extends Struct.CollectionTypeSchema {
+  collectionName: 'inquiries';
+  info: {
+    description: 'Form submissions from travel booking and contact forms';
+    displayName: 'Inquiry';
+    pluralName: 'inquiries';
+    singularName: 'inquiry';
+  };
+  options: {
+    draftAndPublish: false;
+  };
+  attributes: {
+    company: Schema.Attribute.String;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    email: Schema.Attribute.Email & Schema.Attribute.Required;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::inquiry.inquiry'
+    > &
+      Schema.Attribute.Private;
+    message: Schema.Attribute.Text;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    phone: Schema.Attribute.String;
+    publishedAt: Schema.Attribute.DateTime;
+    source: Schema.Attribute.Enumeration<['travel', 'creative']> &
+      Schema.Attribute.Required;
+    status: Schema.Attribute.Enumeration<
+      ['new', 'contacted', 'converted', 'closed']
+    > &
+      Schema.Attribute.DefaultTo<'new'>;
+    tourSlug: Schema.Attribute.String;
+    tourTitle: Schema.Attribute.String;
+    travelDate: Schema.Attribute.Date;
+    travelers: Schema.Attribute.Integer;
+    type: Schema.Attribute.Enumeration<['booking', 'contact']> &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiProjectProject extends Struct.CollectionTypeSchema {
   collectionName: 'projects';
   info: {
@@ -1486,6 +1531,7 @@ declare module '@strapi/strapi' {
       'api::city.city': ApiCityCity;
       'api::destination.destination': ApiDestinationDestination;
       'api::hotel.hotel': ApiHotelHotel;
+      'api::inquiry.inquiry': ApiInquiryInquiry;
       'api::project.project': ApiProjectProject;
       'api::service.service': ApiServiceService;
       'api::team-member.team-member': ApiTeamMemberTeamMember;
