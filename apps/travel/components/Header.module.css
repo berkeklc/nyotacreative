@@ -50,6 +50,13 @@
     font-size: 1.75rem;
 }
 
+.logoText {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 1.25rem;
+    letter-spacing: 0.05em;
+}
+
 .navLinks {
     display: flex;
     gap: 2.5rem;

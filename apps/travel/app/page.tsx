@@ -19,11 +19,11 @@ export default async function Home() {
 
   const destinations = cmsDestinations.map((d: any) => {
     // Strip HTML tags from richtext description for tagline
-    const descriptionText = d.description 
+    const descriptionText = d.description
       ? String(d.description).replace(/<[^>]*>/g, '').trim()
       : '';
     const tagline = descriptionText ? (descriptionText.slice(0, 100) + (descriptionText.length > 100 ? "..." : "")) : "";
-    
+
     return {
       name: d.name || "",
       slug: d.slug || "",
@@ -53,7 +53,7 @@ export default async function Home() {
     <div className={styles.page}>
       {/* Hero Section */}
       <section className={styles.hero}>
-        <div className={styles.heroImageBg} style={heroImage ? { backgroundImage: `url(${heroImage})` } : { backgroundColor: 'var(--color-charcoal)' }} />
+        <div className={styles.heroImageBg} style={{ backgroundImage: `url(${heroImage || '/hero-safari.jpg'})`, backgroundPosition: 'center bottom' }} />
         <div className={styles.heroOverlay} />
         <div className={styles.heroContent}>
           {tanzania?.name && (

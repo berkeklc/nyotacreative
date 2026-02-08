@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import styles from "./Header.module.css";
 
@@ -36,8 +37,14 @@ export default function Header() {
         <header className={headerClass}>
             <nav className={styles.nav} aria-label="Main Navigation">
                 <Link href="/" className={styles.logo}>
-                    <span className={styles.logoIcon}>✦</span>
-                    RUSHZANZIBAR
+                    <Image
+                        src="/logo-rush-zanzibar.png"
+                        alt="Rush Zanzibar"
+                        width={44}
+                        height={44}
+                        style={{ borderRadius: "50%", objectFit: "cover" }}
+                    />
+                    <span className={styles.logoText}>RUSHZANZIBAR</span>
                 </Link>
 
                 <button
