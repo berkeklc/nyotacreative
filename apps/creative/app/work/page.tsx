@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import styles from "../page.module.css";
 import { getProjects, getStrapiMedia } from "@/lib/strapi";
+import Footer from "@/components/Footer";
 
 export const metadata = {
     title: "Our Work | Nyota Creative",
@@ -80,15 +81,7 @@ export default async function WorkPage() {
                 </section>
             </main>
 
-            <footer className={styles.footer}>
-                <div className="container">
-                    <div className={styles.footerBottom}>
-                        <p className="text-muted">
-                            © {new Date().getFullYear()} Nyota Creative. All rights reserved.
-                        </p>
-                    </div>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 }

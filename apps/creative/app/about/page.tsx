@@ -1,5 +1,6 @@
 import Link from "next/link";
 import styles from "../page.module.css";
+import Footer from "@/components/Footer";
 
 export const metadata = {
     title: "About | Nyota Creative",
@@ -96,15 +97,7 @@ export default function AboutPage() {
                 </section>
             </main>
 
-            <footer className={styles.footer}>
-                <div className="container">
-                    <div className={styles.footerBottom}>
-                        <p className="text-muted">
-                            © {new Date().getFullYear()} Nyota Creative. All rights reserved.
-                        </p>
-                    </div>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 }

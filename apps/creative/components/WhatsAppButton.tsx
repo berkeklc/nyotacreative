@@ -5,7 +5,7 @@ import { useState } from "react";
 export default function WhatsAppButton() {
     const [isHovered, setIsHovered] = useState(false);
     const phoneNumber = "255123456789"; // Tanzania phone number
-    const message = encodeURIComponent("Merhaba! Nyota Creative ile ilgili bir sorum var.");
+    const message = encodeURIComponent("Hello! I have a question about Nyota Creative.");
 
     return (
         <a
@@ -51,7 +51,7 @@ export default function WhatsAppButton() {
                     fontSize: "14px",
                     whiteSpace: "nowrap"
                 }}>
-                    Hızlı Mesaj
+                    Quick Message
                 </span>
             )}
         </a>

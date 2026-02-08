@@ -3,6 +3,7 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import styles from "../../page.module.css";
 import { getService, getServices, getStrapiMedia } from "@/lib/strapi";
+import Footer from "@/components/Footer";
 
 // Static fallback data
 const fallbackServices: Record<string, any> = {
@@ -222,15 +223,7 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                 </section>
             </main>
 
-            <footer className={styles.footer}>
-                <div className="container">
-                    <div className={styles.footerBottom}>
-                        <p className="text-muted">
-                            © {new Date().getFullYear()} Nyota Creative. All rights reserved.
-                        </p>
-                    </div>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 }
