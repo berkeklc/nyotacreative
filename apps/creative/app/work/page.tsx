@@ -49,9 +49,11 @@ export default async function WorkPage() {
                             const serviceNames = project.services?.map((s: any) => s.name).join(" / ") || project.industry;
 
                             return (
-                                <article
+                                <Link
+                                    href={`/work/${project.slug}`}
                                     key={project.slug}
                                     className={`${styles.projectCard} ${index === 0 ? styles.projectFeatured : ""}`}
+                                    style={{ textDecoration: "none", color: "inherit" }}
                                 >
                                     <div className={styles.projectImage}>
                                         {heroImageUrl ? (
@@ -69,11 +71,9 @@ export default async function WorkPage() {
                                         <span className={styles.projectCategory}>{serviceNames}</span>
                                         <h3>{project.title}</h3>
                                         <p className="text-muted">{project.excerpt}</p>
-                                        <span style={{ fontSize: "0.75rem", color: "var(--color-gold)", marginTop: "0.5rem", display: "block" }}>
-                                            {project.client}
-                                        </span>
+                                        <span className={styles.viewButton}>View Project →</span>
                                     </div>
-                                </article>
+                                </Link>
                             );
                         })}
                     </div>

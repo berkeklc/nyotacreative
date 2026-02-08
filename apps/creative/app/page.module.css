@@ -178,6 +178,20 @@
   font-size: 0.875rem;
 }
 
+/* View Button */
+.viewButton {
+  display: inline-block;
+  margin-top: var(--space-sm);
+  font-size: 0.8rem;
+  color: var(--color-gold);
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.projectCard:hover .viewButton {
+  transform: translateX(4px);
+}
+
 /* Work Section */
 .work {
   background-color: var(--color-charcoal);
@@ -311,6 +325,33 @@
 }
 
 .footerLinks a:hover {
+  color: var(--color-gold);
+}
+
+.footerColumn {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.footerColumn h4 {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: var(--space-sm);
+  color: var(--color-off-white);
+}
+
+.footerColumn a {
+  font-size: 0.875rem;
+  color: rgba(250, 250, 250, 0.6);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.footerColumn a:hover {
   color: var(--color-gold);
 }
 

@@ -149,9 +149,11 @@ export default async function Home() {
           </div>
           <div className={styles.projectsGrid}>
             {featuredProjects.map((project: any, index: number) => (
-              <article
+              <Link
+                href={`/work/${project.slug || project.title.toLowerCase().replace(/\s+/g, "-")}`}
                 key={project.title}
                 className={`${styles.projectCard} ${index === 0 ? styles.projectFeatured : ""}`}
+                style={{ textDecoration: "none", color: "inherit" }}
               >
                 <div className={styles.projectImage}>
                   <div
@@ -170,8 +172,9 @@ export default async function Home() {
                   </span>
                   <h3>{project.title}</h3>
                   <p className="text-muted">{project.description}</p>
+                  <span className={styles.viewButton}>View Project →</span>
                 </div>
-              </article>
+              </Link>
             ))}
           </div>
           <div className={styles.workCta}>
