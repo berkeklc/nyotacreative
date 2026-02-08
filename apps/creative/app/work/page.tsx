@@ -1,57 +1,20 @@
 import Link from "next/link";
+import Image from "next/image";
 import styles from "../page.module.css";
+import { getProjects, getStrapiMedia } from "@/lib/strapi";
 
 export const metadata = {
     title: "Our Work | Nyota Creative",
     description: "Explore our portfolio of branding, design, and software projects.",
 };
 
-const projects = [
-    {
-        title: "Nyota Travel",
-        slug: "nyota-travel",
-        category: "Platform / Branding",
-        description: "East Africa's premier travel content network. A comprehensive platform for discovering Tanzania and Zanzibar.",
-        year: "2026",
-    },
-    {
-        title: "Serena Hotels",
-        slug: "serena-hotels",
-        category: "Brand Identity / Digital",
-        description: "Complete brand transformation for East Africa's premier hotel group.",
-        year: "2025",
-    },
-    {
-        title: "Zanzibar Nights",
-        slug: "zanzibar-nights",
-        category: "Content / Social",
-        description: "Award-winning cultural documentary series showcasing Zanzibar's vibrant nightlife.",
-        year: "2025",
-    },
-    {
-        title: "Karibu App",
-        slug: "karibu-app",
-        category: "Mobile / UX",
-        description: "Tourism companion app for East African travelers with offline maps and guides.",
-        year: "2024",
-    },
-    {
-        title: "Safari Express",
-        slug: "safari-express",
-        category: "E-Commerce / Development",
-        description: "Online booking platform for safari tours across Tanzania and Kenya.",
-        year: "2024",
-    },
-    {
-        title: "Swahili Sounds",
-        slug: "swahili-sounds",
-        category: "Branding / Content",
-        description: "Music label identity and artist management platform.",
-        year: "2024",
-    },
-];
+// No static fallbacks - content comes from Strapi only
+const fallbackProjects: any[] = [];
 
-export default function WorkPage() {
+export default async function WorkPage() {
+    const strapiProjects = await getProjects();
+    const projects = strapiProjects.length > 0 ? strapiProjects : fallbackProjects;
+
     return (
         <div className={styles.page}>
             <header className={styles.header}>
@@ -81,24 +44,38 @@ export default function WorkPage() {
                     </div>
 
                     <div className={styles.projectsGrid} style={{ marginTop: "3rem" }}>
-                        {projects.map((project, index) => (
-                            <article
-                                key={project.slug}
-                                className={`${styles.projectCard} ${index === 0 ? styles.projectFeatured : ""}`}
-                            >
-                                <div className={styles.projectImage}>
-                                    <div className={styles.projectImagePlaceholder} />
-                                </div>
-                                <div className={styles.projectInfo}>
-                                    <span className={styles.projectCategory}>{project.category}</span>
-                                    <h3>{project.title}</h3>
-                                    <p className="text-muted">{project.description}</p>
-                                    <span style={{ fontSize: "0.75rem", color: "var(--color-gold)", marginTop: "0.5rem", display: "block" }}>
-                                        {project.year}
-                                    </span>
-                                </div>
-                            </article>
-                        ))}
+                        {projects.map((project: any, index: number) => {
+                            const heroImageUrl = getStrapiMedia(project.heroImage?.url);
+                            const serviceNames = project.services?.map((s: any) => s.name).join(" / ") || project.industry;
+
+                            return (
+                                <article
+                                    key={project.slug}
+                                    className={`${styles.projectCard} ${index === 0 ? styles.projectFeatured : ""}`}
+                                >
+                                    <div className={styles.projectImage}>
+                                        {heroImageUrl ? (
+                                            <Image
+                                                src={heroImageUrl}
+                                                alt={project.title}
+                                                fill
+                                                style={{ objectFit: "cover" }}
+                                            />
+                                        ) : (
+                                            <div className={styles.projectImagePlaceholder} />
+                                        )}
+                                    </div>
+                                    <div className={styles.projectInfo}>
+                                        <span className={styles.projectCategory}>{serviceNames}</span>
+                                        <h3>{project.title}</h3>
+                                        <p className="text-muted">{project.excerpt}</p>
+                                        <span style={{ fontSize: "0.75rem", color: "var(--color-gold)", marginTop: "0.5rem", display: "block" }}>
+                                            {project.client}
+                                        </span>
+                                    </div>
+                                </article>
+                            );
+                        })}
                     </div>
                 </section>
             </main>

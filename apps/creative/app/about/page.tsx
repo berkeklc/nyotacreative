@@ -6,14 +6,7 @@ export const metadata = {
     description: "Learn about our team, philosophy, and approach to creative and software work.",
 };
 
-const team = [
-    { name: "Hassan Ali", role: "Founder & Creative Director" },
-    { name: "Amina Mwangi", role: "Head of Design" },
-    { name: "James Kilonzo", role: "Technical Lead" },
-    { name: "Sara Hussein", role: "Brand Strategist" },
-    { name: "David Okello", role: "Studio Manager" },
-    { name: "Zara Mbarouk", role: "Content Director" },
-];
+
 
 const values = [
     { title: "Excellence", description: "We pursue the highest standards in everything we create." },
@@ -88,28 +81,6 @@ export default function AboutPage() {
                     </div>
                 </section>
 
-                {/* Team */}
-                <section className="section container">
-                    <div className={styles.servicesHeader}>
-                        <span className={styles.sectionLabel}>Our Team</span>
-                        <h2>The People Behind Nyota</h2>
-                    </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: "2rem", marginTop: "3rem" }}>
-                        {team.map((member) => (
-                            <div key={member.name} style={{ textAlign: "center" }}>
-                                <div style={{
-                                    width: "150px",
-                                    height: "150px",
-                                    borderRadius: "50%",
-                                    background: "linear-gradient(135deg, var(--color-charcoal-light), rgba(201,169,98,0.2))",
-                                    margin: "0 auto 1rem"
-                                }} />
-                                <h3 style={{ fontSize: "1.25rem", fontWeight: 500, marginBottom: "0.25rem" }}>{member.name}</h3>
-                                <p className="text-muted" style={{ fontSize: "0.875rem" }}>{member.role}</p>
-                            </div>
-                        ))}
-                    </div>
-                </section>
 
                 {/* CTA */}
                 <section className={styles.cta}>

@@ -3,36 +3,9 @@ import styles from "./page.module.css";
 import { fetchAPI, getStrapiMedia } from "../lib/strapi";
 import HeroVisual from "../components/HeroVisual";
 
-// Fallback content if CMS is empty
-const fallbackServices = [
-  { title: "Software Development", description: "Custom web & mobile solutions" },
-  { title: "UI/UX Design", description: "Human-centered digital experiences" },
-  { title: "Branding & Identity", description: "Strategic visual storytelling" },
-  { title: "Content Production", description: "Video, photo & motion design" },
-  { title: "Studio Services", description: "Equipment & production support" },
-  { title: "Talent Collaboration", description: "Dancers, singers & creators" },
-];
-
-const fallbackProjects = [
-  {
-    title: "Nyota Travel",
-    category: "Platform / Branding",
-    description: "East Africa's premier travel content network",
-    image: "/projects/nyota-travel.jpg",
-  },
-  {
-    title: "Serena Hotels",
-    category: "Brand Identity / Digital",
-    description: "Luxury hospitality brand transformation",
-    image: "/projects/serena.jpg",
-  },
-  {
-    title: "Zanzibar Nights",
-    category: "Content / Social",
-    description: "Cultural documentary series",
-    image: "/projects/zanzibar-nights.jpg",
-  },
-];
+// No static fallbacks - content comes from Strapi only
+const fallbackServices: any[] = [];
+const fallbackProjects: any[] = [];
 
 async function getServices() {
   try {
@@ -52,7 +25,7 @@ async function getProjects() {
   try {
     const response = await fetchAPI("/projects", {
       populate: ["heroImage", "services"],
-      filters: { featured: { $eq: true } },
+      sort: ["completedAt:desc", "createdAt:desc"],
       pagination: { limit: 3 },
     });
     return response?.data || [];

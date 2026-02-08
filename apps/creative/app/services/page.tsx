@@ -1,51 +1,44 @@
 import Link from "next/link";
 import styles from "../page.module.css";
+import { getServices } from "@/lib/strapi";
 
 export const metadata = {
     title: "Services | Nyota Creative",
     description: "Full-spectrum creative and technical services including software development, UI/UX design, branding, and content production.",
 };
 
-const services = [
+// Static fallback services
+const fallbackServices = [
     {
-        title: "Software Development",
+        name: "Software Development",
         slug: "software",
-        description: "Custom web applications, mobile apps, and enterprise solutions built with modern technologies.",
+        shortDescription: "Custom web applications, mobile apps, and enterprise solutions built with modern technologies.",
         features: ["Web Applications", "Mobile Apps", "API Development", "Cloud Infrastructure", "E-commerce"],
     },
     {
-        title: "UI/UX Design",
+        name: "UI/UX Design",
         slug: "design",
-        description: "Human-centered digital experiences that delight users and drive business results.",
+        shortDescription: "Human-centered digital experiences that delight users and drive business results.",
         features: ["User Research", "Wireframing", "Prototyping", "Design Systems", "Usability Testing"],
     },
     {
-        title: "Branding & Identity",
+        name: "Branding & Identity",
         slug: "branding",
-        description: "Strategic brand development that tells your story and resonates with your audience.",
+        shortDescription: "Strategic brand development that tells your story and resonates with your audience.",
         features: ["Brand Strategy", "Visual Identity", "Logo Design", "Brand Guidelines", "Messaging"],
     },
     {
-        title: "Content Production",
+        name: "Content Production",
         slug: "content",
-        description: "High-quality video, photography, and motion design that captures attention.",
+        shortDescription: "High-quality video, photography, and motion design that captures attention.",
         features: ["Video Production", "Photography", "Motion Graphics", "Social Content", "Documentary"],
-    },
-    {
-        title: "Studio Services",
-        slug: "studio",
-        description: "Professional equipment and production facilities for your creative projects.",
-        features: ["Equipment Rental", "Studio Space", "Technical Support", "Post-Production", "Sound Design"],
-    },
-    {
-        title: "Talent & Collaboration",
-        slug: "talent",
-        description: "Access to dancers, singers, creators, and artists for your projects.",
-        features: ["Talent Sourcing", "Creative Direction", "Project Management", "Artist Management", "Partnerships"],
     },
 ];
 
-export default function ServicesPage() {
+export default async function ServicesPage() {
+    const strapiServices = await getServices();
+    const services = strapiServices.length > 0 ? strapiServices : fallbackServices;
+
     return (
         <div className={styles.page}>
             <header className={styles.header}>
@@ -75,22 +68,44 @@ export default function ServicesPage() {
                     </div>
 
                     <div className={styles.servicesGrid} style={{ marginTop: "3rem" }}>
-                        {services.map((service, index) => (
-                            <div key={service.slug} className={styles.serviceCard}>
-                                <span className={styles.serviceNumber}>
-                                    {String(index + 1).padStart(2, "0")}
-                                </span>
-                                <h3>{service.title}</h3>
-                                <p className="text-muted" style={{ marginBottom: "1rem" }}>{service.description}</p>
-                                <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-                                    {service.features.map((feature) => (
-                                        <li key={feature} style={{ fontSize: "0.8rem", color: "var(--color-gold)", marginBottom: "0.25rem" }}>
-                                            → {feature}
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        ))}
+                        {services.map((service: any, index: number) => {
+                            const features = Array.isArray(service.features)
+                                ? service.features
+                                : (typeof service.features === "string" ? JSON.parse(service.features || "[]") : []);
+
+                            return (
+                                <Link
+                                    key={service.slug}
+                                    href={`/services/${service.slug}`}
+                                    className={styles.serviceCard}
+                                    style={{ textDecoration: "none", color: "inherit" }}
+                                >
+                                    <span className={styles.serviceNumber}>
+                                        {String(index + 1).padStart(2, "0")}
+                                    </span>
+                                    <h3>{service.name}</h3>
+                                    <p className="text-muted" style={{ marginBottom: "1rem" }}>
+                                        {service.shortDescription}
+                                    </p>
+                                    <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
+                                        {features.slice(0, 5).map((feature: string) => (
+                                            <li key={feature} style={{ fontSize: "0.8rem", color: "var(--color-gold)", marginBottom: "0.25rem" }}>
+                                                → {feature}
+                                            </li>
+                                        ))}
+                                    </ul>
+                                    <span style={{
+                                        display: "inline-block",
+                                        marginTop: "1rem",
+                                        fontSize: "0.8rem",
+                                        color: "var(--color-gold)",
+                                        borderBottom: "1px solid var(--color-gold)"
+                                    }}>
+                                        Learn more →
+                                    </span>
+                                </Link>
+                            );
+                        })}
                     </div>
                 </section>
 

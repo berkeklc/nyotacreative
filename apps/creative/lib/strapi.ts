@@ -21,20 +21,15 @@ export async function fetchAPI(path: string, urlParamsObject = {}, options = {})
             ...options,
         };
 
-        // Build request URL
         const queryString = qs.stringify(urlParamsObject);
         const requestUrl = `${getStrapiURL(
             `/api${path}`
         )}${queryString ? `?${queryString}` : ""}`;
 
-        // Trigger API call
         const response = await fetch(requestUrl, mergedOptions);
 
-        // Handle response
         if (!response.ok) {
             console.error(response.statusText);
-            // For now, don't throw to avoid crashing build on empty CMS
-            // throw new Error(`An error occured please try again`);
             console.warn("Strapi fetch failed, returning null");
             return { data: null };
         }
@@ -46,3 +41,40 @@ export async function fetchAPI(path: string, urlParamsObject = {}, options = {})
         return { data: null };
     }
 }
+
+// Projects
+export async function getProjects() {
+    const data = await fetchAPI("/projects", {
+        populate: ["heroImage", "services"],
+        sort: ["featured:desc", "completedAt:desc"],
+        filters: { publishedAt: { $notNull: true } },
+    });
+    return data?.data || [];
+}
+
+export async function getProject(slug: string) {
+    const data = await fetchAPI("/projects", {
+        filters: { slug: { $eq: slug } },
+        populate: ["heroImage", "gallery", "services", "testimonial"],
+    });
+    return data?.data?.[0] || null;
+}
+
+// Services
+export async function getServices() {
+    const data = await fetchAPI("/services", {
+        populate: ["icon", "projects"],
+        sort: ["order:asc"],
+        filters: { publishedAt: { $notNull: true } },
+    });
+    return data?.data || [];
+}
+
+export async function getService(slug: string) {
+    const data = await fetchAPI("/services", {
+        filters: { slug: { $eq: slug } },
+        populate: ["icon", "projects.heroImage"],
+    });
+    return data?.data?.[0] || null;
+}
+
