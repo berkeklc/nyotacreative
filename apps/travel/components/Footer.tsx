@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import styles from "../app/page.module.css";
 
 export default function Footer() {
@@ -9,9 +10,15 @@ export default function Footer() {
             <div className="container">
                 <div className={styles.footerGrid}>
                     <div className={styles.footerBrand}>
-                        <Link href="/" className={styles.logo} style={{ color: 'var(--color-white)' }}>
-                            <span className={styles.logoIcon}>✦</span>
-                            RUSHZANZIBAR
+                        <Link href="/" className={styles.logo} style={{ color: 'var(--color-white)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                            <Image
+                                src="/logo-rush-zanzibar.png"
+                                alt="Rush Zanzibar"
+                                width={40}
+                                height={40}
+                                style={{ borderRadius: "50%", objectFit: "cover" }}
+                            />
+                            <span>RUSHZANZIBAR</span>
                         </Link>
                         <p>
                             Expert insight into Tanzania's wild heart and Zanzibar's turquoise horizons.

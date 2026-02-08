@@ -53,7 +53,7 @@ export default async function Home() {
     <div className={styles.page}>
       {/* Hero Section */}
       <section className={styles.hero}>
-        <div className={styles.heroImageBg} style={{ backgroundImage: `url(${heroImage || '/hero-safari.jpg'})`, backgroundPosition: 'center bottom' }} />
+        <div className={styles.heroImageBg} style={{ backgroundImage: `url(${heroImage || '/hero-safari.jpg'})`, backgroundPosition: 'center 70%' }} />
         <div className={styles.heroOverlay} />
         <div className={styles.heroContent}>
           {tanzania?.name && (
