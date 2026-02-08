@@ -37,11 +37,11 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
     // Handle both destination and city
     const isCity = !!cityRaw;
     const dataRaw = destinationRaw || cityRaw;
-    
+
     // Strip HTML from richtext description
     const descriptionRaw = dataRaw?.description || "";
     const descriptionText = descriptionRaw ? String(descriptionRaw).replace(/<[^>]*>/g, '').trim() : "";
-    
+
     const rawFacts = dataRaw?.quickFacts || (isCity && cityRaw?.destination?.quickFacts);
     const facts = [
         { label: "Language", value: rawFacts?.language || "" },
@@ -51,7 +51,7 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
         { label: "Timezone", value: rawFacts?.timezone || "" },
         { label: "Avg Temperature", value: rawFacts?.avgTemperature || "" },
     ].filter(fact => fact.value);
-    
+
     const destination = {
         id: dataRaw?.id,
         name: dataRaw?.name || "",
@@ -79,73 +79,134 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
     }
 
     return (
-        <div className={styles.page}>
+        <div className={styles.page} style={{ background: '#fff' }}>
             <main>
-                <section className={styles.hero} style={{ minHeight: '65vh', backgroundImage: destination.heroImage ? `url(${destination.heroImage})` : undefined, backgroundColor: destination.heroImage ? undefined : 'var(--color-charcoal)' }}>
-                    <div className={styles.heroOverlay} />
-                    <div className="container" style={{ position: 'relative', zIndex: 2 }}>
-                        <nav className={styles.breadcrumb} style={{ color: 'white', marginBottom: '2rem' }}>
-                            <Link href="/" style={{ color: 'rgba(255,255,255,0.8)' }}>Home</Link>
-                            <span style={{ margin: '0 0.5rem' }}>/</span>
-                            <Link href="/tanzania" style={{ color: 'rgba(255,255,255,0.8)' }}>Tanzania</Link>
+                <section className={styles.hero} style={{
+                    height: '85vh',
+                    backgroundImage: destination.heroImage ? `url(${destination.heroImage})` : undefined,
+                    backgroundColor: destination.heroImage ? undefined : 'var(--color-charcoal)',
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    position: 'relative'
+                }}>
+                    <div className={styles.heroOverlay} style={{
+                        background: 'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.5) 100%)'
+                    }} />
+                    <div className="container" style={{
+                        position: 'relative',
+                        zIndex: 2,
+                        height: '100%',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        textAlign: 'center'
+                    }}>
+                        <nav className={styles.breadcrumb} style={{ color: 'rgba(255,255,255,0.8)', marginBottom: '2rem', fontSize: '0.9rem', letterSpacing: '0.05em' }}>
+                            <Link href="/" style={{ color: 'inherit', textDecoration: 'none' }}>Home</Link>
+                            <span style={{ margin: '0 0.75rem', opacity: 0.5 }}>/</span>
+                            <Link href="/tanzania" style={{ color: 'inherit', textDecoration: 'none' }}>Tanzania</Link>
                             {isCity && cityRaw?.destination && (
                                 <>
-                                    <span style={{ margin: '0 0.5rem' }}>/</span>
+                                    <span style={{ margin: '0 0.75rem', opacity: 0.5 }}>/</span>
                                     <span style={{ color: 'rgba(255,255,255,0.7)' }}>{cityRaw.destination.name}</span>
                                 </>
                             )}
-                            <span style={{ margin: '0 0.5rem' }}>/</span>
-                            <span style={{ color: 'white' }}>{destination.name}</span>
+                            <span style={{ margin: '0 0.75rem', opacity: 0.5 }}>/</span>
+                            <span style={{ color: '#fff', fontWeight: 500 }}>{destination.name}</span>
                         </nav>
-                        <h1 className={styles.heroTitle} style={{ color: 'white', fontSize: 'clamp(3rem, 10vw, 5rem)', marginBottom: '1rem' }}>
+                        <h1 className={styles.heroTitle} style={{
+                            color: 'white',
+                            fontSize: 'clamp(3.5rem, 8vw, 6rem)',
+                            marginBottom: '1.5rem',
+                            fontWeight: 300,
+                            letterSpacing: '-0.02em',
+                            fontFamily: 'var(--font-serif)'
+                        }}>
                             {destination.name}
                         </h1>
                         {destination.tagline && (
-                            <p className={styles.heroSubtitle} style={{ color: 'rgba(255,255,255,0.95)', maxWidth: '650px', fontSize: '1.25rem' }}>
+                            <p className={styles.heroSubtitle} style={{
+                                color: 'rgba(255,255,255,0.95)',
+                                maxWidth: '700px',
+                                fontSize: 'clamp(1.1rem, 2vw, 1.35rem)',
+                                lineHeight: 1.6,
+                                fontWeight: 300
+                            }}>
                                 {destination.tagline}
                             </p>
                         )}
                     </div>
                 </section>
 
-                <div className="container section">
-                    <div className={styles.layoutGrid}>
+                <div className="container section" style={{ padding: '6rem 2rem' }}>
+                    <div className={styles.layoutGrid} style={{ gap: '6rem' }}>
                         <div className={styles.mainContent}>
-                            <section style={{ marginBottom: '4rem' }}>
-                                <span className={styles.sectionLabel}>The Essence of {destination.name}</span>
-                                <h2 style={{ fontSize: '2.5rem', marginBottom: '1.5rem', color: 'var(--color-charcoal)' }}>Travel Guide 2026</h2>
+                            <section style={{ marginBottom: '6rem' }}>
+                                <h2 style={{
+                                    fontSize: '2.5rem',
+                                    marginBottom: '2rem',
+                                    color: 'var(--color-charcoal)',
+                                    fontWeight: 300,
+                                    letterSpacing: '-0.02em'
+                                }}>
+                                    About {destination.name}
+                                </h2>
                                 {destination.tagline && (
-                                    <p className={styles.descriptionText} style={{ fontSize: '1.2rem', lineHeight: '1.8', color: 'var(--color-slate)' }}>
-                                        {destination.tagline}
+                                    <p className={styles.descriptionText} style={{
+                                        fontSize: '1.2rem',
+                                        lineHeight: '1.9',
+                                        color: 'var(--color-slate)',
+                                        fontWeight: 300
+                                    }}>
+                                        <span style={{
+                                            float: 'left',
+                                            fontSize: '3.5rem',
+                                            lineHeight: 0.8,
+                                            paddingRight: '1rem',
+                                            fontWeight: 700,
+                                            color: 'var(--color-terracotta)'
+                                        }}>{destination.tagline.charAt(0)}</span>
+                                        {destination.tagline.substring(1)}
                                     </p>
                                 )}
                             </section>
 
 
                             {relatedTours.length > 0 && (
-                                <section style={{ marginTop: '5rem' }}>
-                                    <div className={styles.sectionHeader}>
-                                        <div>
-                                            <span className={styles.sectionLabel}>Signature Experiences</span>
-                                            <h2>Popular in {destination.name}</h2>
-                                        </div>
+                                <section style={{ marginTop: '4rem', paddingTop: '4rem', borderTop: '1px solid rgba(0,0,0,0.05)' }}>
+                                    <div style={{ marginBottom: '3rem' }}>
+                                        <span style={{ fontSize: '0.85rem', textTransform: 'uppercase', letterSpacing: '0.2em', color: 'var(--color-terracotta)', display: 'block', marginBottom: '0.5rem' }}>Experiences</span>
+                                        <h2 style={{ fontSize: '2rem', color: 'var(--color-charcoal)', fontWeight: 300 }}>Curated Journeys</h2>
                                     </div>
-                                    <div className={styles.toursGrid} style={{ marginTop: '2rem' }}>
+                                    <div className={styles.toursGrid} style={{
+                                        display: 'grid',
+                                        gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                                        gap: '2.5rem'
+                                    }}>
                                         {relatedTours.map((tour: any) => (
-                                            <Link href={`/tours/${tour.slug}`} key={tour.slug} className={`${styles.tourCard} card`}>
+                                            <Link href={`/tours/${tour.slug}`} key={tour.slug} className={styles.tourCard} style={{ textDecoration: 'none', display: 'block' }}>
                                                 <div
                                                     className={styles.tourImage}
-                                                    style={tour.imageUrl ? { backgroundImage: `url(${tour.imageUrl})` } : { backgroundColor: 'var(--color-sand-dark)' }}
+                                                    style={{
+                                                        backgroundImage: tour.imageUrl ? `url(${tour.imageUrl})` : undefined,
+                                                        backgroundColor: 'var(--color-sand-dark)',
+                                                        paddingBottom: '65%',
+                                                        backgroundSize: 'cover',
+                                                        borderRadius: '4px',
+                                                        marginBottom: '1.5rem'
+                                                    }}
                                                 />
                                                 <div className={styles.tourContent}>
-                                                    <div className={styles.tourMeta}>
-                                                        <span>⏱️ {tour.duration}</span>
-                                                        <span style={{ color: 'var(--color-terracotta)', fontWeight: 600 }}>{tour.cityName}</span>
+                                                    <div className={styles.tourMeta} style={{ fontSize: '0.85rem', color: 'var(--color-slate)', marginBottom: '0.5rem', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                                                        <span>{tour.duration}</span>
+                                                        <span style={{ margin: '0 0.5rem' }}>•</span>
+                                                        <span style={{ color: 'var(--color-terracotta)' }}>{tour.cityName}</span>
                                                     </div>
-                                                    <h3>{tour.name}</h3>
-                                                    <div className={styles.tourFooter}>
-                                                        <span>From <strong>${tour.priceAdult}</strong></span>
-                                                        <span className="btn btn-accent btn-sm">Details</span>
+                                                    <h3 style={{ fontSize: '1.35rem', color: 'var(--color-charcoal)', marginBottom: '0.5rem', fontWeight: 600 }}>{tour.name}</h3>
+                                                    <div className={styles.tourFooter} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: '1rem', paddingTop: '1rem', borderTop: '1px dashed rgba(0,0,0,0.1)' }}>
+                                                        <span style={{ fontSize: '0.95rem', color: 'var(--color-slate)' }}>From <strong style={{ color: 'var(--color-charcoal)' }}>${tour.priceAdult}</strong></span>
+                                                        <span style={{ fontSize: '0.9rem', fontWeight: 600, color: 'var(--color-terracotta)' }}>View Journey →</span>
                                                     </div>
                                                 </div>
                                             </Link>
@@ -155,33 +216,60 @@ export default async function DestinationPage({ params }: { params: Promise<{ sl
                             )}
                         </div>
 
-                        <aside className={styles.sidebar}>
-                            <div className={styles.sidebarCard} style={{ background: 'white', padding: '2rem', borderRadius: '1rem', boxShadow: '0 10px 30px rgba(0,0,0,0.05)', border: '1px solid var(--color-sand-dark)' }}>
-                                <h3 style={{ marginBottom: '1.5rem', borderBottom: '1px solid var(--color-sand-dark)', paddingBottom: '0.75rem' }}>Core Facts</h3>
+                        <aside className={styles.sidebar} style={{ marginTop: '1rem' }}>
+                            <div className={styles.sidebarCard} style={{ padding: '0 0 2rem', borderBottom: '1px solid rgba(0,0,0,0.1)' }}>
+                                <h3 style={{
+                                    marginBottom: '1.5rem',
+                                    fontSize: '0.9rem',
+                                    fontWeight: 700,
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.2em',
+                                    color: 'var(--color-charcoal)'
+                                }}>At a Glance</h3>
                                 {destination.facts.length > 0 ? (
-                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+                                    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                                         {destination.facts.map((fact: any, i: number) => (
-                                            <div key={i}>
-                                                <span style={{ display: 'block', fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--color-slate)', fontWeight: 700, letterSpacing: '0.05em' }}>
+                                            <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
+                                                <span style={{ fontSize: '0.9rem', color: 'var(--color-slate)' }}>
                                                     {fact.label}
                                                 </span>
-                                                <span style={{ fontSize: '1.05rem', color: 'var(--color-charcoal)', fontWeight: 500 }}>
+                                                <span style={{ fontSize: '0.95rem', color: 'var(--color-charcoal)', fontWeight: 500, textAlign: 'right' }}>
                                                     {fact.value}
                                                 </span>
                                             </div>
                                         ))}
                                     </div>
                                 ) : (
-                                    <p style={{ color: 'var(--color-slate)', fontSize: '0.95rem' }}>No facts available at this time.</p>
+                                    <p style={{ color: 'var(--color-slate)', fontSize: '0.95rem', fontStyle: 'italic' }}>Details coming soon.</p>
                                 )}
                             </div>
 
-                            <div className={styles.sidebarCard} style={{ marginTop: '2rem', background: 'var(--color-charcoal)', color: 'white', padding: '2rem', borderRadius: '1rem' }}>
-                                <h3 style={{ color: 'white' }}>Plan Your Adventure</h3>
-                                <p style={{ fontSize: '0.95rem', color: 'rgba(255,255,255,0.7)', marginBottom: '1.5rem' }}>
-                                    Our travel advisors are ready to design a bespoke itinerary for your visit to {destination.name}.
+                            <div className={styles.sidebarCard} style={{ marginTop: '3rem' }}>
+                                <h3 style={{
+                                    fontSize: '1.75rem',
+                                    fontWeight: 300,
+                                    color: 'var(--color-charcoal)',
+                                    marginBottom: '1rem',
+                                    lineHeight: 1.2
+                                }}>
+                                    Dreaming of {destination.name}?
+                                </h3>
+                                <p style={{ fontSize: '1rem', color: 'var(--color-slate)', marginBottom: '2rem', lineHeight: 1.7 }}>
+                                    Let us craft a bespoke itinerary tailored to your rhythm and style.
                                 </p>
-                                <Link href="/contact" className="btn btn-accent" style={{ width: '100%', textAlign: 'center' }}>
+                                <Link href="/contact" className="btn btn-accent" style={{
+                                    width: '100%',
+                                    textAlign: 'center',
+                                    display: 'block',
+                                    background: 'var(--color-charcoal)',
+                                    color: '#fff',
+                                    padding: '1rem',
+                                    textDecoration: 'none',
+                                    borderRadius: '4px',
+                                    textTransform: 'uppercase',
+                                    letterSpacing: '0.1em',
+                                    fontSize: '0.85rem'
+                                }}>
                                     Start Planning
                                 </Link>
                             </div>

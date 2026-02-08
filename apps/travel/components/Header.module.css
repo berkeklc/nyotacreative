@@ -4,11 +4,16 @@
     left: 0;
     right: 0;
     z-index: 1000;
-    background-color: rgba(249, 244, 232, 0.95);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border-bottom: 2px solid var(--color-terracotta);
-    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), opacity 0.4s ease;
+    background: transparent;
+    border-bottom: 1px solid transparent;
+    transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.headerScrolled {
+    background: rgba(20, 20, 20, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
 }
 
 .headerHidden {
@@ -26,124 +31,163 @@
 .nav {
     max-width: 1400px;
     margin: 0 auto;
-    padding: var(--space-md) var(--space-lg);
+    padding: 0 2.5rem;
+    height: 70px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--space-md);
+    position: relative;
 }
 
+/* Logo - Left, half overflowing */
 .logo {
+    position: relative;
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.5rem;
-    color: var(--color-charcoal);
+    align-items: flex-start;
     text-decoration: none;
-    letter-spacing: 0.02em;
+    z-index: 10;
 }
 
 .logoIcon {
-    color: var(--color-terracotta);
-    font-size: 1.75rem;
+    display: none;
 }
 
 .logoText {
-    font-family: var(--font-display);
-    font-weight: 700;
-    font-size: 1.25rem;
-    letter-spacing: 0.05em;
+    display: none;
 }
 
+/* Navigation Links - Center */
 .navLinks {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
+    align-items: center;
     gap: 2.5rem;
 }
 
 .navLinks a {
     text-decoration: none;
-    color: var(--color-slate);
-    font-weight: 600;
-    font-size: 0.875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    transition: all var(--transition-fast);
+    color: rgba(255, 255, 255, 0.8);
+    font-weight: 500;
+    font-size: 0.85rem;
+    letter-spacing: 0.02em;
+    transition: color 0.25s ease;
     position: relative;
+    padding: 0.5rem 0;
 }
 
 .navLinks a:hover {
-    color: var(--color-terracotta);
+    color: #fff;
 }
 
 .navLinks a::after {
     content: '';
     position: absolute;
-    bottom: -4px;
+    bottom: 0;
     left: 0;
     width: 0;
     height: 2px;
-    background: var(--color-terracotta);
+    background: linear-gradient(90deg, #D97706, #EA580C);
     transition: width 0.3s ease;
+    border-radius: 1px;
 }
 
 .navLinks a:hover::after {
     width: 100%;
 }
 
+/* Nav Actions - Right Side */
 .navActions {
     display: flex;
     align-items: center;
-    gap: 1.5rem;
+    gap: 1rem;
 }
 
 .langSwitch {
-    padding: 0.5rem 0.75rem;
-    background: transparent;
-    border: 1px solid var(--color-sand-dark);
-    color: var(--color-charcoal);
-    border-radius: var(--radius-sm);
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+    border-radius: 8px;
     font-size: 0.75rem;
     font-weight: 600;
     cursor: pointer;
-    transition: all var(--transition-fast);
+    transition: all 0.25s ease;
+    letter-spacing: 0.03em;
 }
 
 .langSwitch:hover {
-    border-color: var(--color-terracotta);
-    color: var(--color-terracotta);
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.4);
+    color: #fff;
 }
 
+/* Book Now Button */
+.bookBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.625rem 1.5rem;
+    background: linear-gradient(135deg, #D97706 0%, #EA580C 100%);
+    color: #fff;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 4px 15px rgba(217, 119, 6, 0.3);
+    letter-spacing: 0.02em;
+}
+
+.bookBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(217, 119, 6, 0.45);
+    background: linear-gradient(135deg, #F59E0B 0%, #D97706 100%);
+}
+
+.bookBtn:active {
+    transform: translateY(0);
+}
+
+/* Mobile Menu Toggle */
 .menuToggle {
     display: none;
     background: none;
     border: none;
     font-size: 1.5rem;
     cursor: pointer;
-    color: var(--color-charcoal);
+    color: rgba(255, 255, 255, 0.9);
     padding: 0.5rem;
 }
 
+/* Mobile Responsive */
 @media (max-width: 992px) {
     .nav {
-        padding: var(--space-sm) var(--space-md);
+        padding: 0 1.5rem;
+        height: 60px;
     }
 
     .navLinks {
         position: fixed;
         top: 0;
         right: -100%;
-        width: 85%;
+        width: 75%;
+        max-width: 300px;
         height: 100vh;
-        background: var(--color-sand);
+        background: rgba(30, 30, 30, 0.98);
+        backdrop-filter: blur(20px);
         flex-direction: column;
-        padding: 6rem 2rem;
-        transition: right 0.8s cubic-bezier(0.19, 1, 0.22, 1);
-        box-shadow: -10px 0 50px rgba(0, 0, 0, 0.1);
+        padding: 5rem 2rem 2rem;
+        transition: right 0.4s ease;
+        box-shadow: -10px 0 40px rgba(0, 0, 0, 0.5);
         z-index: 1001;
         gap: 0;
-        display: flex;
+        left: auto;
+        transform: none;
+        align-items: flex-start;
     }
 
     .navLinks.mobileOpen {
@@ -151,17 +195,10 @@
     }
 
     .navLinks a {
-        font-size: 1.5rem;
-        padding: 1.5rem 0;
-        border-bottom: 1px solid var(--color-sand-dark);
+        font-size: 1.1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         width: 100%;
-        color: var(--color-charcoal);
-        text-transform: none;
-        letter-spacing: normal;
-    }
-
-    .navLinks a:hover {
-        color: var(--color-terracotta);
     }
 
     .navLinks a::after {

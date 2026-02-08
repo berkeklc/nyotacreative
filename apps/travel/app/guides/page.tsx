@@ -41,17 +41,59 @@ export default async function GuidesPage({ searchParams }: { searchParams: Promi
     return (
         <div className={styles.page}>
             <main>
-                <section className={styles.hero} style={{ minHeight: '40vh', padding: '120px 0 60px' }}>
-                    <div className={styles.heroOverlay} />
+                <section className={styles.hero} style={{
+                    minHeight: '50vh',
+                    padding: '140px 0 80px',
+                    background: 'linear-gradient(135deg, var(--color-charcoal) 0%, #2a2520 100%)'
+                }}>
+                    <div className={styles.heroOverlay} style={{
+                        background: 'radial-gradient(ellipse at center, transparent 0%, rgba(0,0,0,0.4) 100%)'
+                    }} />
                     <div className="container">
-                        <div className={styles.heroContent} style={{ background: 'transparent', backdropFilter: 'none', boxShadow: 'none', textAlign: 'left', padding: 0 }}>
-                            <span className={styles.heroBadge} style={{ background: 'rgba(192, 90, 62, 0.1)', color: 'var(--color-terracotta)', padding: '0.5rem 1rem', borderRadius: '100px', fontWeight: 700, fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                        <div className={styles.heroContent} style={{
+                            background: 'transparent',
+                            backdropFilter: 'none',
+                            boxShadow: 'none',
+                            textAlign: 'center',
+                            padding: 0,
+                            maxWidth: '800px',
+                            margin: '0 auto'
+                        }}>
+                            <span style={{
+                                display: 'inline-block',
+                                background: 'linear-gradient(135deg, var(--color-terracotta) 0%, var(--color-ochre) 100%)',
+                                color: 'var(--color-white)',
+                                padding: '0.625rem 1.5rem',
+                                borderRadius: '100px',
+                                fontWeight: 800,
+                                fontSize: '0.75rem',
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.15em',
+                                marginBottom: '2rem',
+                                boxShadow: '0 4px 20px rgba(181, 74, 50, 0.3)'
+                            }}>
                                 Expert Insights
                             </span>
-                            <h1 className={styles.heroTitle} style={{ color: 'var(--color-charcoal)', marginTop: '1.5rem' }}>
-                                Tanzanian <span className={styles.heroHighlight}>Guides</span>
+                            <h1 className={styles.heroTitle} style={{
+                                color: 'var(--color-white)',
+                                marginTop: '0',
+                                fontSize: 'clamp(3rem, 8vw, 5rem)',
+                                letterSpacing: '-0.03em'
+                            }}>
+                                Tanzanian <span style={{
+                                    background: 'linear-gradient(135deg, var(--color-ochre) 0%, var(--color-terracotta) 100%)',
+                                    WebkitBackgroundClip: 'text',
+                                    WebkitTextFillColor: 'transparent',
+                                    backgroundClip: 'text'
+                                }}>Guides</span>
                             </h1>
-                            <p className={styles.heroSubtitle} style={{ marginLeft: 0, color: 'var(--color-slate)', fontSize: '1.25rem' }}>
+                            <p className={styles.heroSubtitle} style={{
+                                margin: '0 auto',
+                                color: 'rgba(255, 255, 255, 0.75)',
+                                fontSize: '1.25rem',
+                                maxWidth: '600px',
+                                lineHeight: '1.6'
+                            }}>
                                 Professional advice, local secrets, and essential tips for your safari adventure.
                             </p>
                         </div>

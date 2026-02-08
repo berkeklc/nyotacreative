@@ -1,135 +1,127 @@
+"use client";
+
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import styles from "./page.module.css";
-import { fetchAPI, getStrapiMedia } from "../lib/strapi";
-import SearchBar from "../components/SearchBar";
+import ExperienceSelector, { type ExperienceType } from "../components/ExperienceSelector";
 
-export default async function Home() {
-  const [articlesRes, destinationsRes, toursRes, tanzaniaRes] = await Promise.all([
-    fetchAPI("/articles", { populate: ["heroImage", "author"], pagination: { limit: 3 }, sort: ["publishedAt:desc"] }),
-    fetchAPI("/destinations", { populate: ["heroImage"], pagination: { limit: 3 } }),
-    fetchAPI("/tours", { populate: ["heroImage", "city"], pagination: { limit: 4 } }),
-    fetchAPI("/destinations", { filters: { slug: "tanzania" }, populate: ["heroImage"] })
-  ]);
+interface Tour {
+  title: string;
+  slug: string;
+  duration: string;
+  price: number;
+  image: string | null;
+  category?: string;
+}
 
-  const cmsArticles = articlesRes?.data || [];
-  const cmsDestinations = destinationsRes?.data || [];
-  const cmsTours = toursRes?.data || [];
-  const tanzania = tanzaniaRes?.data?.[0];
-  const heroImage = getStrapiMedia(tanzania?.heroImage?.url);
+interface Destination {
+  name: string;
+  slug: string;
+  tagline: string;
+  image: string | null;
+}
 
-  const destinations = cmsDestinations.map((d: any) => {
-    // Strip HTML tags from richtext description for tagline
-    const descriptionText = d.description
-      ? String(d.description).replace(/<[^>]*>/g, '').trim()
-      : '';
-    const tagline = descriptionText ? (descriptionText.slice(0, 100) + (descriptionText.length > 100 ? "..." : "")) : "";
+interface Article {
+  title: string;
+  slug: string;
+  category: string;
+  author: string;
+  date: string;
+  image: string | null;
+}
 
-    return {
-      name: d.name || "",
-      slug: d.slug || "",
-      tagline: tagline,
-      image: getStrapiMedia(d.heroImage?.url)
+interface HomePageData {
+  destinations: Destination[];
+  tours: Tour[];
+  articles: Article[];
+}
+
+export default function Home() {
+  const [selectedExperience, setSelectedExperience] = useState<ExperienceType>(null);
+  const [data, setData] = useState<HomePageData>({ destinations: [], tours: [], articles: [] });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        const res = await fetch("/api/homepage");
+        const json = await res.json();
+        setData(json);
+      } catch (err) {
+        console.error("Failed to fetch homepage data:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
+
+  const { destinations, tours, articles } = data;
+
+  // Filter and sort content based on selected experience
+  const getFilteredTours = () => {
+    if (!selectedExperience) return tours;
+    const categoryMap: Record<string, string[]> = {
+      beach: ["beach", "coastal", "island", "zanzibar"],
+      safari: ["safari", "wildlife", "mountain", "camping", "serengeti", "ngorongoro"],
+      city: ["city", "cultural", "urban", "stone town", "dar"],
     };
-  });
+    const keywords = categoryMap[selectedExperience] || [];
+    const filtered = tours.filter(t =>
+      keywords.some(k =>
+        t.title?.toLowerCase().includes(k) ||
+        t.category?.toLowerCase().includes(k)
+      )
+    );
+    const others = tours.filter(t => !filtered.includes(t));
+    return [...filtered, ...others];
+  };
 
-  const tours = cmsTours.map((t: any) => ({
-    title: t.name || "",
-    slug: t.slug || "",
-    duration: t.duration || "",
-    price: t.priceAdult || 0,
-    image: getStrapiMedia(t.heroImage?.url)
-  }));
+  const getFilteredArticles = () => {
+    if (!selectedExperience) return articles;
+    const categoryMap: Record<string, string[]> = {
+      beach: ["beaches", "beach", "coastal", "water"],
+      safari: ["safari", "adventure", "wildlife", "nature"],
+      city: ["culture", "food", "urban", "tips"],
+    };
+    const keywords = categoryMap[selectedExperience] || [];
+    const filtered = articles.filter(a =>
+      keywords.some(k => a.category?.toLowerCase().includes(k))
+    );
+    const others = articles.filter(a => !filtered.includes(a));
+    return [...filtered, ...others];
+  };
 
-  const articles = cmsArticles.map((a: any) => ({
-    title: a.title || "",
-    slug: a.slug || "",
-    category: a.category?.replace('-', ' ') || "",
-    author: a.author?.name || "",
-    date: a.publishedAt ? new Date(a.publishedAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : "",
-    image: getStrapiMedia(a.heroImage?.url)
-  }));
+  const filteredTours = getFilteredTours();
+  const filteredArticles = getFilteredArticles();
 
   return (
     <div className={styles.page}>
-      {/* Hero Section */}
-      <section className={styles.hero}>
-        <div className={styles.heroImageBg} style={{ backgroundImage: `url(${heroImage || '/hero-safari.jpg'})`, backgroundPosition: 'center 70%' }} />
-        <div className={styles.heroOverlay} />
-        <div className={styles.heroContent}>
-          {tanzania?.name && (
-            <span className={styles.heroBadge}>The Pulse of East Africa</span>
-          )}
-          <h1 className={styles.heroTitle}>
-            Bespoke <span className={styles.heroHighlight}>Safaris</span> & Coastal Escapes
-          </h1>
-          <p className={styles.heroSubtitle}>
-            Expertly curated journeys through Tanzania's wild heart and Zanzibar's turquoise shores.
-          </p>
-          <SearchBar />
-          <div className={styles.quickLinks}>
-            <Link href="/guides?category=Beaches" className={styles.quickLink}>
-              <span style={{ fontSize: '1.2rem' }}>🏖️</span>
-              Beaches
-            </Link>
-            <Link href="/guides?category=Safari" className={styles.quickLink}>
-              <span style={{ fontSize: '1.2rem' }}>🐆</span>
-              Safari
-            </Link>
-            <Link href="/guides?category=Food%20%26%20Drink" className={styles.quickLink}>
-              <span style={{ fontSize: '1.2rem' }}>🥘</span>
-              Food
-            </Link>
-            <Link href="/hotels" className={styles.quickLink}>
-              <span style={{ fontSize: '1.2rem' }}>🏨</span>
-              Hotels
-            </Link>
-          </div>
-        </div>
-      </section>
+      {/* Hero - Full Viewport Experience Selector */}
+      <ExperienceSelector
+        selected={selectedExperience}
+        onSelect={setSelectedExperience}
+      />
 
-      {/* Destinations Grid */}
-      <section className={`${styles.destinations} section`}>
+      {/* Tours Section - Signature Experiences (1st section) */}
+      <section id="content-section" className={`${styles.tours} section`} style={{ background: 'var(--color-sand)' }}>
         <div className="container">
           <div className={styles.sectionHeader}>
             <div>
-              <span className={styles.sectionLabel}>Explore</span>
-              <h2>Popular Destinations</h2>
-            </div>
-            <Link href="/tanzania" className="btn btn-secondary">View All →</Link>
-          </div>
-          {destinations.length > 0 ? (
-            <div className={styles.destinationsGrid}>
-              {destinations.map((dest: any) => (
-                <Link key={dest.slug} href={`/tanzania/${dest.slug}`} className={styles.destinationCard}>
-                  <div className={styles.destinationImage} style={{ backgroundImage: dest.image ? `url(${dest.image})` : 'none', backgroundColor: 'var(--color-sand-dark)' }} />
-                  <div className={styles.destinationInfo}>
-                    <h3>{dest.name}</h3>
-                    {dest.tagline && <p>{dest.tagline}</p>}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          ) : (
-            <div style={{ textAlign: 'center', padding: '4rem 0' }}>
-              <p>No destinations available at this time.</p>
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* Recommended Tours */}
-      <section className={`${styles.tours} section`} style={{ background: 'var(--color-sand)' }}>
-        <div className="container">
-          <div className={styles.sectionHeader}>
-            <div>
-              <span className={styles.sectionLabel}>Recommendations</span>
+              <span className={styles.sectionLabel}>
+                {selectedExperience ? `${selectedExperience.charAt(0).toUpperCase() + selectedExperience.slice(1)} Tours` : 'Recommendations'}
+              </span>
               <h2>Signature Experiences</h2>
             </div>
             <Link href="/tours" className="btn btn-secondary">All Tours →</Link>
           </div>
-          {tours.length > 0 ? (
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '4rem 0' }}>
+              <p>Loading tours...</p>
+            </div>
+          ) : filteredTours.length > 0 ? (
             <div className={styles.toursGrid}>
-              {tours.map((tour: any) => (
+              {filteredTours.slice(0, 4).map((tour) => (
                 <article key={tour.slug} className={`${styles.tourCard} card`}>
                   <div className={styles.tourImage} style={{ backgroundImage: tour.image ? `url(${tour.image})` : 'none', backgroundColor: 'var(--color-sand-dark)' }} />
                   <div className={styles.tourContent}>
@@ -153,27 +145,36 @@ export default async function Home() {
         </div>
       </section>
 
-
-      {/* Latest Articles */}
+      {/* Guides Section - Local Insights (2nd section) */}
       <section className={`${styles.guides} section`}>
         <div className="container">
           <div className={styles.sectionHeader}>
             <div>
-              <span className={styles.sectionLabel}>Resources</span>
-              <h2>Local Insights</h2>
+              <span className={styles.sectionLabel}>Local Insights</span>
+              <h2>Insider Knowledge</h2>
             </div>
             <Link href="/guides" className="btn btn-secondary">All Guides →</Link>
           </div>
-          {articles.length > 0 ? (
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '4rem 0' }}>
+              <p>Loading guides...</p>
+            </div>
+          ) : filteredArticles.length > 0 ? (
             <div className={styles.guidesGrid}>
-              {articles.map((guide: any) => (
+              {filteredArticles.slice(0, 3).map((guide) => (
                 <article key={guide.slug} className={`${styles.guideCard} card`}>
                   <div className={styles.guideImage} style={{ backgroundImage: guide.image ? `url(${guide.image})` : 'none', backgroundColor: 'var(--color-sand-dark)' }} />
                   <div className={styles.guideContent}>
                     {guide.category && <span className={styles.guideCategory}>{guide.category}</span>}
                     <h3><Link href={`/guides/${guide.slug}`}>{guide.title}</Link></h3>
                     <div className={styles.guideMeta}>
-                      {(guide.author || guide.date) && <span>{guide.author ? `By ${guide.author}` : ''}{guide.author && guide.date ? ' • ' : ''}{guide.date}</span>}
+                      {(guide.author || guide.date) && (
+                        <span>
+                          {guide.author ? `By ${guide.author}` : ''}
+                          {guide.author && guide.date ? ' • ' : ''}
+                          {guide.date}
+                        </span>
+                      )}
                     </div>
                   </div>
                 </article>
@@ -187,6 +188,39 @@ export default async function Home() {
         </div>
       </section>
 
+      {/* Explore Section - Destinations (3rd section) */}
+      <section className={`${styles.destinations} section`} style={{ background: 'var(--color-sand)' }}>
+        <div className="container">
+          <div className={styles.sectionHeader}>
+            <div>
+              <span className={styles.sectionLabel}>Explore</span>
+              <h2>Popular Destinations</h2>
+            </div>
+            <Link href="/tanzania" className="btn btn-secondary">View All →</Link>
+          </div>
+          {loading ? (
+            <div style={{ textAlign: 'center', padding: '4rem 0' }}>
+              <p>Loading destinations...</p>
+            </div>
+          ) : destinations.length > 0 ? (
+            <div className={styles.destinationsGrid}>
+              {destinations.map((dest) => (
+                <Link key={dest.slug} href={`/tanzania/${dest.slug}`} className={styles.destinationCard}>
+                  <div className={styles.destinationImage} style={{ backgroundImage: dest.image ? `url(${dest.image})` : 'none', backgroundColor: 'var(--color-sand-dark)' }} />
+                  <div className={styles.destinationInfo}>
+                    <h3>{dest.name}</h3>
+                    {dest.tagline && <p>{dest.tagline}</p>}
+                  </div>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', padding: '4rem 0' }}>
+              <p>No destinations available at this time.</p>
+            </div>
+          )}
+        </div>
+      </section>
     </div>
   );
 }

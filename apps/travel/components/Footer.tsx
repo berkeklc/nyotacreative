@@ -14,9 +14,9 @@ export default function Footer() {
                             <Image
                                 src="/logo-rush-zanzibar.png"
                                 alt="Rush Zanzibar"
-                                width={48}
-                                height={48}
-                                style={{ borderRadius: "50%", objectFit: "cover" }}
+                                width={90}
+                                height={90}
+                                style={{ borderRadius: "50%", objectFit: "cover", boxShadow: "0 4px 20px rgba(0,0,0,0.3)" }}
                             />
                         </Link>
                         <p>

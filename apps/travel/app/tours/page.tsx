@@ -85,96 +85,126 @@ export default async function ToursPage() {
                         margin: '0 auto 3rem',
                         fontWeight: 400
                     }}>
-                        From budget-friendly adventures to luxury safaris, every journey tells a story. 
-                        Whether you're seeking authentic local experiences or world-class comfort, 
+                        From budget-friendly adventures to luxury safaris, every journey tells a story.
+                        Whether you're seeking authentic local experiences or world-class comfort,
                         Tanzania welcomes travelers of all budgets with open arms.
                     </p>
                 </div>
             </section>
 
-            {/* Story Section */}
-            <section style={{ background: 'var(--color-white)', padding: '6rem 0' }}>
-                <div className="container" style={{ maxWidth: '900px', margin: '0 auto', padding: '0 2rem' }}>
-                    <div style={{ textAlign: 'center', marginBottom: '5rem' }}>
-                        <span className={styles.sectionLabel} style={{ marginBottom: '1.5rem', display: 'block' }}>The Story</span>
+            {/* Story Section - Compact Grid */}
+            <section style={{ background: 'linear-gradient(180deg, #faf8f5 0%, #ffffff 100%)', padding: '5rem 0' }}>
+                <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
+
+                    <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
                         <h2 style={{
-                            fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
-                            fontWeight: 900,
+                            fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
+                            fontWeight: 800,
                             color: 'var(--color-charcoal)',
                             lineHeight: 1.2,
-                            marginBottom: '2rem'
+                            marginBottom: '1rem'
                         }}>
                             Every Budget, Every Dream
                         </h2>
                         <p style={{
-                            fontSize: '1.2rem',
-                            lineHeight: '1.8',
+                            fontSize: '1.05rem',
+                            lineHeight: '1.7',
                             color: 'var(--color-slate)',
-                            maxWidth: '700px',
+                            maxWidth: '600px',
                             margin: '0 auto'
                         }}>
-                            Tanzania isn't just a destination—it's a collection of stories waiting to be lived. 
-                            From the backpacker exploring Stone Town's alleys to the luxury traveler watching 
-                            the Great Migration from a private camp, every journey is unique, every experience priceless.
+                            The lions roar the same at dawn—whether you're in a tent or a suite.
+                            Your Tanzania story is yours alone.
                         </p>
                     </div>
 
                     <div style={{
                         display: 'grid',
                         gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                        gap: '2.5rem',
-                        marginTop: '4rem'
+                        gap: '1.5rem'
                     }}>
+
+                        {/* Budget Story */}
                         <div style={{
-                            background: 'linear-gradient(135deg, #fff8f4 0%, #ffe8dd 100%)',
-                            padding: '3rem 2rem',
-                            borderRadius: '1.5rem',
-                            border: '2px solid rgba(192, 90, 62, 0.1)',
-                            textAlign: 'center'
+                            padding: '2rem',
+                            background: '#ffffff',
+                            borderRadius: '1rem',
+                            borderTop: '3px solid #4A9079',
+                            boxShadow: '0 2px 12px rgba(0,0,0,0.04)'
                         }}>
-                            <div style={{ fontSize: '3rem', marginBottom: '1.5rem' }}>🎒</div>
-                            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1rem', color: 'var(--color-charcoal)' }}>
-                                Budget Adventures
-                            </h3>
-                            <p style={{ color: 'var(--color-slate)', lineHeight: 1.7, fontSize: '1rem' }}>
-                                Authentic experiences that don't break the bank. Local guides, shared accommodations, 
-                                and unforgettable memories starting from $50.
+                            <div style={{
+                                fontSize: '0.7rem',
+                                fontWeight: 700,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.12em',
+                                color: '#4A9079',
+                                marginBottom: '0.75rem'
+                            }}>The Backpacker</div>
+                            <p style={{
+                                color: 'var(--color-slate)',
+                                lineHeight: 1.75,
+                                fontSize: '0.95rem',
+                                margin: 0
+                            }}>
+                                Squeezed between locals on a dalla-dalla bus, sharing mangoes with a grandmother,
+                                learning Swahili from kids. By Nungwi Beach, you've made friends for life.
                             </p>
                         </div>
 
+                        {/* Mid-Range Story */}
                         <div style={{
-                            background: 'linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)',
-                            padding: '3rem 2rem',
-                            borderRadius: '1.5rem',
-                            border: '2px solid rgba(59, 130, 246, 0.1)',
-                            textAlign: 'center'
+                            padding: '2rem',
+                            background: '#ffffff',
+                            borderRadius: '1rem',
+                            borderTop: '3px solid var(--color-terracotta)',
+                            boxShadow: '0 2px 12px rgba(0,0,0,0.04)'
                         }}>
-                            <div style={{ fontSize: '3rem', marginBottom: '1.5rem' }}>🌟</div>
-                            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1rem', color: 'var(--color-charcoal)' }}>
-                                Mid-Range Excellence
-                            </h3>
-                            <p style={{ color: 'var(--color-slate)', lineHeight: 1.7, fontSize: '1rem' }}>
-                                Perfect balance of comfort and adventure. Quality lodges, expert guides, 
-                                and curated experiences from $500.
+                            <div style={{
+                                fontSize: '0.7rem',
+                                fontWeight: 700,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.12em',
+                                color: 'var(--color-terracotta)',
+                                marginBottom: '0.75rem'
+                            }}>The Explorer</div>
+                            <p style={{
+                                color: 'var(--color-slate)',
+                                lineHeight: 1.75,
+                                fontSize: '0.95rem',
+                                margin: 0
+                            }}>
+                                Your guide Juma spots the leopard everyone missed. Campfire stories under
+                                stars so thick you forget city lights exist. Coffee with elephants at dawn.
                             </p>
                         </div>
 
+                        {/* Luxury Story */}
                         <div style={{
-                            background: 'linear-gradient(135deg, #fef3c7 0%, #fde68a 100%)',
-                            padding: '3rem 2rem',
-                            borderRadius: '1.5rem',
-                            border: '2px solid rgba(245, 158, 11, 0.2)',
-                            textAlign: 'center'
+                            padding: '2rem',
+                            background: '#ffffff',
+                            borderRadius: '1rem',
+                            borderTop: '3px solid #C4A052',
+                            boxShadow: '0 2px 12px rgba(0,0,0,0.04)'
                         }}>
-                            <div style={{ fontSize: '3rem', marginBottom: '1.5rem' }}>✨</div>
-                            <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1rem', color: 'var(--color-charcoal)' }}>
-                                Luxury Experiences
-                            </h3>
-                            <p style={{ color: 'var(--color-slate)', lineHeight: 1.7, fontSize: '1rem' }}>
-                                World-class service, exclusive access, and unforgettable moments. 
-                                Premium safaris and beach retreats from $2000.
+                            <div style={{
+                                fontSize: '0.7rem',
+                                fontWeight: 700,
+                                textTransform: 'uppercase',
+                                letterSpacing: '0.12em',
+                                color: '#C4A052',
+                                marginBottom: '0.75rem'
+                            }}>The Dreamer</div>
+                            <p style={{
+                                color: 'var(--color-slate)',
+                                lineHeight: 1.75,
+                                fontSize: '0.95rem',
+                                margin: 0
+                            }}>
+                                Private deck overlooking the Serengeti. Butler brings coffee. Time stops.
+                                Your personal guide shows places other tourists never see.
                             </p>
                         </div>
+
                     </div>
                 </div>
             </section>
@@ -263,7 +293,21 @@ export default async function ToursPage() {
                     <div className="container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
                         <div style={{ marginBottom: '4rem' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                                <span style={{ fontSize: '2rem' }}>🎒</span>
+                                <div style={{
+                                    width: '44px',
+                                    height: '44px',
+                                    borderRadius: '12px',
+                                    background: 'linear-gradient(135deg, rgba(74, 144, 121, 0.12) 0%, rgba(74, 144, 121, 0.06) 100%)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4A9079" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                                        <path d="M2 17l10 5 10-5" />
+                                        <path d="M2 12l10 5 10-5" />
+                                    </svg>
+                                </div>
                                 <span className={styles.sectionLabel}>Budget-Friendly</span>
                             </div>
                             <h2 style={{
@@ -281,7 +325,7 @@ export default async function ToursPage() {
                                 maxWidth: '700px',
                                 lineHeight: 1.7
                             }}>
-                                Experience the real Tanzania without breaking the bank. These tours offer incredible value, 
+                                Experience the real Tanzania without breaking the bank. These tours offer incredible value,
                                 connecting you with local culture, stunning landscapes, and unforgettable moments.
                             </p>
                         </div>
@@ -328,7 +372,19 @@ export default async function ToursPage() {
                     <div className="container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
                         <div style={{ marginBottom: '4rem' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                                <span style={{ fontSize: '2rem' }}>🌟</span>
+                                <div style={{
+                                    width: '44px',
+                                    height: '44px',
+                                    borderRadius: '12px',
+                                    background: 'linear-gradient(135deg, rgba(192, 90, 62, 0.12) 0%, rgba(192, 90, 62, 0.06) 100%)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-terracotta)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
+                                    </svg>
+                                </div>
                                 <span className={styles.sectionLabel}>Mid-Range</span>
                             </div>
                             <h2 style={{
@@ -346,7 +402,7 @@ export default async function ToursPage() {
                                 maxWidth: '700px',
                                 lineHeight: 1.7
                             }}>
-                                Comfort meets adventure. Quality accommodations, expert guides, and carefully curated 
+                                Comfort meets adventure. Quality accommodations, expert guides, and carefully curated
                                 experiences that offer the best of both worlds.
                             </p>
                         </div>
@@ -393,7 +449,22 @@ export default async function ToursPage() {
                     <div className="container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
                         <div style={{ marginBottom: '4rem' }}>
                             <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                                <span style={{ fontSize: '2rem' }}>✨</span>
+                                <div style={{
+                                    width: '44px',
+                                    height: '44px',
+                                    borderRadius: '12px',
+                                    background: 'linear-gradient(135deg, rgba(196, 160, 82, 0.12) 0%, rgba(196, 160, 82, 0.06) 100%)',
+                                    display: 'flex',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C4A052" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
+                                        <path d="M2 17l10 5 10-5" />
+                                        <path d="M2 12l10 5 10-5" />
+                                        <circle cx="12" cy="12" r="3" />
+                                    </svg>
+                                </div>
                                 <span className={styles.sectionLabel}>Luxury</span>
                             </div>
                             <h2 style={{
@@ -411,7 +482,7 @@ export default async function ToursPage() {
                                 maxWidth: '700px',
                                 lineHeight: 1.7
                             }}>
-                                World-class service, exclusive access, and moments that define a lifetime. 
+                                World-class service, exclusive access, and moments that define a lifetime.
                                 Premium safaris, private guides, and luxury accommodations await.
                             </p>
                         </div>
