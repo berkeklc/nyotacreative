@@ -10,15 +10,14 @@ export default function Footer() {
             <div className="container">
                 <div className={styles.footerGrid}>
                     <div className={styles.footerBrand}>
-                        <Link href="/" className={styles.logo} style={{ color: 'var(--color-white)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                        <Link href="/" className={styles.logo} style={{ color: 'var(--color-white)', display: 'flex', alignItems: 'center' }}>
                             <Image
                                 src="/logo-rush-zanzibar.png"
                                 alt="Rush Zanzibar"
-                                width={40}
-                                height={40}
+                                width={48}
+                                height={48}
                                 style={{ borderRadius: "50%", objectFit: "cover" }}
                             />
-                            <span>RUSHZANZIBAR</span>
                         </Link>
                         <p>
                             Expert insight into Tanzania's wild heart and Zanzibar's turquoise horizons.

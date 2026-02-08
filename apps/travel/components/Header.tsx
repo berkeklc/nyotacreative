@@ -40,11 +40,10 @@ export default function Header() {
                     <Image
                         src="/logo-rush-zanzibar.png"
                         alt="Rush Zanzibar"
-                        width={44}
-                        height={44}
+                        width={56}
+                        height={56}
                         style={{ borderRadius: "50%", objectFit: "cover" }}
                     />
-                    <span className={styles.logoText}>RUSHZANZIBAR</span>
                 </Link>
 
                 <button
