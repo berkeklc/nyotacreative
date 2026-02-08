@@ -5,7 +5,7 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { MeshDistortMaterial, Sphere, Environment } from "@react-three/drei";
 import * as THREE from "three";
 
-// DVD-style bouncing sphere
+// DVD-style bouncing sphere (no mouse tracking)
 function LiquidSphere() {
     const meshRef = useRef<THREE.Mesh>(null);
     const materialRef = useRef<any>(null);
@@ -13,20 +13,12 @@ function LiquidSphere() {
 
     // Position and velocity for bouncing
     const pos = useRef({ x: 0, y: 0 });
-    const vel = useRef({ x: 0.015, y: 0.012 });
-    const mouse = useRef({ x: 0, y: 0 });
+    // Random initial velocity
+    const vel = useRef({
+        x: (Math.random() * 0.02 + 0.01) * (Math.random() > 0.5 ? 1 : -1),
+        y: (Math.random() * 0.015 + 0.008) * (Math.random() > 0.5 ? 1 : -1)
+    });
     const sphereRadius = 0.8;
-
-    useEffect(() => {
-        const handleMouseMove = (e: MouseEvent) => {
-            mouse.current = {
-                x: (e.clientX / window.innerWidth) * 2 - 1,
-                y: -(e.clientY / window.innerHeight) * 2 + 1,
-            };
-        };
-        window.addEventListener("mousemove", handleMouseMove);
-        return () => window.removeEventListener("mousemove", handleMouseMove);
-    }, []);
 
     useFrame((state) => {
         if (!meshRef.current) return;
@@ -38,20 +30,6 @@ function LiquidSphere() {
         // Update position
         pos.current.x += vel.current.x;
         pos.current.y += vel.current.y;
-
-        // Gentle mouse influence - subtle attraction
-        const mouseForceX = mouse.current.x * 0.001;
-        const mouseForceY = mouse.current.y * 0.0008;
-        vel.current.x += mouseForceX;
-        vel.current.y += mouseForceY;
-
-        // Limit max speed
-        const maxSpeed = 0.025;
-        const speed = Math.sqrt(vel.current.x ** 2 + vel.current.y ** 2);
-        if (speed > maxSpeed) {
-            vel.current.x = (vel.current.x / speed) * maxSpeed;
-            vel.current.y = (vel.current.y / speed) * maxSpeed;
-        }
 
         // Bounce off RIGHT wall
         if (pos.current.x >= boundX) {
@@ -78,14 +56,13 @@ function LiquidSphere() {
         meshRef.current.position.x = pos.current.x;
         meshRef.current.position.y = pos.current.y;
 
-        // Rotation based on movement
-        meshRef.current.rotation.x += vel.current.y * 0.5;
-        meshRef.current.rotation.y += vel.current.x * 0.5;
+        // Smooth rotation
+        meshRef.current.rotation.x += 0.003;
+        meshRef.current.rotation.y += 0.004;
 
-        // Distortion based on speed
+        // Subtle distortion animation
         if (materialRef.current) {
-            const currentSpeed = Math.sqrt(vel.current.x ** 2 + vel.current.y ** 2);
-            materialRef.current.distort = 0.25 + currentSpeed * 3 + Math.sin(state.clock.elapsedTime * 0.5) * 0.05;
+            materialRef.current.distort = 0.3 + Math.sin(state.clock.elapsedTime * 0.8) * 0.1;
         }
     });
 
