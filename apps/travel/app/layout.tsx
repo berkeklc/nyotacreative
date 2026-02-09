@@ -60,6 +60,8 @@ import Footer from "../components/Footer";
 import ScrollToTop from "../components/ScrollToTop";
 import WhatsAppButton from "../components/WhatsAppButton";
 
+import { GoogleAnalytics } from "@next/third-parties/google";
+
 export default function RootLayout({
   children,
 }: {
@@ -73,6 +75,7 @@ export default function RootLayout({
         <Footer />
         <ScrollToTop />
         <WhatsAppButton />
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ""} />
       </body>
     </html>
   );
