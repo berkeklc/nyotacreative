@@ -84,6 +84,19 @@ export default function RootLayout({
           }}
         />
         <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-QEZ9QQWVQK"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-QEZ9QQWVQK');
+          `}
+        </Script>
+        <Script
           id="json-ld-org"
           type="application/ld+json"
           dangerouslySetInnerHTML={{
