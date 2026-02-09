@@ -36,7 +36,6 @@ export const metadata: Metadata = {
   },
 };
 
-import { GoogleAnalytics } from "@next/third-parties/google";
 import Script from "next/script";
 
 export default function RootLayout({
@@ -69,7 +68,19 @@ export default function RootLayout({
         {children}
         <ScrollToTop />
         <WhatsAppButton />
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID || ""} />
+        <Script
+          src="https://www.googletagmanager.com/gtag/js?id=G-4JQE9PKYDE"
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-4JQE9PKYDE');
+          `}
+        </Script>
       </body>
     </html>
   );
