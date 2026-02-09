@@ -37,6 +37,7 @@ export const metadata: Metadata = {
 };
 
 import { GoogleAnalytics } from "@next/third-parties/google";
+import Script from "next/script";
 
 export default function RootLayout({
   children,
@@ -45,6 +46,25 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+      <head>
+        <Script
+          id="json-ld-agency"
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ProfessionalService",
+              "name": "Nyota Creative",
+              "url": "https://nyotacreative.com",
+              "description": "Premium Creative & Software Agency in Tanzania",
+              "address": {
+                "@type": "PostalAddress",
+                "addressCountry": "TZ"
+              }
+            })
+          }}
+        />
+      </head>
       <body>
         {children}
         <ScrollToTop />
