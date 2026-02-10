@@ -1,594 +1,315 @@
 import Link from "next/link";
-import styles from "../page.module.css";
+import styles from "./tours.module.css";
 import { fetchAPI, getStrapiMedia } from "../../lib/strapi";
+import TourPlannerForm from "../../components/TourPlannerForm";
 
 export const metadata = {
     title: "Tours & Experiences | RushZanzibar",
-    description: "Book unforgettable safaris, beach getaways, and cultural tours in Tanzania and Zanzibar.",
+    description:
+        "Browse Tanzania and Zanzibar tours, chat instantly on WhatsApp, or submit one quick form for a custom itinerary.",
 };
 
+const WHATSAPP_PHONE = "255794094733";
+const WHATSAPP_TEXT = encodeURIComponent("Hi RushZanzibar, I need help choosing the right tour plan.");
+
+interface TourCardData {
+    title: string;
+    slug: string;
+    duration: string;
+    price: number;
+    image: string | null;
+    city: string;
+    difficulty: string;
+    featured: boolean;
+    description: string;
+}
+
+function toText(value: unknown) {
+    if (typeof value !== "string") return "";
+    return value.trim();
+}
+
+function stripHtml(value: string) {
+    return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function toSnippet(description: string) {
+    const text = stripHtml(description);
+    if (!text) return "Curated by local experts with flexible pacing and personalized planning support.";
+    return `${text.slice(0, 96)}${text.length > 96 ? "..." : ""}`;
+}
+
+function parseDurationDays(duration: string) {
+    const numeric = duration.match(/(\d+(?:\.\d+)?)/);
+    if (!numeric) return null;
+    const value = Number(numeric[1]);
+    if (Number.isNaN(value)) return null;
+    const lower = duration.toLowerCase();
+    if (lower.includes("hour") || lower.includes("min")) return null;
+    return value;
+}
+
+function formatPrice(value: number) {
+    return `$${value.toLocaleString("en-US")}`;
+}
+
 export default async function ToursPage() {
-    const toursRes = await fetchAPI("/tours", {
-        populate: ["heroImage", "city"],
-        pagination: { limit: 50 }
-    });
+    let toursRes: { data?: unknown; error?: unknown } | null = null;
+    try {
+        const response = await fetchAPI("/tours", {
+            populate: ["heroImage", "city"],
+            pagination: { limit: 100 },
+            sort: ["featured:desc", "priceAdult:asc", "name:asc"],
+        });
+        toursRes = response as { data?: unknown; error?: unknown };
+    } catch (error) {
+        console.error("Tours page fetch failure:", error);
+        toursRes = { data: [], error: "fetch_failed" };
+    }
 
-    const cmsTours = toursRes?.data || [];
+    const rawTours: Record<string, unknown>[] = Array.isArray(toursRes?.data) ? toursRes.data : [];
+    const hasFetchError = Boolean(toursRes?.error);
 
-    const displayTours = cmsTours.map((t: any) => ({
-        title: t.name || "",
-        slug: t.slug || "",
-        duration: t.duration || "",
-        price: t.priceAdult || 0,
-        image: getStrapiMedia(t.heroImage?.url),
-        city: t.city?.name || "",
-        difficulty: t.difficulty || "",
-        featured: t.featured || false
-    }));
+    const tours: TourCardData[] = rawTours
+        .map((item): TourCardData | null => {
+            const title = toText(item.name);
+            const slug = toText(item.slug);
+            if (!title || !slug) return null;
 
-    // Categorize tours by budget
-    const categorizeByBudget = (tours: any[]) => {
-        return {
-            budget: tours.filter(t => t.price > 0 && t.price < 500),
-            midrange: tours.filter(t => t.price >= 500 && t.price < 2000),
-            luxury: tours.filter(t => t.price >= 2000),
-            featured: tours.filter(t => t.featured)
-        };
-    };
+            const description = toText(item.description);
+            const city = (item.city as { name?: string } | undefined)?.name || "";
+            const heroImage = item.heroImage as { url?: string } | undefined;
 
-    const budgetCategories = categorizeByBudget(displayTours);
-    const allTours = displayTours;
+            return {
+                title,
+                slug,
+                duration: toText(item.duration),
+                price: Number(item.priceAdult || 0),
+                image: getStrapiMedia(heroImage?.url),
+                city: toText(city),
+                difficulty: toText(item.difficulty),
+                featured: Boolean(item.featured),
+                description,
+            };
+        })
+        .filter((tour): tour is TourCardData => tour !== null);
+
+    const plannerOptions = tours.map((tour) => ({ slug: tour.slug, title: tour.title }));
+
+    const featuredCount = tours.filter((tour) => tour.featured).length;
+    const pricedTours = tours.filter((tour) => tour.price > 0);
+    const minimumPrice = pricedTours.length ? Math.min(...pricedTours.map((tour) => tour.price)) : null;
+
+    const durations = tours
+        .map((tour) => parseDurationDays(tour.duration))
+        .filter((value): value is number => value !== null);
+    const avgDays = durations.length
+        ? `${(durations.reduce((sum, value) => sum + value, 0) / durations.length).toFixed(1)} days`
+        : "Flexible";
+
+    const topCities = tours
+        .map((tour) => tour.city)
+        .filter((city): city is string => Boolean(city))
+        .reduce<Record<string, number>>((acc, city) => {
+            acc[city] = (acc[city] || 0) + 1;
+            return acc;
+        }, {});
+
+    const strongestCity =
+        Object.entries(topCities)
+            .sort((a, b) => b[1] - a[1])
+            .map(([city]) => city)[0] || "Tanzania";
 
     return (
         <div className={styles.page}>
-            {/* Hero Section */}
-            <section style={{
-                minHeight: "75vh",
-                background: 'linear-gradient(135deg, var(--color-charcoal) 0%, #1a1a1a 100%)',
-                position: 'relative',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                padding: '6rem 2rem',
-                overflow: 'hidden'
-            }}>
-                <div style={{
-                    position: 'absolute',
-                    inset: 0,
-                    background: 'radial-gradient(circle at 30% 50%, rgba(192, 90, 62, 0.15) 0%, transparent 50%)',
-                    zIndex: 1
-                }} />
-                <div className="container" style={{ position: 'relative', zIndex: 2, maxWidth: '1000px', textAlign: 'center' }}>
-                    <span className={styles.sectionLabel} style={{
-                        color: 'rgba(255,255,255,0.8)',
-                        marginBottom: '2rem',
-                        display: 'block'
-                    }}>Your Journey Awaits</span>
-                    <h1 style={{
-                        fontSize: 'clamp(3rem, 8vw, 5.5rem)',
-                        fontWeight: 900,
-                        lineHeight: 1.1,
-                        color: '#ffffff',
-                        marginBottom: '2rem',
-                        letterSpacing: '-0.02em',
-                        textShadow: '0 4px 20px rgba(0,0,0,0.3)'
-                    }}>
-                        Discover Tanzania
-                        <br />
-                        <span style={{ color: 'var(--color-terracotta)' }}>Your Way</span>
-                    </h1>
-                    <p style={{
-                        fontSize: 'clamp(1.1rem, 2vw, 1.4rem)',
-                        color: 'rgba(255,255,255,0.9)',
-                        lineHeight: 1.7,
-                        maxWidth: '700px',
-                        margin: '0 auto 3rem',
-                        fontWeight: 400
-                    }}>
-                        From budget-friendly adventures to luxury safaris, every journey tells a story.
-                        Whether you're seeking authentic local experiences or world-class comfort,
-                        Tanzania welcomes travelers of all budgets with open arms.
+            <section className={styles.hero}>
+                <div className={styles.heroGlow} />
+                <div className={`container ${styles.heroInner}`}>
+                    <span className={styles.heroBadge}>Tour Planner 2026</span>
+                    <h1>Find The Right Tour Fast, Then Book In Minutes</h1>
+                    <p>
+                        No complex category maze. Compare the best active routes, chat instantly on WhatsApp, or fill one
+                        short form and get your custom itinerary from our advisors.
                     </p>
-                </div>
-            </section>
-
-            {/* Story Section - Compact Grid */}
-            <section style={{ background: 'linear-gradient(180deg, #faf8f5 0%, #ffffff 100%)', padding: '5rem 0' }}>
-                <div className="container" style={{ maxWidth: '1200px', margin: '0 auto', padding: '0 2rem' }}>
-
-                    <div style={{ textAlign: 'center', marginBottom: '3rem' }}>
-                        <h2 style={{
-                            fontSize: 'clamp(1.75rem, 4vw, 2.5rem)',
-                            fontWeight: 800,
-                            color: 'var(--color-charcoal)',
-                            lineHeight: 1.2,
-                            marginBottom: '1rem'
-                        }}>
-                            Every Budget, Every Dream
-                        </h2>
-                        <p style={{
-                            fontSize: '1.05rem',
-                            lineHeight: '1.7',
-                            color: 'var(--color-slate)',
-                            maxWidth: '600px',
-                            margin: '0 auto'
-                        }}>
-                            The lions roar the same at dawn—whether you're in a tent or a suite.
-                            Your Tanzania story is yours alone.
-                        </p>
+                    <div className={styles.heroActions}>
+                        <a
+                            href={`https://wa.me/${WHATSAPP_PHONE}?text=${WHATSAPP_TEXT}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.whatsAppHeroBtn}
+                        >
+                            WhatsApp Now
+                        </a>
+                        <a href="#tour-planner" className={`${styles.quickPlannerBtn} btn btn-primary`}>
+                            Open Quick Planner
+                        </a>
+                        <Link href="/contact" className={`${styles.advisorBtn} btn btn-secondary`}>
+                            Talk To Advisor
+                        </Link>
                     </div>
-
-                    <div style={{
-                        display: 'grid',
-                        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-                        gap: '1.5rem'
-                    }}>
-
-                        {/* Budget Story */}
-                        <div style={{
-                            padding: '2rem',
-                            background: '#ffffff',
-                            borderRadius: '1rem',
-                            borderTop: '3px solid #4A9079',
-                            boxShadow: '0 2px 12px rgba(0,0,0,0.04)'
-                        }}>
-                            <div style={{
-                                fontSize: '0.7rem',
-                                fontWeight: 700,
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.12em',
-                                color: '#4A9079',
-                                marginBottom: '0.75rem'
-                            }}>The Backpacker</div>
-                            <p style={{
-                                color: 'var(--color-slate)',
-                                lineHeight: 1.75,
-                                fontSize: '0.95rem',
-                                margin: 0
-                            }}>
-                                Squeezed between locals on a dalla-dalla bus, sharing mangoes with a grandmother,
-                                learning Swahili from kids. By Nungwi Beach, you've made friends for life.
-                            </p>
-                        </div>
-
-                        {/* Mid-Range Story */}
-                        <div style={{
-                            padding: '2rem',
-                            background: '#ffffff',
-                            borderRadius: '1rem',
-                            borderTop: '3px solid var(--color-terracotta)',
-                            boxShadow: '0 2px 12px rgba(0,0,0,0.04)'
-                        }}>
-                            <div style={{
-                                fontSize: '0.7rem',
-                                fontWeight: 700,
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.12em',
-                                color: 'var(--color-terracotta)',
-                                marginBottom: '0.75rem'
-                            }}>The Explorer</div>
-                            <p style={{
-                                color: 'var(--color-slate)',
-                                lineHeight: 1.75,
-                                fontSize: '0.95rem',
-                                margin: 0
-                            }}>
-                                Your guide Juma spots the leopard everyone missed. Campfire stories under
-                                stars so thick you forget city lights exist. Coffee with elephants at dawn.
-                            </p>
-                        </div>
-
-                        {/* Luxury Story */}
-                        <div style={{
-                            padding: '2rem',
-                            background: '#ffffff',
-                            borderRadius: '1rem',
-                            borderTop: '3px solid #C4A052',
-                            boxShadow: '0 2px 12px rgba(0,0,0,0.04)'
-                        }}>
-                            <div style={{
-                                fontSize: '0.7rem',
-                                fontWeight: 700,
-                                textTransform: 'uppercase',
-                                letterSpacing: '0.12em',
-                                color: '#C4A052',
-                                marginBottom: '0.75rem'
-                            }}>The Dreamer</div>
-                            <p style={{
-                                color: 'var(--color-slate)',
-                                lineHeight: 1.75,
-                                fontSize: '0.95rem',
-                                margin: 0
-                            }}>
-                                Private deck overlooking the Serengeti. Butler brings coffee. Time stops.
-                                Your personal guide shows places other tourists never see.
-                            </p>
-                        </div>
-
+                    <div className={styles.heroHint}>
+                        <span>Response in under 24h</span>
+                        <span>Local ground team in Tanzania</span>
+                        <span>Custom private and group plans</span>
+                    </div>
+                    <div className={styles.heroStatStrip}>
+                        <article>
+                            <span>Live Tours</span>
+                            <strong>{tours.length}</strong>
+                        </article>
+                        <article>
+                            <span>Featured</span>
+                            <strong>{featuredCount}</strong>
+                        </article>
+                        <article>
+                            <span>Starting From</span>
+                            <strong>{minimumPrice ? formatPrice(minimumPrice) : "Custom"}</strong>
+                        </article>
                     </div>
                 </div>
             </section>
 
-            {/* Featured Tours */}
-            {budgetCategories.featured.length > 0 && (
-                <section style={{ background: 'var(--color-sand)', padding: '6rem 0' }}>
-                    <div className="container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
-                        <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                            <span className={styles.sectionLabel} style={{ marginBottom: '1.5rem', display: 'block' }}>Editor's Choice</span>
-                            <h2 style={{
-                                fontSize: 'clamp(2.5rem, 5vw, 3.5rem)',
-                                fontWeight: 900,
-                                color: 'var(--color-charcoal)',
-                                lineHeight: 1.2
-                            }}>
-                                Signature Experiences
-                            </h2>
-                            <p style={{
-                                fontSize: '1.1rem',
-                                color: 'var(--color-slate)',
-                                marginTop: '1rem',
-                                maxWidth: '600px',
-                                margin: '1rem auto 0'
-                            }}>
-                                Our most recommended tours, handpicked by local experts
+            <section className={styles.mainSection}>
+                <div className={`container ${styles.layout}`}>
+                    <aside id="tour-planner" className={styles.plannerPanel}>
+                        <div className={styles.plannerHead}>
+                            <span>Quick Inquiry</span>
+                            <h2>Plan My Tour</h2>
+                            <p>
+                                Fill this once. We will align route, dates, and budget quickly, then send your final
+                                recommendation.
                             </p>
                         </div>
-                        <div className={styles.toursGrid} style={{
-                            gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-                            gap: '2.5rem'
-                        }}>
-                            {budgetCategories.featured.map((tour: any) => (
-                                <Link href={`/tours/${tour.slug}`} key={tour.slug} className={`${styles.tourCard} card`} style={{
-                                    position: 'relative',
-                                    border: '2px solid var(--color-terracotta)'
-                                }}>
-                                    <div style={{
-                                        position: 'absolute',
-                                        top: '1rem',
-                                        right: '1rem',
-                                        background: 'var(--color-terracotta)',
-                                        color: 'white',
-                                        padding: '0.4rem 1rem',
-                                        borderRadius: '50px',
-                                        fontSize: '0.75rem',
-                                        fontWeight: 700,
-                                        zIndex: 2,
-                                        textTransform: 'uppercase',
-                                        letterSpacing: '0.05em'
-                                    }}>Featured</div>
-                                    <div
-                                        className={styles.tourImage}
-                                        style={{
-                                            backgroundImage: tour.image ? `url(${tour.image})` : undefined,
-                                            backgroundColor: tour.image ? undefined : 'var(--color-sand-dark)',
-                                            height: '240px'
-                                        }}
-                                    />
-                                    <div className={styles.tourContent} style={{ padding: '2rem' }}>
-                                        <div className={styles.tourMeta} style={{ marginBottom: '1rem' }}>
-                                            {tour.duration && <span style={{ fontSize: '0.8rem' }}>⏱️ {tour.duration}</span>}
-                                            {tour.city && <span style={{ color: 'var(--color-terracotta)', fontWeight: 700, fontSize: '0.8rem' }}>{tour.city}</span>}
-                                        </div>
-                                        <h3 style={{ fontSize: '1.5rem', fontWeight: 800, marginBottom: '1rem', lineHeight: 1.3 }}>{tour.title}</h3>
-                                        <div className={styles.tourFooter}>
-                                            {tour.price > 0 && (
-                                                <div>
-                                                    <span style={{ fontSize: '0.85rem', color: 'var(--color-slate)' }}>From </span>
-                                                    <strong style={{ fontSize: '1.5rem', color: 'var(--color-terracotta)', fontWeight: 800 }}>${tour.price}</strong>
-                                                </div>
-                                            )}
-                                            <span className="btn btn-accent btn-sm">Explore</span>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-            )}
 
-            {/* Budget Tours */}
-            {budgetCategories.budget.length > 0 && (
-                <section style={{ background: 'var(--color-white)', padding: '6rem 0' }}>
-                    <div className="container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
-                        <div style={{ marginBottom: '4rem' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                                <div style={{
-                                    width: '44px',
-                                    height: '44px',
-                                    borderRadius: '12px',
-                                    background: 'linear-gradient(135deg, rgba(74, 144, 121, 0.12) 0%, rgba(74, 144, 121, 0.06) 100%)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}>
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#4A9079" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                                        <path d="M2 17l10 5 10-5" />
-                                        <path d="M2 12l10 5 10-5" />
-                                    </svg>
-                                </div>
-                                <span className={styles.sectionLabel}>Budget-Friendly</span>
+                        <a
+                            href={`https://wa.me/${WHATSAPP_PHONE}?text=${WHATSAPP_TEXT}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={styles.plannerWhatsApp}
+                        >
+                            <span className={styles.plannerWhatsAppIcon}>WA</span>
+                            <span className={styles.plannerWhatsAppText}>
+                                <strong>Need instant help?</strong>
+                                <span>Tap here for live WhatsApp support.</span>
+                            </span>
+                        </a>
+
+                        <div className={styles.plannerBody}>
+                            <TourPlannerForm tourOptions={plannerOptions} />
+                        </div>
+                    </aside>
+
+                    <div className={styles.listPanel}>
+                        <div className={styles.listHeader}>
+                            <div>
+                                <h2>Active Tours</h2>
+                                <p>
+                                    Featured routes are prioritized first, then all available tours sorted for faster
+                                    scanning.
+                                </p>
+                                {hasFetchError && (
+                                    <p className={styles.dataWarning}>
+                                        Live tour feed is temporarily unstable. If a tour looks missing, use WhatsApp for
+                                        instant manual options.
+                                    </p>
+                                )}
                             </div>
-                            <h2 style={{
-                                fontSize: 'clamp(2rem, 4vw, 3rem)',
-                                fontWeight: 900,
-                                color: 'var(--color-charcoal)',
-                                lineHeight: 1.2,
-                                marginBottom: '1rem'
-                            }}>
-                                Authentic Adventures
-                            </h2>
-                            <p style={{
-                                fontSize: '1.1rem',
-                                color: 'var(--color-slate)',
-                                maxWidth: '700px',
-                                lineHeight: 1.7
-                            }}>
-                                Experience the real Tanzania without breaking the bank. These tours offer incredible value,
-                                connecting you with local culture, stunning landscapes, and unforgettable moments.
-                            </p>
+                            <Link href="/contact" className={`${styles.helpChoosingBtn} btn btn-accent`}>
+                                Need Help Choosing?
+                            </Link>
                         </div>
-                        <div className={styles.toursGrid} style={{
-                            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-                            gap: '2.5rem'
-                        }}>
-                            {budgetCategories.budget.map((tour: any) => (
-                                <Link href={`/tours/${tour.slug}`} key={tour.slug} className={`${styles.tourCard} card`}>
-                                    <div
-                                        className={styles.tourImage}
-                                        style={{
-                                            backgroundImage: tour.image ? `url(${tour.image})` : undefined,
-                                            backgroundColor: tour.image ? undefined : 'var(--color-sand-dark)',
-                                            height: '220px'
-                                        }}
-                                    />
-                                    <div className={styles.tourContent} style={{ padding: '2rem' }}>
-                                        <div className={styles.tourMeta} style={{ marginBottom: '0.75rem' }}>
-                                            {tour.duration && <span style={{ fontSize: '0.8rem' }}>⏱️ {tour.duration}</span>}
-                                            {tour.city && <span style={{ color: 'var(--color-terracotta)', fontWeight: 700, fontSize: '0.8rem' }}>{tour.city}</span>}
-                                        </div>
-                                        <h3 style={{ fontSize: '1.35rem', fontWeight: 800, marginBottom: '1rem', lineHeight: 1.3 }}>{tour.title}</h3>
-                                        <div className={styles.tourFooter}>
-                                            {tour.price > 0 && (
-                                                <div>
-                                                    <span style={{ fontSize: '0.85rem', color: 'var(--color-slate)' }}>From </span>
-                                                    <strong style={{ fontSize: '1.4rem', color: 'var(--color-terracotta)', fontWeight: 800 }}>${tour.price}</strong>
-                                                </div>
-                                            )}
-                                            <span className="btn btn-accent btn-sm">Explore</span>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-            )}
 
-            {/* Mid-Range Tours */}
-            {budgetCategories.midrange.length > 0 && (
-                <section style={{ background: 'var(--color-sand)', padding: '6rem 0' }}>
-                    <div className="container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
-                        <div style={{ marginBottom: '4rem' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                                <div style={{
-                                    width: '44px',
-                                    height: '44px',
-                                    borderRadius: '12px',
-                                    background: 'linear-gradient(135deg, rgba(192, 90, 62, 0.12) 0%, rgba(192, 90, 62, 0.06) 100%)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}>
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-terracotta)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2" />
-                                    </svg>
-                                </div>
-                                <span className={styles.sectionLabel}>Mid-Range</span>
+                        <div className={styles.statsRow}>
+                            <article className={styles.statCard}>
+                                <span>Total Tours</span>
+                                <strong>{tours.length}</strong>
+                            </article>
+                            <article className={styles.statCard}>
+                                <span>Featured</span>
+                                <strong>{featuredCount}</strong>
+                            </article>
+                            <article className={styles.statCard}>
+                                <span>From</span>
+                                <strong>{minimumPrice ? formatPrice(minimumPrice) : "Custom"}</strong>
+                            </article>
+                            <article className={styles.statCard}>
+                                <span>Strongest Hub</span>
+                                <strong>{strongestCity}</strong>
+                            </article>
+                        </div>
+
+                        <div className={styles.flowRow}>
+                            <article className={styles.flowCard}>
+                                <span>1</span>
+                                <strong>Pick A Route</strong>
+                                <p>Compare current tours quickly by duration, city, and starting budget.</p>
+                            </article>
+                            <article className={styles.flowCard}>
+                                <span>2</span>
+                                <strong>Send One Form</strong>
+                                <p>Share dates, travelers, and contact preference once. We handle the rest.</p>
+                            </article>
+                            <article className={styles.flowCard}>
+                                <span>3</span>
+                                <strong>Confirm On WhatsApp</strong>
+                                <p>Receive your final routing and operational details via your chosen channel.</p>
+                            </article>
+                        </div>
+
+                        {tours.length > 0 ? (
+                            <div className={styles.toursGrid}>
+                                {tours.map((tour) => (
+                                    <article key={tour.slug} className={styles.tourCard}>
+                                        <Link href={`/tours/${tour.slug}`}>
+                                            <div
+                                                className={styles.tourImage}
+                                                style={{
+                                                    backgroundImage: tour.image ? `url(${tour.image})` : undefined,
+                                                    backgroundColor: tour.image ? undefined : "var(--color-sand-dark)",
+                                                }}
+                                            >
+                                                {tour.featured && <span className={styles.tourBadge}>Featured</span>}
+                                            </div>
+                                        </Link>
+
+                                        <div className={styles.tourBody}>
+                                            <div className={styles.tourMeta}>
+                                                <span>{tour.duration || avgDays}</span>
+                                                {tour.city && <span className={styles.tourCity}>{tour.city}</span>}
+                                            </div>
+                                            <h3>
+                                                <Link href={`/tours/${tour.slug}`}>{tour.title}</Link>
+                                            </h3>
+                                            <p>{toSnippet(tour.description)}</p>
+                                            <div className={styles.tourFooter}>
+                                                <span className={styles.tourPrice}>
+                                                    From <strong>{tour.price > 0 ? formatPrice(tour.price) : "Custom"}</strong>
+                                                </span>
+                                                <Link href={`/tours/${tour.slug}`} className={styles.tourDetailBtn}>
+                                                    View Details
+                                                </Link>
+                                            </div>
+                                        </div>
+                                    </article>
+                                ))}
                             </div>
-                            <h2 style={{
-                                fontSize: 'clamp(2rem, 4vw, 3rem)',
-                                fontWeight: 900,
-                                color: 'var(--color-charcoal)',
-                                lineHeight: 1.2,
-                                marginBottom: '1rem'
-                            }}>
-                                Perfect Balance
-                            </h2>
-                            <p style={{
-                                fontSize: '1.1rem',
-                                color: 'var(--color-slate)',
-                                maxWidth: '700px',
-                                lineHeight: 1.7
-                            }}>
-                                Comfort meets adventure. Quality accommodations, expert guides, and carefully curated
-                                experiences that offer the best of both worlds.
-                            </p>
-                        </div>
-                        <div className={styles.toursGrid} style={{
-                            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-                            gap: '2.5rem'
-                        }}>
-                            {budgetCategories.midrange.map((tour: any) => (
-                                <Link href={`/tours/${tour.slug}`} key={tour.slug} className={`${styles.tourCard} card`}>
-                                    <div
-                                        className={styles.tourImage}
-                                        style={{
-                                            backgroundImage: tour.image ? `url(${tour.image})` : undefined,
-                                            backgroundColor: tour.image ? undefined : 'var(--color-sand-dark)',
-                                            height: '220px'
-                                        }}
-                                    />
-                                    <div className={styles.tourContent} style={{ padding: '2rem' }}>
-                                        <div className={styles.tourMeta} style={{ marginBottom: '0.75rem' }}>
-                                            {tour.duration && <span style={{ fontSize: '0.8rem' }}>⏱️ {tour.duration}</span>}
-                                            {tour.city && <span style={{ color: 'var(--color-terracotta)', fontWeight: 700, fontSize: '0.8rem' }}>{tour.city}</span>}
-                                        </div>
-                                        <h3 style={{ fontSize: '1.35rem', fontWeight: 800, marginBottom: '1rem', lineHeight: 1.3 }}>{tour.title}</h3>
-                                        <div className={styles.tourFooter}>
-                                            {tour.price > 0 && (
-                                                <div>
-                                                    <span style={{ fontSize: '0.85rem', color: 'var(--color-slate)' }}>From </span>
-                                                    <strong style={{ fontSize: '1.4rem', color: 'var(--color-terracotta)', fontWeight: 800 }}>${tour.price}</strong>
-                                                </div>
-                                            )}
-                                            <span className="btn btn-accent btn-sm">Explore</span>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-            )}
-
-            {/* Luxury Tours */}
-            {budgetCategories.luxury.length > 0 && (
-                <section style={{ background: 'var(--color-white)', padding: '6rem 0' }}>
-                    <div className="container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
-                        <div style={{ marginBottom: '4rem' }}>
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
-                                <div style={{
-                                    width: '44px',
-                                    height: '44px',
-                                    borderRadius: '12px',
-                                    background: 'linear-gradient(135deg, rgba(196, 160, 82, 0.12) 0%, rgba(196, 160, 82, 0.06) 100%)',
-                                    display: 'flex',
-                                    alignItems: 'center',
-                                    justifyContent: 'center'
-                                }}>
-                                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#C4A052" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                        <path d="M12 2L2 7l10 5 10-5-10-5z" />
-                                        <path d="M2 17l10 5 10-5" />
-                                        <path d="M2 12l10 5 10-5" />
-                                        <circle cx="12" cy="12" r="3" />
-                                    </svg>
-                                </div>
-                                <span className={styles.sectionLabel}>Luxury</span>
+                        ) : (
+                            <div className={styles.empty}>
+                                <h3>Tours are being refreshed</h3>
+                                <p>Use WhatsApp and we will send live options manually right away.</p>
+                                <a
+                                    href={`https://wa.me/${WHATSAPP_PHONE}?text=${WHATSAPP_TEXT}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.whatsAppHeroBtn}
+                                >
+                                    Chat On WhatsApp
+                                </a>
                             </div>
-                            <h2 style={{
-                                fontSize: 'clamp(2rem, 4vw, 3rem)',
-                                fontWeight: 900,
-                                color: 'var(--color-charcoal)',
-                                lineHeight: 1.2,
-                                marginBottom: '1rem'
-                            }}>
-                                Unforgettable Excellence
-                            </h2>
-                            <p style={{
-                                fontSize: '1.1rem',
-                                color: 'var(--color-slate)',
-                                maxWidth: '700px',
-                                lineHeight: 1.7
-                            }}>
-                                World-class service, exclusive access, and moments that define a lifetime.
-                                Premium safaris, private guides, and luxury accommodations await.
-                            </p>
-                        </div>
-                        <div className={styles.toursGrid} style={{
-                            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-                            gap: '2.5rem'
-                        }}>
-                            {budgetCategories.luxury.map((tour: any) => (
-                                <Link href={`/tours/${tour.slug}`} key={tour.slug} className={`${styles.tourCard} card`}>
-                                    <div
-                                        className={styles.tourImage}
-                                        style={{
-                                            backgroundImage: tour.image ? `url(${tour.image})` : undefined,
-                                            backgroundColor: tour.image ? undefined : 'var(--color-sand-dark)',
-                                            height: '220px'
-                                        }}
-                                    />
-                                    <div className={styles.tourContent} style={{ padding: '2rem' }}>
-                                        <div className={styles.tourMeta} style={{ marginBottom: '0.75rem' }}>
-                                            {tour.duration && <span style={{ fontSize: '0.8rem' }}>⏱️ {tour.duration}</span>}
-                                            {tour.city && <span style={{ color: 'var(--color-terracotta)', fontWeight: 700, fontSize: '0.8rem' }}>{tour.city}</span>}
-                                        </div>
-                                        <h3 style={{ fontSize: '1.35rem', fontWeight: 800, marginBottom: '1rem', lineHeight: 1.3 }}>{tour.title}</h3>
-                                        <div className={styles.tourFooter}>
-                                            {tour.price > 0 && (
-                                                <div>
-                                                    <span style={{ fontSize: '0.85rem', color: 'var(--color-slate)' }}>From </span>
-                                                    <strong style={{ fontSize: '1.4rem', color: 'var(--color-terracotta)', fontWeight: 800 }}>${tour.price}</strong>
-                                                </div>
-                                            )}
-                                            <span className="btn btn-accent btn-sm">Explore</span>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
+                        )}
                     </div>
-                </section>
-            )}
-
-            {/* All Tours Fallback */}
-            {allTours.length > 0 && budgetCategories.featured.length === 0 && budgetCategories.budget.length === 0 && budgetCategories.midrange.length === 0 && budgetCategories.luxury.length === 0 && (
-                <section style={{ background: 'var(--color-sand)', padding: '6rem 0' }}>
-                    <div className="container" style={{ maxWidth: '1400px', margin: '0 auto', padding: '0 2rem' }}>
-                        <div style={{ textAlign: 'center', marginBottom: '4rem' }}>
-                            <span className={styles.sectionLabel} style={{ marginBottom: '1.5rem', display: 'block' }}>Discover</span>
-                            <h2 style={{
-                                fontSize: 'clamp(2rem, 4vw, 3rem)',
-                                fontWeight: 900,
-                                color: 'var(--color-charcoal)',
-                                lineHeight: 1.2
-                            }}>
-                                All Adventures
-                            </h2>
-                        </div>
-                        <div className={styles.toursGrid} style={{
-                            gridTemplateColumns: 'repeat(auto-fill, minmax(340px, 1fr))',
-                            gap: '2.5rem'
-                        }}>
-                            {allTours.map((tour: any) => (
-                                <Link href={`/tours/${tour.slug}`} key={tour.slug} className={`${styles.tourCard} card`}>
-                                    <div
-                                        className={styles.tourImage}
-                                        style={{
-                                            backgroundImage: tour.image ? `url(${tour.image})` : undefined,
-                                            backgroundColor: tour.image ? undefined : 'var(--color-sand-dark)',
-                                            height: '220px'
-                                        }}
-                                    />
-                                    <div className={styles.tourContent} style={{ padding: '2rem' }}>
-                                        <div className={styles.tourMeta} style={{ marginBottom: '0.75rem' }}>
-                                            {tour.duration && <span style={{ fontSize: '0.8rem' }}>⏱️ {tour.duration}</span>}
-                                            {tour.city && <span style={{ color: 'var(--color-terracotta)', fontWeight: 700, fontSize: '0.8rem' }}>{tour.city}</span>}
-                                        </div>
-                                        <h3 style={{ fontSize: '1.35rem', fontWeight: 800, marginBottom: '1rem', lineHeight: 1.3 }}>{tour.title}</h3>
-                                        <div className={styles.tourFooter}>
-                                            {tour.price > 0 && (
-                                                <div>
-                                                    <span style={{ fontSize: '0.85rem', color: 'var(--color-slate)' }}>From </span>
-                                                    <strong style={{ fontSize: '1.4rem', color: 'var(--color-terracotta)', fontWeight: 800 }}>${tour.price}</strong>
-                                                </div>
-                                            )}
-                                            <span className="btn btn-accent btn-sm">Explore</span>
-                                        </div>
-                                    </div>
-                                </Link>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-            )}
-
-            {/* Empty State */}
-            {allTours.length === 0 && (
-                <section style={{ background: 'var(--color-sand)', padding: '8rem 0' }}>
-                    <div className="container" style={{ textAlign: 'center' }}>
-                        <div style={{ fontSize: '4rem', marginBottom: '2rem' }}>🗺️</div>
-                        <h2 style={{ fontSize: '2rem', fontWeight: 800, marginBottom: '1rem', color: 'var(--color-charcoal)' }}>
-                            Exploring Tanzania
-                        </h2>
-                        <p style={{ fontSize: '1.1rem', color: 'var(--color-slate)', maxWidth: '600px', margin: '0 auto' }}>
-                            We're currently updating our tour offerings. Check back soon for amazing adventures!
-                        </p>
-                    </div>
-                </section>
-            )}
+                </div>
+            </section>
         </div>
     );
 }

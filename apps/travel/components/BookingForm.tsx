@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import styles from "../app/tours/[slug]/tour.module.css";
 
 export default function BookingForm({ tourTitle, tourSlug }: { tourTitle: string, tourSlug: string }) {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
+        phone: "",
+        contactPreference: "whatsapp",
         date: "",
         travelers: 1,
         message: ""
@@ -29,20 +31,22 @@ export default function BookingForm({ tourTitle, tourSlug }: { tourTitle: string
             });
             if (!response.ok) throw new Error("Booking failed");
             setStatus("success");
-            setFormData({ name: "", email: "", date: "", travelers: 1, message: "" });
+            setFormData({ name: "", email: "", phone: "", contactPreference: "whatsapp", date: "", travelers: 1, message: "" });
         } catch (err) {
             setStatus("error");
             console.error("Booking error:", err);
         }
     };
 
+    const tourLabel = useMemo(() => tourTitle || "this tour", [tourTitle]);
+
     if (status === "success") {
         return (
             <div className={styles.successState}>
                 <div className={styles.successIcon}>✨</div>
                 <h3>Inquiry Sent!</h3>
-                <p>Our travel experts will contact you within 24 hours to finalize your {tourTitle} itinerary.</p>
-                <button onClick={() => setStatus("idle")} className="btn btn-secondary" style={{ marginTop: "2rem", width: "100%" }}>Send Another Request</button>
+                <p>Our travel experts will contact you within 24 hours to finalize your {tourLabel} itinerary.</p>
+                <button onClick={() => setStatus("idle")} className={`btn btn-secondary ${styles.successResetBtn}`}>Send Another Request</button>
             </div>
         );
     }
@@ -56,6 +60,7 @@ export default function BookingForm({ tourTitle, tourSlug }: { tourTitle: string
                     type="text"
                     required
                     placeholder="e.g. John Doe"
+                    autoComplete="name"
                     value={formData.name}
                     onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 />
@@ -67,11 +72,39 @@ export default function BookingForm({ tourTitle, tourSlug }: { tourTitle: string
                     type="email"
                     required
                     placeholder="e.g. john@example.com"
+                    autoComplete="email"
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 />
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+            <div className={styles.formTwoColGrid}>
+                <div className={styles.formGroup}>
+                    <label htmlFor="phone">Phone / WhatsApp</label>
+                    <input
+                        id="phone"
+                        type="tel"
+                        required
+                        placeholder="e.g. +255..."
+                        autoComplete="tel"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                    />
+                </div>
+                <div className={styles.formGroup}>
+                    <label htmlFor="contactPreference">Preferred Contact</label>
+                    <select
+                        id="contactPreference"
+                        required
+                        value={formData.contactPreference}
+                        onChange={(e) => setFormData({ ...formData, contactPreference: e.target.value })}
+                    >
+                        <option value="whatsapp">WhatsApp</option>
+                        <option value="phone">Phone Call</option>
+                        <option value="email">Email</option>
+                    </select>
+                </div>
+            </div>
+            <div className={styles.formTwoColGrid}>
                 <div className={styles.formGroup}>
                     <label htmlFor="date">Travel Date</label>
                     <input
@@ -112,7 +145,7 @@ export default function BookingForm({ tourTitle, tourSlug }: { tourTitle: string
                 {status === "loading" ? "Processing..." : "Request Experience"}
             </button>
             {status === "error" && (
-                <p style={{ color: "red", fontSize: "0.875rem", marginTop: "1rem", textAlign: "center" }}>
+                <p className={styles.inlineError}>
                     Something went wrong. Please try again.
                 </p>
             )}

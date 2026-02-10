@@ -1,7 +1,10 @@
 import qs from "qs";
 
+const DEFAULT_STRAPI_URL = "https://cms-production-219a.up.railway.app";
+
 export function getStrapiURL(path = "") {
-    const baseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://cms-production-219a.up.railway.app";
+    const configuredBaseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL?.trim() || "";
+    const baseUrl = /^https?:\/\//.test(configuredBaseUrl) ? configuredBaseUrl : DEFAULT_STRAPI_URL;
     // Remove trailing slash if present
     const cleanBase = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
     return `${cleanBase}${path}`;
@@ -16,7 +19,7 @@ export function getStrapiMedia(url: string | null | undefined) {
 
 export async function fetchAPI(path: string, urlParamsObject = {}, options = {}) {
     try {
-        const token = process.env.STRAPI_API_TOKEN;
+        const token = process.env.STRAPI_API_TOKEN?.trim();
         if (!token) {
             console.error("STRAPI_API_TOKEN is missing in environment variables!");
         }

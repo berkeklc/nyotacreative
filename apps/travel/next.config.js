@@ -8,6 +8,10 @@ const nextConfig = {
             },
             {
                 protocol: 'https',
+                hostname: 'res.cloudinary.com',
+            },
+            {
+                protocol: 'https',
                 hostname: 'cms-production-219a.up.railway.app',
             }
         ],

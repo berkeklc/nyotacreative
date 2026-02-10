@@ -1,18 +1,78 @@
 import Link from "next/link";
 import Image from "next/image";
+import { notFound } from "next/navigation";
 import styles from "./tour.module.css";
 import { fetchAPI, getStrapiMedia } from "../../../lib/strapi";
-import { notFound } from "next/navigation";
 import BookingForm from "../../../components/BookingForm";
+
+const WHATSAPP_PHONE = "255794094733";
+
+function toText(value: unknown) {
+    if (typeof value !== "string") return "";
+    return value.trim();
+}
+
+function stripHtml(value: string) {
+    return value.replace(/<[^>]*>/g, " ").replace(/\s+/g, " ").trim();
+}
+
+function toSnippet(value: string, max = 160) {
+    if (!value) return "";
+    return `${value.slice(0, max)}${value.length > max ? "..." : ""}`;
+}
+
+function normalizeHighlights(value: unknown) {
+    if (!Array.isArray(value)) return [] as string[];
+    return value
+        .map((item) => {
+            if (typeof item === "string") return item.trim();
+            if (item && typeof item === "object") {
+                const title = toText((item as { title?: unknown }).title);
+                const description = toText((item as { description?: unknown }).description);
+                return title || description;
+            }
+            return "";
+        })
+        .filter(Boolean);
+}
+
+function normalizeItinerary(value: unknown) {
+    if (!Array.isArray(value)) return [] as Array<{ day: string; title: string; description: string }>;
+    return value
+        .map((item, index) => {
+            if (!item || typeof item !== "object") return null;
+            const dayNumber = (item as { dayNumber?: unknown }).dayNumber;
+            const title = toText((item as { title?: unknown }).title) || `Day ${index + 1}`;
+            const description = stripHtml(toText((item as { description?: unknown }).description));
+            return {
+                day: dayNumber ? `Day ${dayNumber}` : `Day ${index + 1}`,
+                title,
+                description,
+            };
+        })
+        .filter((entry): entry is { day: string; title: string; description: string } => Boolean(entry));
+}
+
+interface RelatedTourData {
+    title: string;
+    slug: string;
+    duration: string;
+    city: string;
+    image: string | null;
+}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     const res = await fetchAPI("/tours", { filters: { slug: { $eq: slug } } });
-    const tour = res.data?.[0];
+    const tour = Array.isArray(res?.data) ? res.data[0] : null;
+
+    const title = toText(tour?.name) || "Tour Detail";
+    const descriptionRaw = stripHtml(toText(tour?.description));
 
     return {
-        title: tour ? `${tour.name} | RushZanzibar` : "Tour Detail",
-        description: tour?.description ? String(tour.description).replace(/<[^>]*>/g, '').trim().slice(0, 160) : "",
+        title: `${title} | RushZanzibar`,
+        description:
+            toSnippet(descriptionRaw, 160) || "Explore this tour itinerary and contact RushZanzibar for a custom booking plan.",
     };
 }
 
@@ -21,71 +81,134 @@ export default async function TourPage({ params }: { params: Promise<{ slug: str
 
     const res = await fetchAPI("/tours", {
         filters: { slug: { $eq: slug } },
-        populate: ["heroImage", "gallery", "city", "itinerary", "seoMetadata"]
+        populate: ["heroImage", "gallery", "city", "itinerary", "seoMetadata"],
     });
 
-    const tour = res.data?.[0];
+    const tour = Array.isArray(res?.data) ? res.data[0] : null;
     if (!tour) return notFound();
 
-    const heroImage = getStrapiMedia(tour.heroImage?.url);
+    const heroImage = getStrapiMedia((tour.heroImage as { url?: string } | undefined)?.url);
+    const title = toText(tour.name);
+    const description = stripHtml(toText(tour.description));
+    const duration = toText(tour.duration);
+    const difficulty = toText(tour.difficulty);
+    const city = toText((tour.city as { name?: unknown } | undefined)?.name);
+    const price = Number(tour.priceAdult || 0);
+
+    const highlights = normalizeHighlights(tour.highlights);
+    const itinerary = normalizeItinerary(tour.itinerary);
+
+    const relatedRes = await fetchAPI("/tours", {
+        filters: { slug: { $ne: slug } },
+        populate: ["heroImage", "city"],
+        pagination: { limit: 3 },
+        sort: ["featured:desc", "priceAdult:asc"],
+    });
+
+    const relatedRawTours: Record<string, unknown>[] = Array.isArray(relatedRes?.data) ? relatedRes.data : [];
+    const relatedTours: RelatedTourData[] = relatedRawTours
+        .map((item): RelatedTourData => ({
+                  title: toText(item.name),
+                  slug: toText(item.slug),
+                  duration: toText(item.duration),
+                  city: toText((item.city as { name?: unknown } | undefined)?.name),
+                  image: getStrapiMedia((item.heroImage as { url?: string } | undefined)?.url),
+              }))
+        .filter((item): item is RelatedTourData => Boolean(item.title && item.slug));
+
+    const whatsAppMessage = encodeURIComponent(
+        `Hi RushZanzibar, I want to book ${title || "this tour"}. Please share details.`
+    );
 
     return (
         <div className={styles.tourPage}>
             <main>
-                {/* Hero Section */}
-                <section className={styles.hero} style={{ backgroundColor: heroImage ? undefined : 'var(--color-charcoal)' }}>
-                    <div className={styles.heroOverlay} />
+                <section className={styles.hero} style={{ backgroundColor: heroImage ? undefined : "var(--color-charcoal)" }}>
                     {heroImage && (
                         <Image
                             src={heroImage}
-                            alt={tour.name || "Tour"}
+                            alt={title || "Tour"}
                             fill
                             className={styles.heroImage}
                             priority
                             sizes="100vw"
                         />
                     )}
+                    <div className={styles.heroOverlay} />
 
-                    <div className={styles.heroContent}>
+                    <div className={`container ${styles.heroContent}`}>
                         <nav className={styles.breadcrumb}>
-                            <Link href="/tours">All Tours</Link>
+                            <Link href="/tours">Tours</Link>
                             <span>/</span>
-                            <span>{tour.name}</span>
+                            <span>{title}</span>
                         </nav>
-                        <h1>{tour.name}</h1>
-                        <div className={styles.tourMeta}>
-                            {tour.duration && (
-                                <div className={styles.metaItem}>
-                                    <span aria-hidden="true">⏱️</span> {tour.duration}
-                                </div>
-                            )}
-                            {tour.difficulty && (
-                                <div className={styles.metaItem}>
-                                    <span className="badge badge-featured" style={{ background: 'var(--color-terracotta)', padding: '0.2rem 0.8rem', borderRadius: '1rem', fontSize: '0.7rem' }}>
-                                        {tour.difficulty}
-                                    </span>
-                                </div>
-                            )}
+
+                        <span className={styles.heroBadge}>Signature Tour</span>
+                        <h1>{title}</h1>
+
+                        <div className={styles.heroMetaRow}>
+                            {duration && <span>{duration}</span>}
+                            {city && <span>{city}</span>}
+                            {difficulty && <span>{difficulty}</span>}
+                        </div>
+                        <p className={styles.heroLead}>
+                            Build your plan in one step, then confirm directly with our operations desk on WhatsApp or your
+                            preferred channel.
+                        </p>
+
+                        <div className={styles.heroActions}>
+                            <a
+                                href={`https://wa.me/${WHATSAPP_PHONE}?text=${whatsAppMessage}`}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={styles.whatsAppBtn}
+                            >
+                                WhatsApp Booking
+                            </a>
+                            <a href="#book-now" className={`btn btn-primary ${styles.heroFormBtn}`}>
+                                Fill Quick Form
+                            </a>
                         </div>
                     </div>
                 </section>
 
-                <div className="container">
-                    <div className={styles.contentGrid}>
+                <section className={styles.mainSection}>
+                    <div className={`container ${styles.contentGrid}`}>
                         <div className={styles.overview}>
-                            <h2>Experience Overview</h2>
-                            <p style={{ whiteSpace: 'pre-wrap' }}>{tour.description}</p>
+                            <h2>Overview</h2>
+                            <p>{description || "Tour details will be shared by our advisor shortly."}</p>
 
-                            {Array.isArray(tour.highlights) && tour.highlights.length > 0 && (
+                            <div className={styles.keyFacts}>
+                                <article>
+                                    <span>Duration</span>
+                                    <strong>{duration || "Flexible"}</strong>
+                                </article>
+                                <article>
+                                    <span>Destination</span>
+                                    <strong>{city || "Tanzania"}</strong>
+                                </article>
+                                <article>
+                                    <span>Difficulty</span>
+                                    <strong>{difficulty || "All levels"}</strong>
+                                </article>
+                                <article>
+                                    <span>From</span>
+                                    <strong>{price > 0 ? `$${price}` : "Custom"}</strong>
+                                </article>
+                            </div>
+
+                            {highlights.length > 0 && (
                                 <>
-                                    <h3 style={{ marginTop: "3rem", marginBottom: "1.5rem" }}>Trip Highlights</h3>
+                                    <h3>Highlights</h3>
                                     <div className={styles.includesGrid}>
-                                        {tour.highlights.map((highlight: any, idx: number) => (
-                                            <div key={idx} className={styles.includeCard}>
-                                                <span className={styles.includeIcon} aria-hidden="true">✨</span>
+                                        {highlights.map((highlight, idx) => (
+                                            <div key={`${highlight}-${idx}`} className={styles.includeCard}>
+                                                <span className={styles.includeIcon} aria-hidden="true">
+                                                    ✦
+                                                </span>
                                                 <div className={styles.includeText}>
-                                                    <strong>Key Feature</strong>
-                                                    <span>{typeof highlight === 'string' ? highlight : (highlight.title || "")}</span>
+                                                    <strong>Included Experience</strong>
+                                                    <span>{highlight}</span>
                                                 </div>
                                             </div>
                                         ))}
@@ -93,35 +216,76 @@ export default async function TourPage({ params }: { params: Promise<{ slug: str
                                 </>
                             )}
 
-                            {Array.isArray(tour.itinerary) && tour.itinerary.length > 0 && (
+                            {itinerary.length > 0 && (
                                 <>
-                                    <h3 style={{ marginTop: "4rem", marginBottom: "2rem" }}>Journey Itinerary</h3>
+                                    <h3>Itinerary</h3>
                                     <div className={styles.itinerary}>
-                                        {tour.itinerary.map((item: any, idx: number) => (
-                                            <div key={idx} className={styles.itineraryItem}>
-                                                <div className={styles.dayBadge}>Day {item.dayNumber || (idx + 1)}</div>
+                                        {itinerary.map((item, idx) => (
+                                            <div key={`${item.day}-${idx}`} className={styles.itineraryItem}>
+                                                <div className={styles.dayBadge}>{item.day}</div>
                                                 <div className={styles.itineraryContent}>
-                                                    <h4>{item.title || `Day ${idx + 1}`}</h4>
-                                                    <p>{item.description}</p>
+                                                    <h4>{item.title}</h4>
+                                                    <p>{item.description || "Detailed plan will be finalized with your advisor."}</p>
                                                 </div>
                                             </div>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+
+                            {relatedTours.length > 0 && (
+                                <>
+                                    <h3>Similar Tours</h3>
+                                    <div className={styles.relatedGrid}>
+                                        {relatedTours.map((item) => (
+                                            <Link key={item.slug} href={`/tours/${item.slug}`} className={styles.relatedCard}>
+                                                <div
+                                                    className={styles.relatedImage}
+                                                    style={{
+                                                        backgroundImage: item.image ? `url(${item.image})` : undefined,
+                                                        backgroundColor: item.image ? undefined : "var(--color-sand-dark)",
+                                                    }}
+                                                />
+                                                <div className={styles.relatedBody}>
+                                                    <strong>{item.title}</strong>
+                                                    <span>
+                                                        {item.duration || "Flexible"}
+                                                        {item.city ? ` • ${item.city}` : ""}
+                                                    </span>
+                                                </div>
+                                            </Link>
                                         ))}
                                     </div>
                                 </>
                             )}
                         </div>
 
-                        <div className={styles.sidebar}>
+                        <aside id="book-now" className={styles.sidebar}>
                             <div className={styles.bookingCard}>
                                 <div className={styles.priceHeader}>
                                     <span className={styles.priceLabel}>Starting from</span>
-                                    <div className={styles.priceValue}>${tour.priceAdult}</div>
+                                    <div className={styles.priceValue}>{price > 0 ? `$${price}` : "Custom"}</div>
                                 </div>
-                                <BookingForm tourTitle={tour.name} tourSlug={tour.slug} />
+
+                                <a
+                                    href={`https://wa.me/${WHATSAPP_PHONE}?text=${whatsAppMessage}`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className={styles.whatsAppBtnSecondary}
+                                >
+                                    Chat On WhatsApp
+                                </a>
+
+                                <p className={styles.sidebarHint}>
+                                    For fastest response, start with WhatsApp. Or submit the form below and we will reply
+                                    with your full itinerary.
+                                </p>
+
+                                <BookingForm tourTitle={title} tourSlug={slug} />
                             </div>
-                        </div>
+                        </aside>
                     </div>
-                </div>
+                </section>
             </main>
         </div>
     );
