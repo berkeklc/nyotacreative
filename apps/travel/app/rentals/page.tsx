@@ -102,21 +102,22 @@ export default function RentalsPage() {
             </section>
 
             {/* Transfers Section */}
+            {/* Transfers Section */}
             {activeTab === "transfers" && (
-                <section className="section" style={{ background: "var(--color-sand)" }}>
+                <section className={styles.transfersSection}>
                     <div className="container">
-                        <div style={{ marginBottom: "2.5rem" }}>
-                            <h2 style={{ fontSize: "clamp(1.75rem, 4vw, 2.25rem)", fontWeight: 900, marginBottom: "0.5rem" }}>
+                        <div style={{ marginBottom: "3rem", textAlign: "center" }}>
+                            <h2 style={{ fontSize: "clamp(2rem, 5vw, 2.5rem)", fontWeight: 400, marginBottom: "1rem", fontFamily: "var(--font-serif)", color: "white" }}>
                                 Popular Transfer Routes
                             </h2>
-                            <p style={{ color: "var(--color-slate)", fontSize: "1.05rem", maxWidth: "600px" }}>
-                                Safe, reliable, and affordable transfers across Tanzania and Zanzibar.
-                                All prices include meet & greet and luggage assistance.
+                            <p style={{ color: "var(--color-text-muted)", fontSize: "1.1rem", maxWidth: "600px", margin: "0 auto" }}>
+                                Safe, reliable, and comfortable transfers across Tanzania and Zanzibar.
+                                All prices include meet & greet.
                             </p>
                         </div>
 
                         {loading ? (
-                            <div style={{ textAlign: "center", padding: "4rem 0" }}>
+                            <div style={{ textAlign: "center", padding: "4rem 0", color: "white" }}>
                                 <p>Loading transfer routes...</p>
                             </div>
                         ) : (
@@ -132,10 +133,6 @@ export default function RentalsPage() {
                                             style={{
                                                 backgroundImage: route.image ? `url(${route.image})` : undefined,
                                                 backgroundColor: route.image ? undefined : "#1a2d3d",
-                                                backgroundSize: "cover",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
                                             }}
                                         >
                                             {!route.image && (
@@ -149,30 +146,18 @@ export default function RentalsPage() {
                                         </div>
                                         <div className={styles.transferContent}>
                                             <div className={styles.transferRoute}>
-                                                <div className={styles.transferLocation}>
-                                                    <span className={styles.transferLocationLabel}>Pickup</span>
-                                                    <span className={styles.transferLocationName}>{route.pickupLocation}</span>
-                                                </div>
-                                                <div className={styles.transferArrow}>
-                                                    <div className={styles.transferArrowLine} />
-                                                </div>
-                                                <div className={styles.transferLocation}>
-                                                    <span className={styles.transferLocationLabel}>Drop-off</span>
-                                                    <span className={styles.transferLocationName}>{route.dropoffLocation}</span>
-                                                </div>
+                                                <span className={styles.transferLocationLabel}>From</span>
+                                                <span className={styles.transferLocationName}>{route.pickupLocation}</span>
+                                                <div className={styles.transferArrow}>↓</div>
+                                                <span className={styles.transferLocationLabel}>To</span>
+                                                <span className={styles.transferLocationName}>{route.dropoffLocation}</span>
                                             </div>
                                             <div className={styles.transferMeta}>
                                                 <span className={styles.transferMetaItem}>
-                                                    <span className={styles.transferMetaIcon}>⏱️</span>
-                                                    {route.duration}
+                                                    ⏱️ {route.duration}
                                                 </span>
                                                 <span className={styles.transferMetaItem}>
-                                                    <span className={styles.transferMetaIcon}>📏</span>
-                                                    {route.distance}
-                                                </span>
-                                                <span className={styles.transferMetaItem}>
-                                                    <span className={styles.transferMetaIcon}>🚗</span>
-                                                    {route.vehicleType}
+                                                    📏 {route.distance}
                                                 </span>
                                             </div>
                                             <div className={styles.transferFooter}>
@@ -180,7 +165,7 @@ export default function RentalsPage() {
                                                     <span className={styles.transferPriceLabel}>One way</span>
                                                     <span className={styles.transferPriceAmount}>${route.price}</span>
                                                 </div>
-                                                <span className={styles.transferCta}>Book Now</span>
+                                                <div className={styles.transferCta}>→</div>
                                             </div>
                                         </div>
                                     </Link>
@@ -193,20 +178,20 @@ export default function RentalsPage() {
 
             {/* Vehicles Section */}
             {activeTab === "vehicles" && (
-                <section className="section" style={{ background: "var(--color-sand)" }}>
+                <section className={styles.vehiclesSection}>
                     <div className="container">
-                        <div style={{ marginBottom: "2.5rem" }}>
-                            <h2 style={{ fontSize: "clamp(1.75rem, 4vw, 2.25rem)", fontWeight: 900, marginBottom: "0.5rem" }}>
-                                Self-Drive Cars
+                        <div style={{ marginBottom: "3rem", textAlign: "center" }}>
+                            <h2 style={{ fontSize: "clamp(2rem, 5vw, 2.5rem)", fontWeight: 400, marginBottom: "1rem", fontFamily: "var(--font-serif)", color: "white" }}>
+                                Self-Drive Fleet
                             </h2>
-                            <p style={{ color: "var(--color-slate)", fontSize: "1.05rem", maxWidth: "600px" }}>
-                                Explore Tanzania at your own pace. Choose from our fleet of well-maintained vehicles,
-                                from compact city cars to safari-ready 4x4s.
+                            <p style={{ color: "var(--color-text-muted)", fontSize: "1.1rem", maxWidth: "600px", margin: "0 auto" }}>
+                                Explore Tanzania at your own pace. Choose from our fleet of well-maintained,
+                                safari-ready vehicles.
                             </p>
                         </div>
 
                         {loading ? (
-                            <div style={{ textAlign: "center", padding: "4rem 0" }}>
+                            <div style={{ textAlign: "center", padding: "4rem 0", color: "white" }}>
                                 <p>Loading vehicles...</p>
                             </div>
                         ) : (
@@ -221,14 +206,11 @@ export default function RentalsPage() {
                                             className={styles.vehicleImage}
                                             style={{
                                                 backgroundImage: vehicle.image ? `url(${vehicle.image})` : undefined,
-                                                backgroundColor: vehicle.image ? undefined : "#e8e4db",
-                                                display: "flex",
-                                                alignItems: "center",
-                                                justifyContent: "center",
+                                                backgroundColor: vehicle.image ? undefined : "#1a2d3d",
                                             }}
                                         >
                                             {!vehicle.image && (
-                                                <span style={{ fontSize: "4rem" }}>
+                                                <span style={{ fontSize: "4rem", position: "relative", zIndex: 2 }}>
                                                     {categoryIcons[vehicle.category] || "🚗"}
                                                 </span>
                                             )}
@@ -240,35 +222,28 @@ export default function RentalsPage() {
                                             <h3 className={styles.vehicleName}>{vehicle.name}</h3>
                                             <div className={styles.vehicleSpecs}>
                                                 <span className={styles.vehicleSpec}>
-                                                    <span className={styles.vehicleSpecIcon}>👤</span>
-                                                    {vehicle.seats} seats
+                                                    👤 {vehicle.seats}
                                                 </span>
                                                 <span className={styles.vehicleSpec}>
-                                                    <span className={styles.vehicleSpecIcon}>⚙️</span>
-                                                    {vehicle.transmission}
+                                                    ⚙️ {vehicle.transmission}
                                                 </span>
                                             </div>
                                             <div className={styles.vehicleFeatures}>
-                                                {vehicle.features.slice(0, 4).map((f) => (
+                                                {vehicle.features.slice(0, 3).map((f) => (
                                                     <span key={f} className={styles.vehicleFeature}>
                                                         {f}
                                                     </span>
                                                 ))}
-                                                {vehicle.features.length > 4 && (
-                                                    <span className={styles.vehicleFeature}>
-                                                        +{vehicle.features.length - 4} more
-                                                    </span>
-                                                )}
                                             </div>
                                             <div className={styles.vehicleFooter}>
                                                 <div className={styles.vehiclePrice}>
-                                                    <span className={styles.vehiclePriceLabel}>From</span>
+                                                    <span className={styles.vehiclePriceLabel}>Daily Rate</span>
                                                     <span className={styles.vehiclePriceAmount}>
                                                         ${vehicle.pricePerDay}
-                                                        <span className={styles.vehiclePriceSuffix}>/day</span>
+                                                        <span>/day</span>
                                                     </span>
                                                 </div>
-                                                <span className={styles.transferCta}>View Details</span>
+                                                <div className={styles.transferCta}>→</div>
                                             </div>
                                         </div>
                                     </Link>
@@ -280,9 +255,9 @@ export default function RentalsPage() {
             )}
 
             {/* Why Choose Us CTA */}
-            <section className={styles.ctaSection}>
+            <section className={styles.ctaSection} style={{ background: "#0a1016", borderTop: "1px solid rgba(255,255,255,0.05)" }}>
                 <div className="container">
-                    <h2 className={styles.ctaTitle}>Why Travel With Us?</h2>
+                    <h2 className={styles.ctaTitle} style={{ fontFamily: "var(--font-serif)", fontWeight: 400 }}>Why Travel With Us?</h2>
                     <p className={styles.ctaText}>
                         All vehicles are regularly maintained and insured. Our drivers are professional,
                         English-speaking, and know every corner of Tanzania.
@@ -291,38 +266,33 @@ export default function RentalsPage() {
                         display: "grid",
                         gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
                         gap: "1.5rem",
-                        maxWidth: "800px",
+                        maxWidth: "1000px",
                         margin: "0 auto 3rem",
                     }}>
                         {[
-                            { icon: "🛡️", title: "Fully Insured", desc: "All vehicles covered" },
-                            { icon: "⏰", title: "24/7 Support", desc: "Help whenever you need" },
+                            { icon: "🛡️", title: "Fully Insured", desc: "Comprehensive coverage" },
+                            { icon: "⏰", title: "24/7 Support", desc: "Always here to help" },
                             { icon: "💰", title: "Best Prices", desc: "No hidden fees" },
-                            { icon: "✅", title: "Free Cancellation", desc: "Up to 24h before" },
+                            { icon: "✅", title: "Flexible", desc: "Easy cancellation" },
                         ].map((item) => (
                             <div key={item.title} style={{
-                                padding: "1.5rem",
-                                borderRadius: "var(--radius-md)",
-                                background: "rgba(255,255,255,0.06)",
+                                padding: "2rem",
+                                borderRadius: "var(--radius-lg)",
+                                background: "rgba(255,255,255,0.03)",
+                                border: "1px solid rgba(255,255,255,0.05)",
                                 textAlign: "center",
+                                backdropFilter: "blur(10px)",
                             }}>
-                                <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>{item.icon}</div>
-                                <div style={{ color: "white", fontWeight: 700, fontSize: "0.95rem", marginBottom: "0.25rem" }}>{item.title}</div>
-                                <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.85rem" }}>{item.desc}</div>
+                                <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>{item.icon}</div>
+                                <div style={{ color: "white", fontWeight: 600, fontSize: "1.1rem", marginBottom: "0.5rem", fontFamily: "var(--font-serif)" }}>{item.title}</div>
+                                <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.9rem" }}>{item.desc}</div>
                             </div>
                         ))}
                     </div>
                     <div className={styles.ctaButtons}>
-                        <Link href="/contact" className="btn btn-primary">Contact Us</Link>
-                        <a
-                            href="https://wa.me/255123456789?text=Hi!%20I%27m%20interested%20in%20your%20car%20rental%20services"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="btn btn-secondary"
-                            style={{ color: "white", borderColor: "rgba(255,255,255,0.3)" }}
-                        >
-                            💬 WhatsApp
-                        </a>
+                        <Link href="/contact" className={styles.submitBtn} style={{ width: "auto", padding: "1rem 2.5rem", margin: 0 }}>
+                            Contact Us
+                        </Link>
                     </div>
                 </div>
             </section>

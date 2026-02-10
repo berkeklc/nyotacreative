@@ -149,7 +149,7 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
                             <div className={styles.specCard}>
                                 <div className={styles.specCardIcon}>✅</div>
                                 <div className={styles.specCardLabel}>Status</div>
-                                <div className={styles.specCardValue}>
+                                <div className={styles.specCardValue} style={{ color: vehicle.available ? "var(--color-success)" : "red" }}>
                                     {vehicle.available ? "Available" : "Unavailable"}
                                 </div>
                             </div>
@@ -167,10 +167,10 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
                     {/* Features */}
                     <div className={styles.detailSection}>
                         <h2 className={styles.detailSectionTitle}>⭐ Features & Equipment</h2>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
                             {vehicle.features.map((feature) => (
-                                <div key={feature} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.9rem" }}>
-                                    <span style={{ color: "var(--color-sage)" }}>✓</span>
+                                <div key={feature} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "1rem", color: "var(--color-text-muted)" }}>
+                                    <span style={{ color: "var(--color-success)" }}>✓</span>
                                     <span>{feature}</span>
                                 </div>
                             ))}
@@ -180,7 +180,7 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
                     {/* Rental Terms */}
                     <div className={styles.detailSection}>
                         <h2 className={styles.detailSectionTitle}>📜 Rental Terms</h2>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
                             {[
                                 "Valid driving license required",
                                 "Minimum age: 23 years",
@@ -191,8 +191,8 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
                                 "24/7 roadside assistance",
                                 "Free delivery in city",
                             ].map((term) => (
-                                <div key={term} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem", color: "var(--color-slate)" }}>
-                                    <span>•</span>
+                                <div key={term} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.95rem", color: "var(--color-text-muted)" }}>
+                                    <span style={{ color: "var(--color-accent)" }}>•</span>
                                     <span>{term}</span>
                                 </div>
                             ))}
@@ -204,14 +204,14 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
                 <div className={styles.sidebar}>
                     <div className={styles.bookingCard}>
                         <div className={styles.bookingCardHeader}>
-                            <div className={styles.bookingCardLabel}>Daily rate</div>
-                            <div className={styles.bookingCardPrice}>
+                            <div className={styles.bookingCardLabel} style={{ color: "var(--color-text-muted)" }}>Daily rate</div>
+                            <div className={styles.bookingCardPrice} style={{ color: "var(--color-accent)", fontSize: "2.5rem", fontWeight: "700", fontFamily: "var(--font-serif)" }}>
                                 ${vehicle.pricePerDay}
-                                <span className={styles.bookingCardPriceSuffix}>/day</span>
+                                <span style={{ fontSize: "1rem", color: "var(--color-text-muted)", fontWeight: "400", marginLeft: "0.5rem" }}>/day</span>
                             </div>
                             {vehicle.pricePerWeek > 0 && (
-                                <div style={{ fontSize: "0.85rem", opacity: 0.7, marginTop: "0.25rem" }}>
-                                    Weekly: ${vehicle.pricePerWeek}/week
+                                <div style={{ fontSize: "0.9rem", color: "var(--color-text-muted)", marginTop: "0.5rem" }}>
+                                    Weekly: <span style={{ color: "white" }}>${vehicle.pricePerWeek}/week</span>
                                 </div>
                             )}
                         </div>

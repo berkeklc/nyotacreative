@@ -152,7 +152,7 @@ export default function TransferDetailPage({ params }: { params: Promise<{ slug:
                     {/* What's Included */}
                     <div className={styles.detailSection}>
                         <h2 className={styles.detailSectionTitle}>✅ What's Included</h2>
-                        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.75rem" }}>
+                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
                             {[
                                 "Professional driver",
                                 "Meet & greet at arrival",
@@ -163,8 +163,8 @@ export default function TransferDetailPage({ params }: { params: Promise<{ slug:
                                 "Child seat (on request)",
                                 "24/7 customer support",
                             ].map((item) => (
-                                <div key={item} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.9rem" }}>
-                                    <span style={{ color: "var(--color-sage)" }}>✓</span>
+                                <div key={item} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "1rem", color: "var(--color-text-muted)" }}>
+                                    <span style={{ color: "var(--color-success)" }}>✓</span>
                                     <span>{item}</span>
                                 </div>
                             ))}
@@ -176,14 +176,14 @@ export default function TransferDetailPage({ params }: { params: Promise<{ slug:
                 <div className={styles.sidebar}>
                     <div className={styles.bookingCard}>
                         <div className={styles.bookingCardHeader}>
-                            <div className={styles.bookingCardLabel}>One-way transfer</div>
-                            <div className={styles.bookingCardPrice}>
+                            <div className={styles.bookingCardLabel} style={{ color: "var(--color-text-muted)" }}>One-way transfer</div>
+                            <div className={styles.bookingCardPrice} style={{ color: "var(--color-accent)", fontSize: "2.5rem", fontWeight: "700", fontFamily: "var(--font-serif)" }}>
                                 ${transfer.price}
-                                <span className={styles.bookingCardPriceSuffix}> per vehicle</span>
+                                <span style={{ fontSize: "1rem", color: "var(--color-text-muted)", fontWeight: "400", marginLeft: "0.5rem" }}>per vehicle</span>
                             </div>
                             {transfer.priceReturn > 0 && (
-                                <div style={{ fontSize: "0.85rem", opacity: 0.7, marginTop: "0.25rem" }}>
-                                    Return: ${transfer.priceReturn}
+                                <div style={{ fontSize: "0.9rem", color: "var(--color-text-muted)", marginTop: "0.5rem" }}>
+                                    Return: <span style={{ color: "white" }}>${transfer.priceReturn}</span>
                                 </div>
                             )}
                         </div>
