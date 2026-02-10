@@ -67,7 +67,7 @@ export default function RentalsPage() {
     };
 
     return (
-        <div>
+        <div style={{ background: "#0f1923", minHeight: "100vh" }}>
             {/* Hero Section */}
             <section className={styles.hero}>
                 <div className={styles.heroGlow} />
@@ -278,14 +278,14 @@ export default function RentalsPage() {
                             <div key={item.title} style={{
                                 padding: "2rem",
                                 borderRadius: "var(--radius-lg)",
-                                background: "rgba(255,255,255,0.03)",
-                                border: "1px solid rgba(255,255,255,0.05)",
+                                background: "#16202a", // Solid dark background
+                                border: "1px solid #2a3b4c",
                                 textAlign: "center",
                                 backdropFilter: "blur(10px)",
                             }}>
                                 <div style={{ fontSize: "2.5rem", marginBottom: "1rem" }}>{item.icon}</div>
                                 <div style={{ color: "white", fontWeight: 600, fontSize: "1.1rem", marginBottom: "0.5rem", fontFamily: "var(--font-serif)" }}>{item.title}</div>
-                                <div style={{ color: "rgba(255,255,255,0.6)", fontSize: "0.9rem" }}>{item.desc}</div>
+                                <div style={{ color: "#a3b3c2", fontSize: "0.9rem" }}>{item.desc}</div>
                             </div>
                         ))}
                     </div>

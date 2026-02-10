@@ -3,11 +3,14 @@
 /* Variables */
 .container {
     --color-bg-dark: #0f1923;
-    --color-bg-card: rgba(255, 255, 255, 0.03);
-    --color-bg-card-hover: rgba(255, 255, 255, 0.08);
-    --color-border: rgba(255, 255, 255, 0.1);
+    --color-bg-card: #16202a;
+    /* Solid background instead of transparent */
+    --color-bg-card-hover: #1c2834;
+    --color-border: #2a3b4c;
+    /* Visible border */
     --color-text-main: #ffffff;
-    --color-text-muted: rgba(255, 255, 255, 0.7);
+    --color-text-muted: #a3b3c2;
+    /* Lighter grey for better readability */
     --color-accent: #e76f51;
     /* Terracotta */
     --color-accent-light: #f4a261;
@@ -470,9 +473,26 @@
     padding: 2rem;
 }
 
+.successState {
+    text-align: center;
+    padding: 2rem;
+    animation: fadeInUp 0.5s ease;
+}
+
+.successIcon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
 /* Form Styles */
+.formRow {
+    display: flex;
+    gap: 1rem;
+}
+
 .formGroup {
     margin-bottom: 1.25rem;
+    flex: 1;
 }
 
 .formGroup label {
@@ -488,11 +508,13 @@
 .formGroup select,
 .formGroup textarea {
     width: 100%;
-    background: rgba(255, 255, 255, 0.05);
+    background: #1a242d;
+    /* Solid dark background */
     border: 1px solid var(--color-border);
     padding: 1rem;
     border-radius: var(--radius-md);
-    color: white;
+    color: white !important;
+    /* Force white text */
     font-family: var(--font-sans);
     transition: var(--transition);
 }
@@ -547,5 +569,10 @@
     .sidebar {
         position: static;
         margin-top: 2rem;
+    }
+
+    .formRow {
+        flex-direction: column;
+        gap: 0;
     }
 }

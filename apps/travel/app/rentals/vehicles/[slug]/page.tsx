@@ -85,7 +85,7 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
     }
 
     return (
-        <div>
+        <div style={{ backgroundColor: "#0f1923", minHeight: "100vh" }}>
             {/* Hero */}
             <div
                 className={styles.detailHero}
