@@ -19,91 +19,10 @@ interface RentalVehicle {
     available: boolean;
 }
 
-const FALLBACK_VEHICLES: Record<string, RentalVehicle> = {
-    "toyota-vitz": {
-        name: "Toyota Vitz",
-        slug: "toyota-vitz",
-        description: "The Toyota Vitz is a perfect city companion — compact, fuel-efficient, and easy to park. Ideal for short trips around Stone Town, Dar es Salaam, or getting to the beach without the fuss. Comes with air conditioning and Bluetooth connectivity.",
-        category: "sedan",
-        transmission: "automatic",
-        seats: 5,
-        pricePerDay: 40,
-        pricePerWeek: 250,
-        features: ["AC", "Bluetooth", "USB Charging", "Fuel Efficient"],
-        image: null,
-        available: true,
-    },
-    "toyota-rav4": {
-        name: "Toyota RAV4",
-        slug: "toyota-rav4",
-        description: "The Toyota RAV4 offers the perfect balance between comfort and capability. With 4WD and generous cargo space, it handles both city roads and unpaved tracks with ease. Great for exploring more rural areas while still enjoying a comfortable ride.",
-        category: "suv",
-        transmission: "automatic",
-        seats: 5,
-        pricePerDay: 70,
-        pricePerWeek: 450,
-        features: ["AC", "4WD", "GPS", "Bluetooth", "Roof Rack"],
-        image: null,
-        available: true,
-    },
-    "toyota-land-cruiser": {
-        name: "Toyota Land Cruiser",
-        slug: "toyota-land-cruiser",
-        description: "The legendary Toyota Land Cruiser — the king of African safari vehicles. Built for the toughest terrain, this 4x4 comes equipped with everything you need for a self-drive safari adventure, including a pop-up roof hatch for wildlife viewing.",
-        category: "4x4",
-        transmission: "automatic",
-        seats: 7,
-        pricePerDay: 120,
-        pricePerWeek: 750,
-        features: ["AC", "4WD", "GPS", "Safari Ready", "Roof Hatch", "Cooler Box"],
-        image: null,
-        available: true,
-    },
-    "toyota-hiace": {
-        name: "Toyota Hiace",
-        slug: "toyota-hiace",
-        description: "Need to move a group? The Toyota Hiace is your answer. With seating for up to 14 passengers and ample luggage space, it's perfect for team travel, airport transfers for large groups, or family road trips across Tanzania.",
-        category: "van",
-        transmission: "manual",
-        seats: 14,
-        pricePerDay: 90,
-        pricePerWeek: 550,
-        features: ["AC", "Large Luggage Space", "USB Charging"],
-        image: null,
-        available: true,
-    },
-    "suzuki-alto": {
-        name: "Suzuki Alto",
-        slug: "suzuki-alto",
-        description: "Budget-friendly and extremely fuel-efficient. The Suzuki Alto is perfect for solo travelers or couples looking to save on transportation costs while maintaining independence.",
-        category: "sedan",
-        transmission: "manual",
-        seats: 4,
-        pricePerDay: 30,
-        pricePerWeek: 180,
-        features: ["AC", "Fuel Efficient", "Compact"],
-        image: null,
-        available: true,
-    },
-    "toyota-fortuner": {
-        name: "Toyota Fortuner",
-        slug: "toyota-fortuner",
-        description: "Premium comfort meets rugged capability. The Toyota Fortuner offers leather seating, advanced audio, and 4WD capability in a stylish package. Perfect for those who want to explore in luxury.",
-        category: "luxury",
-        transmission: "automatic",
-        seats: 7,
-        pricePerDay: 100,
-        pricePerWeek: 650,
-        features: ["AC", "4WD", "Leather Seats", "GPS", "Bluetooth", "Premium Audio"],
-        image: null,
-        available: true,
-    },
-};
-
 const categoryIcons: Record<string, string> = {
     sedan: "🚗",
     suv: "🚙",
-    "4x4": "🛻",
+    offroad: "🛻",
     van: "🚐",
     luxury: "✨",
 };
@@ -134,12 +53,6 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
                 }
             } catch (err) {
                 console.error("Failed to fetch vehicle:", err);
-            }
-
-            // Fallback
-            const fallback = FALLBACK_VEHICLES[slug];
-            if (fallback) {
-                setVehicle(fallback);
             }
             setLoading(false);
         }

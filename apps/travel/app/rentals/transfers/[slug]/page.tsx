@@ -19,88 +19,6 @@ interface TransferRoute {
     image: string | null;
 }
 
-// Fallback data
-const FALLBACK_TRANSFERS: Record<string, TransferRoute> = {
-    "zanzibar-airport-to-nungwi": {
-        name: "Zanzibar Airport to Nungwi Beach",
-        slug: "zanzibar-airport-to-nungwi",
-        description: "Enjoy a comfortable and scenic drive from Zanzibar Airport to the stunning Nungwi Beach on the northern tip of the island. Our professional drivers will ensure you arrive relaxed and ready to enjoy paradise. The route passes through local villages and spice plantations, giving you a first taste of Zanzibar's culture.",
-        pickupLocation: "Zanzibar Airport (ZNZ)",
-        dropoffLocation: "Nungwi Beach",
-        distance: "58 km",
-        duration: "1h 15min",
-        price: 45,
-        priceReturn: 80,
-        vehicleType: "Sedan / Minivan",
-        image: null,
-    },
-    "zanzibar-airport-to-stone-town": {
-        name: "Zanzibar Airport to Stone Town",
-        slug: "zanzibar-airport-to-stone-town",
-        description: "Quick and convenient transfer from Zanzibar Airport to the historic Stone Town, a UNESCO World Heritage Site. Our drivers know the narrow streets well and will drop you as close to your hotel as possible.",
-        pickupLocation: "Zanzibar Airport (ZNZ)",
-        dropoffLocation: "Stone Town",
-        distance: "8 km",
-        duration: "20min",
-        price: 20,
-        priceReturn: 35,
-        vehicleType: "Sedan",
-        image: null,
-    },
-    "zanzibar-airport-to-paje": {
-        name: "Zanzibar Airport to Paje Beach",
-        slug: "zanzibar-airport-to-paje",
-        description: "Relax as we drive you from Zanzibar Airport to the beautiful Paje Beach on the east coast. Known for its kitesurfing and powdery white sand, Paje is a favorite among adventurous travelers.",
-        pickupLocation: "Zanzibar Airport (ZNZ)",
-        dropoffLocation: "Paje Beach",
-        distance: "42 km",
-        duration: "55min",
-        price: 40,
-        priceReturn: 70,
-        vehicleType: "Sedan / Minivan",
-        image: null,
-    },
-    "zanzibar-airport-to-kendwa": {
-        name: "Zanzibar Airport to Kendwa Beach",
-        slug: "zanzibar-airport-to-kendwa",
-        description: "Smooth transfer from the airport to the popular Kendwa Beach resort area. Kendwa is known for its stunning sunsets and vibrant beach parties.",
-        pickupLocation: "Zanzibar Airport (ZNZ)",
-        dropoffLocation: "Kendwa Beach",
-        distance: "55 km",
-        duration: "1h 10min",
-        price: 45,
-        priceReturn: 80,
-        vehicleType: "Sedan / Minivan",
-        image: null,
-    },
-    "dar-airport-to-masaki": {
-        name: "Dar Airport to Masaki",
-        slug: "dar-airport-to-masaki",
-        description: "Professional transfer from Julius Nyerere International Airport to the upscale Masaki area in Dar es Salaam. Masaki is home to many international restaurants, embassies, and premium hotels.",
-        pickupLocation: "Julius Nyerere Airport (DAR)",
-        dropoffLocation: "Masaki, Dar es Salaam",
-        distance: "15 km",
-        duration: "30min",
-        price: 35,
-        priceReturn: 60,
-        vehicleType: "Sedan / SUV",
-        image: null,
-    },
-    "dar-airport-to-city-center": {
-        name: "Dar Airport to City Center",
-        slug: "dar-airport-to-city-center",
-        description: "Reliable transfer from Julius Nyerere International Airport to the Dar es Salaam city center. Avoid the hassle of negotiating with taxi drivers and arrive in comfort.",
-        pickupLocation: "Julius Nyerere Airport (DAR)",
-        dropoffLocation: "Dar es Salaam City Center",
-        distance: "12 km",
-        duration: "25min",
-        price: 30,
-        priceReturn: 50,
-        vehicleType: "Sedan",
-        image: null,
-    },
-};
-
 export default function TransferDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const [slug, setSlug] = useState<string>("");
     const [transfer, setTransfer] = useState<TransferRoute | null>(null);
@@ -127,12 +45,6 @@ export default function TransferDetailPage({ params }: { params: Promise<{ slug:
                 }
             } catch (err) {
                 console.error("Failed to fetch transfer:", err);
-            }
-
-            // Fallback
-            const fallback = FALLBACK_TRANSFERS[slug];
-            if (fallback) {
-                setTransfer(fallback);
             }
             setLoading(false);
         }

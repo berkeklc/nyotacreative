@@ -50,11 +50,7 @@ export default function Home() {
   const [selectedExperience, setSelectedExperience] = useState<ExperienceType>(null);
   const [data, setData] = useState<HomePageData>({ destinations: [], tours: [], articles: [], transfers: [] });
 
-  const FALLBACK_TRANSFERS: Transfer[] = [
-    { name: "Zanzibar Airport to Nungwi Beach", slug: "zanzibar-airport-to-nungwi", pickupLocation: "Zanzibar Airport (ZNZ)", dropoffLocation: "Nungwi Beach", duration: "1h 15min", price: 45 },
-    { name: "Zanzibar Airport to Stone Town", slug: "zanzibar-airport-to-stone-town", pickupLocation: "Zanzibar Airport (ZNZ)", dropoffLocation: "Stone Town", duration: "20min", price: 20 },
-    { name: "Dar Airport to Masaki", slug: "dar-airport-to-masaki", pickupLocation: "Julius Nyerere Airport (DAR)", dropoffLocation: "Masaki, Dar es Salaam", duration: "30min", price: 35 },
-  ];
+
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -72,8 +68,7 @@ export default function Home() {
     fetchData();
   }, []);
 
-  const { destinations, tours, articles, transfers: cmsTransfers } = data;
-  const displayTransfers = cmsTransfers.length > 0 ? cmsTransfers : FALLBACK_TRANSFERS;
+  const { destinations, tours, articles, transfers: displayTransfers } = data;
 
   // Filter and sort content based on selected experience
   const getFilteredTours = () => {

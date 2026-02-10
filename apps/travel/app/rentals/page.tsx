@@ -32,175 +32,12 @@ interface RentalVehicle {
     available: boolean;
 }
 
-// Fallback data while Strapi content types are being set up
-const FALLBACK_TRANSFERS: TransferRoute[] = [
-    {
-        name: "Zanzibar Airport to Nungwi Beach",
-        slug: "zanzibar-airport-to-nungwi",
-        pickupLocation: "Zanzibar Airport (ZNZ)",
-        dropoffLocation: "Nungwi Beach",
-        distance: "58 km",
-        duration: "1h 15min",
-        price: 45,
-        priceReturn: 80,
-        vehicleType: "Sedan / Minivan",
-        image: null,
-        featured: true,
-    },
-    {
-        name: "Zanzibar Airport to Stone Town",
-        slug: "zanzibar-airport-to-stone-town",
-        pickupLocation: "Zanzibar Airport (ZNZ)",
-        dropoffLocation: "Stone Town",
-        distance: "8 km",
-        duration: "20min",
-        price: 20,
-        priceReturn: 35,
-        vehicleType: "Sedan",
-        image: null,
-        featured: true,
-    },
-    {
-        name: "Zanzibar Airport to Paje Beach",
-        slug: "zanzibar-airport-to-paje",
-        pickupLocation: "Zanzibar Airport (ZNZ)",
-        dropoffLocation: "Paje Beach",
-        distance: "42 km",
-        duration: "55min",
-        price: 40,
-        priceReturn: 70,
-        vehicleType: "Sedan / Minivan",
-        image: null,
-        featured: false,
-    },
-    {
-        name: "Zanzibar Airport to Kendwa Beach",
-        slug: "zanzibar-airport-to-kendwa",
-        pickupLocation: "Zanzibar Airport (ZNZ)",
-        dropoffLocation: "Kendwa Beach",
-        distance: "55 km",
-        duration: "1h 10min",
-        price: 45,
-        priceReturn: 80,
-        vehicleType: "Sedan / Minivan",
-        image: null,
-        featured: false,
-    },
-    {
-        name: "Dar Airport to Masaki",
-        slug: "dar-airport-to-masaki",
-        pickupLocation: "Julius Nyerere Airport (DAR)",
-        dropoffLocation: "Masaki, Dar es Salaam",
-        distance: "15 km",
-        duration: "30min",
-        price: 35,
-        priceReturn: 60,
-        vehicleType: "Sedan / SUV",
-        image: null,
-        featured: true,
-    },
-    {
-        name: "Dar Airport to City Center",
-        slug: "dar-airport-to-city-center",
-        pickupLocation: "Julius Nyerere Airport (DAR)",
-        dropoffLocation: "Dar es Salaam City Center",
-        distance: "12 km",
-        duration: "25min",
-        price: 30,
-        priceReturn: 50,
-        vehicleType: "Sedan",
-        image: null,
-        featured: false,
-    },
-];
-
-const FALLBACK_VEHICLES: RentalVehicle[] = [
-    {
-        name: "Toyota Vitz",
-        slug: "toyota-vitz",
-        category: "sedan",
-        transmission: "automatic",
-        seats: 5,
-        pricePerDay: 40,
-        pricePerWeek: 250,
-        features: ["AC", "Bluetooth", "USB Charging", "Fuel Efficient"],
-        image: null,
-        featured: true,
-        available: true,
-    },
-    {
-        name: "Toyota RAV4",
-        slug: "toyota-rav4",
-        category: "suv",
-        transmission: "automatic",
-        seats: 5,
-        pricePerDay: 70,
-        pricePerWeek: 450,
-        features: ["AC", "4WD", "GPS", "Bluetooth", "Roof Rack"],
-        image: null,
-        featured: true,
-        available: true,
-    },
-    {
-        name: "Toyota Land Cruiser",
-        slug: "toyota-land-cruiser",
-        category: "4x4",
-        transmission: "automatic",
-        seats: 7,
-        pricePerDay: 120,
-        pricePerWeek: 750,
-        features: ["AC", "4WD", "GPS", "Safari Ready", "Roof Hatch", "Cooler Box"],
-        image: null,
-        featured: true,
-        available: true,
-    },
-    {
-        name: "Toyota Hiace",
-        slug: "toyota-hiace",
-        category: "van",
-        transmission: "manual",
-        seats: 14,
-        pricePerDay: 90,
-        pricePerWeek: 550,
-        features: ["AC", "Large Luggage Space", "USB Charging"],
-        image: null,
-        featured: false,
-        available: true,
-    },
-    {
-        name: "Suzuki Alto",
-        slug: "suzuki-alto",
-        category: "sedan",
-        transmission: "manual",
-        seats: 4,
-        pricePerDay: 30,
-        pricePerWeek: 180,
-        features: ["AC", "Fuel Efficient", "Compact"],
-        image: null,
-        featured: false,
-        available: true,
-    },
-    {
-        name: "Toyota Fortuner",
-        slug: "toyota-fortuner",
-        category: "luxury",
-        transmission: "automatic",
-        seats: 7,
-        pricePerDay: 100,
-        pricePerWeek: 650,
-        features: ["AC", "4WD", "Leather Seats", "GPS", "Bluetooth", "Premium Audio"],
-        image: null,
-        featured: false,
-        available: true,
-    },
-];
-
 type TabType = "transfers" | "vehicles";
 
 export default function RentalsPage() {
     const [activeTab, setActiveTab] = useState<TabType>("transfers");
-    const [transfers, setTransfers] = useState<TransferRoute[]>(FALLBACK_TRANSFERS);
-    const [vehicles, setVehicles] = useState<RentalVehicle[]>(FALLBACK_VEHICLES);
+    const [transfers, setTransfers] = useState<TransferRoute[]>([]);
+    const [vehicles, setVehicles] = useState<RentalVehicle[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -209,8 +46,8 @@ export default function RentalsPage() {
                 const res = await fetch("/api/rentals");
                 if (res.ok) {
                     const json = await res.json();
-                    if (json.transfers?.length > 0) setTransfers(json.transfers);
-                    if (json.vehicles?.length > 0) setVehicles(json.vehicles);
+                    setTransfers(json.transfers || []);
+                    setVehicles(json.vehicles || []);
                 }
             } catch (err) {
                 console.error("Failed to fetch rental data:", err);
@@ -224,7 +61,7 @@ export default function RentalsPage() {
     const categoryIcons: Record<string, string> = {
         sedan: "🚗",
         suv: "🚙",
-        "4x4": "🛻",
+        offroad: "🛻",
         van: "🚐",
         luxury: "✨",
     };
