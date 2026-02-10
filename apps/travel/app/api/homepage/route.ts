@@ -3,6 +3,19 @@ import { fetchAPI, getStrapiMedia } from "../../../lib/strapi";
 
 export async function GET() {
     try {
+        // Fetch transfers separately since the content type might not exist yet
+        let transfersData: any[] = [];
+        try {
+            const transfersRes = await fetchAPI("/transfer-routes", {
+                populate: ["heroImage"],
+                pagination: { limit: 4 },
+                sort: ["featured:desc", "order:asc"],
+            });
+            transfersData = transfersRes?.data || [];
+        } catch {
+            // Content type might not exist yet
+        }
+
         const [articlesRes, destinationsRes, toursRes] = await Promise.all([
             fetchAPI("/articles", {
                 populate: ["heroImage", "author"],
@@ -59,9 +72,20 @@ export async function GET() {
             image: getStrapiMedia(a.heroImage?.url)
         }));
 
-        return NextResponse.json({ destinations, tours, articles });
+        const transfers = transfersData.map((t: any) => ({
+            name: t.name || "",
+            slug: t.slug || "",
+            pickupLocation: t.pickupLocation || "",
+            dropoffLocation: t.dropoffLocation || "",
+            duration: t.duration || "",
+            price: t.price || 0,
+            image: getStrapiMedia(t.heroImage?.url),
+            featured: t.featured || false,
+        }));
+
+        return NextResponse.json({ destinations, tours, articles, transfers });
     } catch (error) {
         console.error("Homepage API error:", error);
-        return NextResponse.json({ destinations: [], tours: [], articles: [] }, { status: 500 });
+        return NextResponse.json({ destinations: [], tours: [], articles: [], transfers: [] }, { status: 500 });
     }
 }

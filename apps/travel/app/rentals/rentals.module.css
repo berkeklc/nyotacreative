@@ -1,0 +1,818 @@
+/* ===== RENTALS MODULE STYLES ===== */
+
+/* Hero */
+.hero {
+    min-height: 70vh;
+    background: linear-gradient(135deg, #0f1923 0%, #1a2d3d 50%, #0f1923 100%);
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6rem 2rem;
+    overflow: hidden;
+}
+
+.heroGlow {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 30% 50%, rgba(42, 157, 143, 0.15) 0%, transparent 50%),
+        radial-gradient(circle at 70% 80%, rgba(196, 146, 42, 0.1) 0%, transparent 40%);
+    z-index: 1;
+}
+
+.heroContent {
+    position: relative;
+    z-index: 2;
+    max-width: 900px;
+    text-align: center;
+}
+
+.heroLabel {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 2rem;
+}
+
+.heroTitle {
+    font-size: clamp(2.5rem, 7vw, 4.5rem);
+    font-weight: 900;
+    line-height: 1.1;
+    color: #ffffff;
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.02em;
+}
+
+.heroTitle span {
+    background: linear-gradient(135deg, #2A9D8F, #E9C46A);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.heroSubtitle {
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.7;
+    max-width: 650px;
+    margin: 0 auto 2.5rem;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-bottom: 3rem;
+    background: rgba(255, 255, 255, 0.06);
+    border-radius: var(--radius-xl);
+    padding: 0.35rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.tab {
+    flex: 1;
+    padding: 0.875rem 1.5rem;
+    border: none;
+    background: transparent;
+    color: var(--color-slate);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: calc(var(--radius-xl) - 4px);
+    transition: all var(--transition-base);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.tab:hover {
+    color: var(--color-charcoal);
+    background: rgba(0, 0, 0, 0.03);
+}
+
+.tabActive {
+    background: var(--color-white) !important;
+    color: var(--color-charcoal) !important;
+    box-shadow: var(--shadow-md);
+}
+
+.tabIcon {
+    font-size: 1.1rem;
+}
+
+/* Transfer Cards Grid */
+.transfersGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+    gap: 2rem;
+}
+
+.transferCard {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-sand-dark);
+    text-decoration: none;
+    color: inherit;
+}
+
+.transferCard:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+    border-color: var(--color-terracotta);
+}
+
+.transferImage {
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.transferImage::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.4), transparent 50%);
+}
+
+.transferBadge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    z-index: 2;
+    background: var(--color-terracotta);
+    color: white;
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.transferContent {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.transferRoute {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.transferLocation {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    flex: 1;
+}
+
+.transferLocationLabel {
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-slate);
+    font-weight: 600;
+}
+
+.transferLocationName {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-charcoal);
+}
+
+.transferArrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--color-terracotta);
+    min-width: 40px;
+}
+
+.transferArrowLine {
+    width: 24px;
+    height: 2px;
+    background: var(--color-terracotta);
+    position: relative;
+}
+
+.transferArrowLine::after {
+    content: '→';
+    position: absolute;
+    right: -8px;
+    top: -9px;
+    font-size: 1rem;
+}
+
+.transferMeta {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.transferMetaItem {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    color: var(--color-slate);
+}
+
+.transferMetaIcon {
+    font-size: 0.9rem;
+}
+
+.transferFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-sand-dark);
+}
+
+.transferPrice {
+    display: flex;
+    flex-direction: column;
+}
+
+.transferPriceLabel {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-slate);
+}
+
+.transferPriceAmount {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-terracotta);
+}
+
+.transferCta {
+    padding: 0.6rem 1.25rem;
+    background: linear-gradient(135deg, var(--color-ochre) 0%, #A87320 100%);
+    color: white;
+    border-radius: var(--radius-md);
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    border: none;
+}
+
+/* Vehicle Cards Grid */
+.vehiclesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 2rem;
+}
+
+.vehicleCard {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-sand-dark);
+    text-decoration: none;
+    color: inherit;
+}
+
+.vehicleCard:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+    border-color: var(--color-ochre);
+}
+
+.vehicleImage {
+    height: 220px;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--color-sand-dark);
+    position: relative;
+}
+
+.vehicleCategoryBadge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 0.3rem 0.75rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    backdrop-filter: blur(4px);
+}
+
+.vehicleContent {
+    padding: 1.5rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.vehicleName {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-charcoal);
+    margin-bottom: 0.75rem;
+}
+
+.vehicleSpecs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.vehicleSpec {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    color: var(--color-slate);
+    background: var(--color-sand);
+    padding: 0.35rem 0.75rem;
+    border-radius: var(--radius-sm);
+}
+
+.vehicleSpecIcon {
+    font-size: 0.9rem;
+}
+
+.vehicleFeatures {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+}
+
+.vehicleFeature {
+    font-size: 0.7rem;
+    color: var(--color-sage);
+    background: rgba(91, 115, 84, 0.08);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.vehicleFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-sand-dark);
+}
+
+.vehiclePrice {
+    display: flex;
+    flex-direction: column;
+}
+
+.vehiclePriceLabel {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--color-slate);
+}
+
+.vehiclePriceAmount {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-ochre);
+}
+
+.vehiclePriceSuffix {
+    font-size: 0.8rem;
+    font-weight: 400;
+    color: var(--color-slate);
+}
+
+/* Detail Page Styles */
+.detailHero {
+    min-height: 50vh;
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding: 4rem 2rem;
+    background-size: cover;
+    background-position: center;
+}
+
+.detailHero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 50%, rgba(0, 0, 0, 0.3) 100%);
+}
+
+.detailHeroContent {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+}
+
+.detailBreadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.detailBreadcrumb a {
+    color: rgba(255, 255, 255, 0.7);
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+.detailBreadcrumb a:hover {
+    color: white;
+}
+
+.detailTitle {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 900;
+    color: white;
+    margin-bottom: 0.5rem;
+    line-height: 1.15;
+}
+
+.detailSubtitle {
+    font-size: 1.1rem;
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 1.6;
+}
+
+.detailBody {
+    display: grid;
+    grid-template-columns: 1fr 380px;
+    gap: 3rem;
+    padding: 4rem 2rem;
+    max-width: 1280px;
+    margin: 0 auto;
+}
+
+.detailMain {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+}
+
+.detailSection {
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--color-sand-dark);
+}
+
+.detailSectionTitle {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-charcoal);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detailDescription {
+    color: var(--color-slate);
+    line-height: 1.8;
+    font-size: 1rem;
+}
+
+.detailDescription p {
+    margin-bottom: 1rem;
+}
+
+/* Route Info Cards */
+.routeInfoGrid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.routeInfoCard {
+    background: var(--color-sand);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+}
+
+.routeInfoIcon {
+    font-size: 1.5rem;
+    line-height: 1;
+}
+
+.routeInfoLabel {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-slate);
+    font-weight: 600;
+}
+
+.routeInfoValue {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-charcoal);
+    margin-top: 0.15rem;
+}
+
+/* Vehicle Specs Grid */
+.specsGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 1rem;
+}
+
+.specCard {
+    background: var(--color-sand);
+    border-radius: var(--radius-md);
+    padding: 1.25rem;
+    text-align: center;
+}
+
+.specCardIcon {
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.specCardLabel {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--color-slate);
+    font-weight: 600;
+}
+
+.specCardValue {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--color-charcoal);
+    margin-top: 0.15rem;
+}
+
+/* Sidebar / Booking Card */
+.sidebar {
+    position: sticky;
+    top: 120px;
+    align-self: start;
+}
+
+.bookingCard {
+    background: var(--color-white);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-sand-dark);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+}
+
+.bookingCardHeader {
+    background: linear-gradient(135deg, var(--color-charcoal), #2a2a2a);
+    padding: 1.5rem;
+    color: white;
+}
+
+.bookingCardPrice {
+    font-size: 2rem;
+    font-weight: 900;
+}
+
+.bookingCardPriceSuffix {
+    font-size: 0.9rem;
+    font-weight: 400;
+    opacity: 0.8;
+}
+
+.bookingCardLabel {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    opacity: 0.7;
+    margin-top: 0.25rem;
+}
+
+.bookingCardBody {
+    padding: 1.5rem;
+}
+
+/* Booking Form Styles */
+.formGroup {
+    margin-bottom: 1rem;
+}
+
+.formGroup label {
+    display: block;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-charcoal);
+    margin-bottom: 0.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.formGroup input,
+.formGroup select,
+.formGroup textarea {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--color-sand-dark);
+    border-radius: var(--radius-sm);
+    font-family: var(--font-sans);
+    font-size: 0.9rem;
+    color: var(--color-charcoal);
+    background: var(--color-sand);
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.formGroup input:focus,
+.formGroup select:focus,
+.formGroup textarea:focus {
+    outline: none;
+    border-color: var(--color-terracotta);
+    box-shadow: 0 0 0 3px rgba(181, 74, 50, 0.1);
+    background: white;
+}
+
+.formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.submitBtn {
+    width: 100%;
+    padding: 1rem;
+    background: linear-gradient(135deg, var(--color-terracotta) 0%, #943D28 100%);
+    color: white;
+    border: none;
+    border-radius: var(--radius-md);
+    font-family: var(--font-sans);
+    font-size: 0.95rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all var(--transition-base);
+    margin-top: 0.5rem;
+}
+
+.submitBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(181, 74, 50, 0.3);
+}
+
+.submitBtn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.successState {
+    text-align: center;
+    padding: 2rem 1.5rem;
+}
+
+.successIcon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+}
+
+.successState h3 {
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+    color: var(--color-charcoal);
+}
+
+.successState p {
+    font-size: 0.9rem;
+    color: var(--color-slate);
+    line-height: 1.6;
+}
+
+/* CTA Section */
+.ctaSection {
+    background: linear-gradient(135deg, var(--color-charcoal) 0%, #2a2a2a 100%);
+    padding: 5rem 2rem;
+    text-align: center;
+}
+
+.ctaTitle {
+    color: white;
+    font-size: clamp(1.75rem, 4vw, 2.5rem);
+    font-weight: 900;
+    margin-bottom: 1rem;
+}
+
+.ctaText {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 1.1rem;
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    line-height: 1.7;
+}
+
+.ctaButtons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Homepage Section */
+.homeSectionGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 1.5rem;
+}
+
+/* Empty State */
+.emptyState {
+    text-align: center;
+    padding: 5rem 2rem;
+}
+
+.emptyIcon {
+    font-size: 4rem;
+    margin-bottom: 1.5rem;
+}
+
+.emptyTitle {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--color-charcoal);
+    margin-bottom: 0.75rem;
+}
+
+.emptyText {
+    color: var(--color-slate);
+    font-size: 1rem;
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .transfersGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .vehiclesGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .detailBody {
+        grid-template-columns: 1fr;
+    }
+
+    .sidebar {
+        position: static;
+    }
+
+    .routeInfoGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .formRow {
+        grid-template-columns: 1fr;
+    }
+
+    .tabs {
+        max-width: 100%;
+    }
+
+    .homeSectionGrid {
+        grid-template-columns: 1fr;
+    }
+}

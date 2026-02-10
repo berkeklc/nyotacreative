@@ -1,0 +1,65 @@
+{
+    "kind": "collectionType",
+    "collectionName": "transfer_routes",
+    "info": {
+        "singularName": "transfer-route",
+        "pluralName": "transfer-routes",
+        "displayName": "Transfer Route",
+        "description": "Airport and city transfer routes with pricing"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "attributes": {
+        "name": {
+            "type": "string",
+            "required": true
+        },
+        "slug": {
+            "type": "uid",
+            "targetField": "name",
+            "required": true
+        },
+        "description": {
+            "type": "text"
+        },
+        "pickupLocation": {
+            "type": "string",
+            "required": true
+        },
+        "dropoffLocation": {
+            "type": "string",
+            "required": true
+        },
+        "distance": {
+            "type": "string"
+        },
+        "duration": {
+            "type": "string"
+        },
+        "price": {
+            "type": "decimal",
+            "required": true
+        },
+        "priceReturn": {
+            "type": "decimal"
+        },
+        "vehicleType": {
+            "type": "string"
+        },
+        "heroImage": {
+            "type": "media",
+            "allowedTypes": [
+                "images"
+            ]
+        },
+        "featured": {
+            "type": "boolean",
+            "default": false
+        },
+        "order": {
+            "type": "integer",
+            "default": 0
+        }
+    }
+}

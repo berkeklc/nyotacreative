@@ -56,6 +56,13 @@ export default function Footer() {
                     </div>
 
                     <div className={styles.footerLinks}>
+                        <h4>Transport</h4>
+                        <Link href="/rentals">Car Rental</Link>
+                        <Link href="/rentals">Airport Transfers</Link>
+                        <Link href="/rentals">Self-Drive</Link>
+                    </div>
+
+                    <div className={styles.footerLinks}>
                         <h4>Agency</h4>
                         <Link href="/about">About Us</Link>
                         <Link href="/contact">Contact</Link>

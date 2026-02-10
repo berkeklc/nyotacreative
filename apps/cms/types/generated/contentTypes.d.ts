@@ -1015,6 +1015,48 @@ export interface ApiTourTour extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiTransferRouteTransferRoute
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'transfer_routes';
+  info: {
+    description: 'Airport and city transfer routes with pricing';
+    displayName: 'Transfer Route';
+    pluralName: 'transfer-routes';
+    singularName: 'transfer-route';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    distance: Schema.Attribute.String;
+    dropoffLocation: Schema.Attribute.String & Schema.Attribute.Required;
+    duration: Schema.Attribute.String;
+    featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    heroImage: Schema.Attribute.Media<'images'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::transfer-route.transfer-route'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    order: Schema.Attribute.Integer & Schema.Attribute.DefaultTo<0>;
+    pickupLocation: Schema.Attribute.String & Schema.Attribute.Required;
+    price: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    priceReturn: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    vehicleType: Schema.Attribute.String;
+  };
+}
+
 export interface PluginContentReleasesRelease
   extends Struct.CollectionTypeSchema {
   collectionName: 'strapi_releases';
@@ -1536,6 +1578,7 @@ declare module '@strapi/strapi' {
       'api::service.service': ApiServiceService;
       'api::team-member.team-member': ApiTeamMemberTeamMember;
       'api::tour.tour': ApiTourTour;
+      'api::transfer-route.transfer-route': ApiTransferRouteTransferRoute;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;
       'plugin::i18n.locale': PluginI18NLocale;

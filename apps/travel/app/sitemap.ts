@@ -12,6 +12,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         "/tours",
         "/tanzania",
         "/hotels",
+        "/guides",
+        "/rentals",
         "/privacy",
         "/terms",
     ].map((route) => ({
@@ -23,7 +25,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     // Fetch dynamic routes
     // 1. Cities (from /tanzania/[city])
-    // We can fetch cities using the same logic as the Tanzania page or just all cities
     let cities: any[] = [];
     try {
         const citiesRes = await fetchAPI("/cities", {
@@ -57,5 +58,34 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
     }));
 
-    return [...routes, ...cityRoutes, ...tourRoutes];
+    // 3. Transfer routes & Rental vehicles
+    let transferRoutes: any[] = [];
+    let vehicleRoutes: any[] = [];
+    try {
+        const transfersRes = await fetchAPI("/transfer-routes", {});
+        const transfers = transfersRes?.data || [];
+        transferRoutes = transfers.map((t: any) => ({
+            url: `${BASE_URL}/rentals/transfers/${t.slug}`,
+            lastModified: t.updatedAt || new Date().toISOString(),
+            changeFrequency: "weekly" as const,
+            priority: 0.6,
+        }));
+    } catch {
+        // Content type may not exist yet
+    }
+
+    try {
+        const vehiclesRes = await fetchAPI("/rental-vehicles", {});
+        const vehicles = vehiclesRes?.data || [];
+        vehicleRoutes = vehicles.map((v: any) => ({
+            url: `${BASE_URL}/rentals/vehicles/${v.slug}`,
+            lastModified: v.updatedAt || new Date().toISOString(),
+            changeFrequency: "weekly" as const,
+            priority: 0.6,
+        }));
+    } catch {
+        // Content type may not exist yet
+    }
+
+    return [...routes, ...cityRoutes, ...tourRoutes, ...transferRoutes, ...vehicleRoutes];
 }

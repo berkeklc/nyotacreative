@@ -30,15 +30,31 @@ interface Article {
   image: string | null;
 }
 
+interface Transfer {
+  name: string;
+  slug: string;
+  pickupLocation: string;
+  dropoffLocation: string;
+  duration: string;
+  price: number;
+}
+
 interface HomePageData {
   destinations: Destination[];
   tours: Tour[];
   articles: Article[];
+  transfers: Transfer[];
 }
 
 export default function Home() {
   const [selectedExperience, setSelectedExperience] = useState<ExperienceType>(null);
-  const [data, setData] = useState<HomePageData>({ destinations: [], tours: [], articles: [] });
+  const [data, setData] = useState<HomePageData>({ destinations: [], tours: [], articles: [], transfers: [] });
+
+  const FALLBACK_TRANSFERS: Transfer[] = [
+    { name: "Zanzibar Airport to Nungwi Beach", slug: "zanzibar-airport-to-nungwi", pickupLocation: "Zanzibar Airport (ZNZ)", dropoffLocation: "Nungwi Beach", duration: "1h 15min", price: 45 },
+    { name: "Zanzibar Airport to Stone Town", slug: "zanzibar-airport-to-stone-town", pickupLocation: "Zanzibar Airport (ZNZ)", dropoffLocation: "Stone Town", duration: "20min", price: 20 },
+    { name: "Dar Airport to Masaki", slug: "dar-airport-to-masaki", pickupLocation: "Julius Nyerere Airport (DAR)", dropoffLocation: "Masaki, Dar es Salaam", duration: "30min", price: 35 },
+  ];
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -56,7 +72,8 @@ export default function Home() {
     fetchData();
   }, []);
 
-  const { destinations, tours, articles } = data;
+  const { destinations, tours, articles, transfers: cmsTransfers } = data;
+  const displayTransfers = cmsTransfers.length > 0 ? cmsTransfers : FALLBACK_TRANSFERS;
 
   // Filter and sort content based on selected experience
   const getFilteredTours = () => {
@@ -142,6 +159,48 @@ export default function Home() {
               <p>No tours available at this time.</p>
             </div>
           )}
+        </div>
+      </section>
+
+      {/* Transfers & Rentals Section */}
+      <section className={`${styles.tours} section`}>
+        <div className="container">
+          <div className={styles.sectionHeader}>
+            <div>
+              <span className={styles.sectionLabel}>🚗 Transport</span>
+              <h2>Transfers & Car Rental</h2>
+            </div>
+            <Link href="/rentals" className="btn btn-secondary">All Services →</Link>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '1.5rem' }}>
+            {displayTransfers.slice(0, 3).map((t) => (
+              <Link
+                key={t.slug}
+                href={`/rentals/transfers/${t.slug}`}
+                className="card"
+                style={{ padding: '1.5rem', textDecoration: 'none', color: 'inherit' }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-slate)', fontWeight: 600 }}>Pickup</div>
+                    <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{t.pickupLocation}</div>
+                  </div>
+                  <div style={{ color: 'var(--color-terracotta)', fontSize: '1.2rem' }}>→</div>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ fontSize: '0.65rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: 'var(--color-slate)', fontWeight: 600 }}>Drop-off</div>
+                    <div style={{ fontWeight: 700, fontSize: '0.95rem' }}>{t.dropoffLocation}</div>
+                  </div>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingTop: '0.75rem', borderTop: '1px solid var(--color-sand-dark)' }}>
+                  <span style={{ fontSize: '0.85rem', color: 'var(--color-slate)' }}>⏱️ {t.duration}</span>
+                  <span style={{ fontWeight: 800, fontSize: '1.25rem', color: 'var(--color-terracotta)' }}>From ${t.price}</span>
+                </div>
+              </Link>
+            ))}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: '2rem' }}>
+            <Link href="/rentals" className="btn btn-accent">Browse Self-Drive Cars →</Link>
+          </div>
         </div>
       </section>
 

@@ -40,13 +40,12 @@ export default function Header() {
                     <Image
                         src="/logo-rush-zanzibar.png"
                         alt="Rush Zanzibar"
-                        width={70}
-                        height={70}
+                        width={100}
+                        height={100}
                         priority
                         style={{
                             borderRadius: "50%",
                             objectFit: "cover",
-                            border: "2px solid rgba(255,255,255,0.2)"
                         }}
                     />
                 </Link>
@@ -56,6 +55,7 @@ export default function Header() {
                     <Link href="/tanzania" onClick={() => setIsMenuOpen(false)}>Tanzania</Link>
                     <Link href="/tanzania/zanzibar" onClick={() => setIsMenuOpen(false)}>Zanzibar</Link>
                     <Link href="/tours" onClick={() => setIsMenuOpen(false)}>Tours</Link>
+                    <Link href="/rentals" onClick={() => setIsMenuOpen(false)}>Rentals</Link>
                     <Link href="/guides" onClick={() => setIsMenuOpen(false)}>Guides</Link>
                     <Link href="/hotels" onClick={() => setIsMenuOpen(false)}>Hotels</Link>
                 </div>
