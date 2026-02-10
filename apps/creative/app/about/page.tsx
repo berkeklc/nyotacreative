@@ -37,21 +37,21 @@ export default function AboutPage() {
 
             <main style={{ paddingTop: "120px" }}>
                 {/* Intro */}
-                <section className="section container">
+                <section className={`${styles.section} container`}>
                     <div className={styles.servicesHeader}>
                         <span className={styles.sectionLabel}>About Us</span>
                         <h1>We are Nyota</h1>
                     </div>
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "4rem", marginTop: "3rem" }}>
+                    <div className={styles.gridTwo}>
                         <div>
-                            <p style={{ fontSize: "1.25rem", lineHeight: 1.8, color: "rgba(250,250,250,0.9)" }}>
+                            <p className={styles.introText}>
                                 Nyota ("star" in Swahili) is a premium creative and software agency
                                 based in Dar es Salaam, Tanzania. We blend strategic thinking with
                                 creative excellence to build brands, products, and stories that resonate.
                             </p>
                         </div>
                         <div>
-                            <p style={{ lineHeight: 1.8, color: "rgba(250,250,250,0.7)" }}>
+                            <p className={styles.descriptionText}>
                                 Founded in 2020, we've grown from a small studio to a full-service
                                 agency working with clients across East Africa and beyond. Our team
                                 combines local expertise with global perspective, creating work that

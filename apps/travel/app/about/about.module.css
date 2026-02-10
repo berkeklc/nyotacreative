@@ -1,0 +1,272 @@
+/* ===== ABOUT PAGE STYLES (PREMIUM RENTALS STYLE) ===== */
+
+/* Variables - Matching Rentals */
+.page {
+    --color-bg-light: #F9F9F9;
+    --color-bg-card: #FFFFFF;
+    --color-text-main: #111111;
+    --color-text-muted: #666666;
+    --color-accent: #E76F51;
+
+    --font-serif: var(--font-serif, "Playfair Display", serif);
+    --font-sans: var(--font-sans, "Inter", sans-serif);
+
+    --radius-lg: 24px;
+    --radius-pill: 100px;
+
+    --shadow-soft: 0 10px 40px -10px rgba(0, 0, 0, 0.05);
+    --shadow-card-hover: 0 20px 50px -10px rgba(0, 0, 0, 0.15);
+    --transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+
+    background-color: var(--color-bg-light);
+    color: var(--color-text-main);
+    min-height: 100vh;
+    font-family: var(--font-sans);
+}
+
+/* Hero Section */
+.hero {
+    height: 70vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    color: #FFFFFF;
+}
+
+.heroBg {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+}
+
+.heroBgImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.05);
+}
+
+.heroOverlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom,
+            rgba(0, 0, 0, 0.4) 0%,
+            rgba(0, 0, 0, 0.5) 50%,
+            rgba(0, 0, 0, 0.7) 100%);
+    z-index: 1;
+}
+
+.heroContent {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    max-width: 900px;
+    padding: 0 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.heroTitle {
+    font-family: var(--font-serif);
+    font-size: clamp(3rem, 7vw, 5.5rem);
+    font-weight: 400;
+    line-height: 1.1;
+    margin-bottom: 2rem;
+    letter-spacing: -0.02em;
+    text-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    color: #FFFFFF;
+}
+
+.heroTitle span {
+    font-style: italic;
+    font-weight: 300;
+}
+
+/* Content Sections */
+.section {
+    padding: 6rem 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.sectionHeader {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.sectionLabel {
+    display: block;
+    font-size: 0.8rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.sectionHeader h2 {
+    font-family: var(--font-serif);
+    font-size: 3rem;
+    color: var(--color-text-main);
+    margin-bottom: 1.5rem;
+}
+
+.introText {
+    font-size: 1.35rem;
+    line-height: 1.6;
+    color: var(--color-text-muted);
+    max-width: 800px;
+    margin: 0 auto 4rem;
+    text-align: center;
+    font-weight: 300;
+}
+
+.gridTwo {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: center;
+    margin-bottom: 6rem;
+}
+
+.textBlock h3 {
+    font-family: var(--font-serif);
+    font-size: 2.25rem;
+    margin-bottom: 1.5rem;
+    color: var(--color-text-main);
+}
+
+.textBlock p {
+    font-size: 1.05rem;
+    line-height: 1.8;
+    color: var(--color-text-muted);
+    margin-bottom: 1.5rem;
+}
+
+.imageBlock {
+    position: relative;
+    height: 500px;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-soft);
+}
+
+.imageCover {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+}
+
+.imageBlock:hover .imageCover {
+    transform: scale(1.05);
+}
+
+/* Values Grid */
+.valuesGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.valueCard {
+    background: #FFFFFF;
+    padding: 3rem 2rem;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-soft);
+    transition: var(--transition);
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    text-align: center;
+}
+
+.valueCard:hover {
+    transform: translateY(-10px);
+    box-shadow: var(--shadow-card-hover);
+}
+
+.valueIcon {
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    display: block;
+}
+
+.valueCard h3 {
+    font-family: var(--font-serif);
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    color: var(--color-text-main);
+}
+
+.valueCard p {
+    color: var(--color-text-muted);
+    line-height: 1.6;
+}
+
+/* CTA */
+.ctaSection {
+    background: #111111;
+    color: #FFFFFF;
+    padding: 8rem 2rem;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-top: 4rem;
+    border-radius: var(--radius-lg);
+}
+
+.ctaContent {
+    position: relative;
+    z-index: 2;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.ctaTitle {
+    font-family: var(--font-serif);
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    margin-bottom: 1.5rem;
+    font-weight: 400;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.ctaText {
+    font-size: 1.2rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 3rem;
+}
+
+.ctaButton {
+    display: inline-block;
+    background: #FFFFFF;
+    color: #111111;
+    padding: 1.25rem 3rem;
+    border-radius: var(--radius-pill);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    transition: var(--transition);
+}
+
+.ctaButton:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 768px) {
+    .gridTwo {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+    }
+
+    .imageBlock {
+        height: 300px;
+    }
+}

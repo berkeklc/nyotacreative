@@ -1,5 +1,5 @@
 import Link from "next/link";
-import styles from "../page.module.css";
+import styles from "./about.module.css";
 
 export const metadata = {
     title: "About Us | Nyota Travel",
@@ -9,57 +9,84 @@ export const metadata = {
 export default function AboutPage() {
     return (
         <div className={styles.page}>
-            <main style={{ paddingTop: "120px" }}>
-                <section className="section">
-                    <div className="container">
-                        <div className={styles.sectionHeader}>
-                            <div>
-                                <span className={styles.sectionLabel}>Identity</span>
-                                <h1>About Nyota Travel</h1>
-                            </div>
+            {/* Hero Section */}
+            <section className={styles.hero}>
+                <div className={styles.heroBg}>
+                    <img
+                        src="/hero-safari.jpg"
+                        alt="Background"
+                        className={styles.heroBgImage}
+                    />
+                    <div className={styles.heroOverlay} />
+                </div>
+                <div className={styles.heroContent}>
+                    <h1 className={styles.heroTitle}>
+                        Our Tanzania,<br />
+                        <span>Your Adventure</span>
+                    </h1>
+                </div>
+            </section>
+
+            {/* Content Section */}
+            <section className={styles.section}>
+                <div className={styles.container}>
+                    <p className={styles.introText}>
+                        Nyota Travel was founded on a simple principle: nobody knows Tanzania better than the people who call it home.
+                        We aren't just a booking platform; we are your local advisors, your on-the-ground support, and your bridge to the wild heart of Africa.
+                    </p>
+
+                    <div className={styles.gridTwo}>
+                        <div className={styles.imageBlock}>
+                            <img src="/zanzibar-beach.jpg" alt="Zanzibar Beach" className={styles.imageCover} />
                         </div>
-                        <div className={styles.layoutGrid}>
-                            <div className={styles.mainContent}>
-                                <div className={styles.adviceCard} style={{ background: 'var(--color-sand)', borderLeft: '6px solid var(--color-terracotta)', marginBottom: '3rem' }}>
-                                    <h3 style={{ color: 'var(--color-terracotta)' }}>Our Tanzania, Your Adventure</h3>
-                                    <p className={styles.descriptionText}>
-                                        Nyota Travel was founded on a simple principle: nobody knows Tanzania better than the people who call it home. We aren't just a booking platform; we are your local advisors, your on-the-ground support, and your bridge to the wild heart of Africa.
-                                    </p>
-                                </div>
-                                <section>
-                                    <h2>Expertise You Can Trust</h2>
-                                    <p className={styles.descriptionText} style={{ marginBottom: '2rem' }}>
-                                        From the rhythmic tides of Zanzibar to the thundering hooves of the Serengeti migration, our guides and experts have walked every trail and explored every hidden alley of Stone Town. We curate experiences that prioritize authenticity, cultural respect, and premium comfort.
-                                    </p>
-                                    <div className={styles.infoGrid} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
-                                        <div className="card-premium">
-                                            <h4>Local Insight</h4>
-                                            <p style={{ color: 'var(--color-slate)', fontSize: '0.9rem' }}>Deep-rooted connections with local communities to ensure unique, ethical experiences.</p>
-                                        </div>
-                                        <div className="card-premium">
-                                            <h4>Bespoke Planning</h4>
-                                            <p style={{ color: 'var(--color-slate)', fontSize: '0.9rem' }}>Tailor-made itineraries crafted by experts who understand the nuances of Tanzanian travel.</p>
-                                        </div>
-                                    </div>
-                                </section>
-                            </div>
-                            <aside className={styles.sidebar}>
-                                <div className={styles.sidebarCard}>
-                                    <h3>Ready to start?</h3>
-                                    <ul className={styles.sidebarLinks}>
-                                        <li><Link href="/tours">View All Tours</Link></li>
-                                        <li><Link href="/guides">Read Travel Guides</Link></li>
-                                        <li><Link href="/contact">Inquire Now</Link></li>
-                                    </ul>
-                                    <Link href="/contact" className="btn btn-primary" style={{ width: '100%', textAlign: 'center' }}>
-                                        Contact an Advisor
-                                    </Link>
-                                </div>
-                            </aside>
+                        <div className={styles.textBlock}>
+                            <span className={styles.sectionLabel}>Our Story</span>
+                            <h3>Expertise You Can Trust</h3>
+                            <p>
+                                From the rhythmic tides of Zanzibar to the thundering hooves of the Serengeti migration, our guides and experts have walked every trail and explored every hidden alley of Stone Town.
+                            </p>
+                            <p>
+                                We curate experiences that prioritize authenticity, cultural respect, and premium comfort. When you travel with Rush, you travel with friends who know the way.
+                            </p>
                         </div>
                     </div>
-                </section>
-            </main>
+
+                    <div className={styles.sectionHeader}>
+                        <span className={styles.sectionLabel}>Why Choose Us</span>
+                        <h2>The Nyota Difference</h2>
+                    </div>
+
+                    <div className={styles.valuesGrid}>
+                        <div className={styles.valueCard}>
+                            <span className={styles.valueIcon}>🌍</span>
+                            <h3>Local Insight</h3>
+                            <p>Deep-rooted connections with local communities to ensure unique, ethical experiences that gives back.</p>
+                        </div>
+                        <div className={styles.valueCard}>
+                            <span className={styles.valueIcon}>✨</span>
+                            <h3>Bespoke Planning</h3>
+                            <p>Tailor-made itineraries crafted by experts who understand the nuances of Tanzanian travel and luxury.</p>
+                        </div>
+                        <div className={styles.valueCard}>
+                            <span className={styles.valueIcon}>🤝</span>
+                            <h3>On-Ground Support</h3>
+                            <p>24/7 assistance from our team in Dar es Salaam and Zanzibar. We are always just a call away.</p>
+                        </div>
+                    </div>
+
+                    <div className={styles.ctaSection}>
+                        <div className={styles.ctaContent}>
+                            <h2 className={styles.ctaTitle}>Start Your Journey</h2>
+                            <p className={styles.ctaText}>
+                                Ready to explore the best of Tanzania? Let's plan your dream trip together.
+                            </p>
+                            <Link href="/contact" className={styles.ctaButton}>
+                                Contact an Advisor
+                            </Link>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     );
 }

@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import styles from "../page.module.css";
+import styles from "./contact.module.css";
+import globalStyles from "../page.module.css";
 import Footer from "@/components/Footer";
 
 export default function ContactPage() {
@@ -36,183 +37,154 @@ export default function ContactPage() {
     if (status === "success") {
         return (
             <div className={styles.page}>
-                <header className={styles.header}>
-                    <nav className={styles.nav}>
-                        <Link href="/" className={styles.logo}>
-                            NYOTA<span className={styles.logoAccent}>.</span>
+                <header className={globalStyles.header}>
+                    <nav className={globalStyles.nav}>
+                        <Link href="/" className={globalStyles.logo}>
+                            NYOTA<span className={globalStyles.logoAccent}>.</span>
                         </Link>
-                        <div className={styles.navLinks}>
+                        <div className={globalStyles.navLinks}>
                             <Link href="/work">Work</Link>
                             <Link href="/services">Services</Link>
                             <Link href="/about">About</Link>
-                            <Link href="/contact" className="btn btn-outline">
+                            <Link href="/contact" className={globalStyles.activeLink}>
                                 Contact
                             </Link>
                         </div>
                     </nav>
                 </header>
                 <main style={{ paddingTop: "120px", minHeight: "80vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <div style={{ textAlign: "center", maxWidth: "500px" }}>
-                        <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>✨</div>
-                        <h2>Message Sent!</h2>
-                        <p style={{ color: "rgba(250,250,250,0.7)", marginBottom: "2rem" }}>
-                            Thank you for reaching out. Our team will get back to you within 24 hours.
+                    <div className={styles.successMessage}>
+                        <div style={{ fontSize: "3rem", marginBottom: "1.5rem", color: "var(--color-gold)" }}>✨</div>
+                        <h2 className={styles.title} style={{ fontSize: "2.5rem" }}>Message Sent</h2>
+                        <p className={styles.description}>
+                            Thank you for reaching out. We will review your message and get back to you shortly.
                         </p>
-                        <button onClick={() => setStatus("idle")} className="btn btn-outline">
-                            Send Another Message
+                        <button onClick={() => setStatus("idle")} className={styles.submitButton}>
+                            Send Another
                         </button>
                     </div>
                 </main>
-                <footer className={styles.footer}>
-                    <div className="container">
-                        <div className={styles.footerBottom}>
-                            <p className="text-muted">
-                                © {new Date().getFullYear()} Nyota Creative. All rights reserved.
-                            </p>
-                        </div>
-                    </div>
-                </footer>
+                <Footer />
             </div>
         );
     }
 
     return (
         <div className={styles.page}>
-            <header className={styles.header}>
-                <nav className={styles.nav}>
-                    <Link href="/" className={styles.logo}>
-                        NYOTA<span className={styles.logoAccent}>.</span>
+            <header className={globalStyles.header}>
+                <nav className={globalStyles.nav}>
+                    <Link href="/" className={globalStyles.logo}>
+                        NYOTA<span className={globalStyles.logoAccent}>.</span>
                     </Link>
-                    <div className={styles.navLinks}>
+                    <div className={globalStyles.navLinks}>
                         <Link href="/work">Work</Link>
                         <Link href="/services">Services</Link>
                         <Link href="/about">About</Link>
-                        <Link href="/contact" className="btn btn-outline">
+                        <Link href="/contact" style={{ color: "var(--color-gold)" }}>
                             Contact
                         </Link>
                     </div>
                 </nav>
             </header>
 
-            <main style={{ paddingTop: "120px", minHeight: "80vh" }}>
-                <section className="section container">
-                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "6rem" }}>
-                        <div>
-                            <span className={styles.sectionLabel}>Contact</span>
-                            <h1 style={{ marginBottom: "1.5rem" }}>Let's talk</h1>
-                            <p style={{ color: "rgba(250,250,250,0.7)", marginBottom: "3rem", maxWidth: "400px" }}>
-                                Ready to start your next project? We'd love to hear from you.
-                                Fill out the form or reach us directly.
+            <main style={{ paddingTop: "120px" }}>
+                <section className={`${styles.section} container`}>
+                    <div className={styles.grid}>
+                        <div className={styles.contentSide}>
+                            <span className={globalStyles.sectionLabel}>Start a Conversation</span>
+                            <h1 className={styles.title}>Let's Create<br />Something Iconic.</h1>
+                            <p className={styles.description}>
+                                Whether you have a clear vision or just a spark of an idea, we're here to help you bring it to life.
                             </p>
 
-                            <div style={{ marginBottom: "2rem" }}>
-                                <h4 style={{ fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--color-gold)", marginBottom: "0.5rem" }}>Email</h4>
-                                <a href="mailto:nyotacreatives@gmail.com" style={{ fontSize: "1.125rem" }}>nyotacreatives@gmail.com</a>
-                            </div>
+                            <div className={styles.contactInfo}>
+                                <div style={{ marginBottom: "2rem" }}>
+                                    <span className={styles.label}>Email</span>
+                                    <a href="mailto:nyotacreatives@gmail.com" className={styles.value}>
+                                        nyotacreatives@gmail.com
+                                    </a>
+                                </div>
 
-                            <div style={{ marginBottom: "2rem" }}>
-                                <h4 style={{ fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--color-gold)", marginBottom: "0.5rem" }}>Phone</h4>
-                                <a href="tel:+255123456789" style={{ fontSize: "1.125rem" }}>+255 123 456 789</a>
-                            </div>
+                                <div style={{ marginBottom: "2rem" }}>
+                                    <span className={styles.label}>Phone</span>
+                                    <a href="tel:+255794094733" className={styles.value}>
+                                        +255 794 094 733
+                                    </a>
+                                </div>
 
-                            <div style={{ marginBottom: "2rem" }}>
-                                <h4 style={{ fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--color-gold)", marginBottom: "0.5rem" }}>Location</h4>
-                                <p style={{ fontSize: "1.125rem" }}>
-                                    Dar es Salaam, Tanzania
-                                </p>
+                                <div>
+                                    <span className={styles.label}>Studio</span>
+                                    <p className={styles.location}>
+                                        Dar es Salaam,<br />Tanzania
+                                    </p>
+                                </div>
                             </div>
 
                             <div>
-                                <h4 style={{ fontSize: "0.875rem", textTransform: "uppercase", letterSpacing: "0.1em", color: "var(--color-gold)", marginBottom: "0.5rem" }}>Social</h4>
-                                <div style={{ display: "flex", gap: "1rem" }}>
-                                    <a href="https://instagram.com/nyotacreative" target="_blank" rel="noopener">Instagram</a>
-                                    <a href="https://linkedin.com/company/nyotacreative" target="_blank" rel="noopener">LinkedIn</a>
-                                    <a href="https://twitter.com/nyotacreative" target="_blank" rel="noopener">Twitter</a>
+                                <span className={styles.label} style={{ marginBottom: "1rem" }}>Follow Us</span>
+                                <div className={styles.socialLinks}>
+                                    <a href="https://instagram.com/nyotacreative" target="_blank" className={styles.socialLink}>Instagram</a>
+                                    <a href="https://linkedin.com/company/nyotacreative" target="_blank" className={styles.socialLink}>LinkedIn</a>
+                                    <a href="https://twitter.com/nyotacreative" target="_blank" className={styles.socialLink}>Twitter</a>
                                 </div>
                             </div>
                         </div>
 
-                        <div>
-                            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "1.5rem" }}>
-                                <div>
-                                    <label style={{ display: "block", fontSize: "0.875rem", marginBottom: "0.5rem", color: "rgba(250,250,250,0.7)" }}>Name *</label>
+                        <div className={styles.formSide}>
+                            <form onSubmit={handleSubmit} className={styles.form}>
+                                <div className={styles.formGroup}>
+                                    <label className={styles.inputLabel}>Name</label>
                                     <input
                                         type="text"
                                         required
                                         value={formData.name}
                                         onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                                        style={{
-                                            width: "100%",
-                                            padding: "1rem",
-                                            background: "var(--color-charcoal-light)",
-                                            border: "1px solid rgba(250,250,250,0.1)",
-                                            color: "var(--color-off-white)",
-                                            fontSize: "1rem"
-                                        }}
+                                        className={styles.input}
+                                        placeholder="Enter your name"
                                     />
                                 </div>
-                                <div>
-                                    <label style={{ display: "block", fontSize: "0.875rem", marginBottom: "0.5rem", color: "rgba(250,250,250,0.7)" }}>Email *</label>
+                                <div className={styles.formGroup}>
+                                    <label className={styles.inputLabel}>Email</label>
                                     <input
                                         type="email"
                                         required
                                         value={formData.email}
                                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                                        style={{
-                                            width: "100%",
-                                            padding: "1rem",
-                                            background: "var(--color-charcoal-light)",
-                                            border: "1px solid rgba(250,250,250,0.1)",
-                                            color: "var(--color-off-white)",
-                                            fontSize: "1rem"
-                                        }}
+                                        className={styles.input}
+                                        placeholder="Enter your email"
                                     />
                                 </div>
-                                <div>
-                                    <label style={{ display: "block", fontSize: "0.875rem", marginBottom: "0.5rem", color: "rgba(250,250,250,0.7)" }}>Company</label>
+                                <div className={styles.formGroup}>
+                                    <label className={styles.inputLabel}>Company (Optional)</label>
                                     <input
                                         type="text"
                                         value={formData.company}
                                         onChange={(e) => setFormData({ ...formData, company: e.target.value })}
-                                        style={{
-                                            width: "100%",
-                                            padding: "1rem",
-                                            background: "var(--color-charcoal-light)",
-                                            border: "1px solid rgba(250,250,250,0.1)",
-                                            color: "var(--color-off-white)",
-                                            fontSize: "1rem"
-                                        }}
+                                        className={styles.input}
+                                        placeholder="Company name"
                                     />
                                 </div>
-                                <div>
-                                    <label style={{ display: "block", fontSize: "0.875rem", marginBottom: "0.5rem", color: "rgba(250,250,250,0.7)" }}>Message *</label>
+                                <div className={styles.formGroup}>
+                                    <label className={styles.inputLabel}>Message</label>
                                     <textarea
                                         required
-                                        rows={5}
+                                        rows={4}
                                         value={formData.message}
                                         onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-                                        style={{
-                                            width: "100%",
-                                            padding: "1rem",
-                                            background: "var(--color-charcoal-light)",
-                                            border: "1px solid rgba(250,250,250,0.1)",
-                                            color: "var(--color-off-white)",
-                                            fontSize: "1rem",
-                                            resize: "vertical"
-                                        }}
+                                        className={styles.textarea}
+                                        placeholder="Tell us about your project..."
                                     />
                                 </div>
                                 <button
                                     type="submit"
-                                    className="btn btn-primary"
-                                    style={{ alignSelf: "flex-start" }}
+                                    className={styles.submitButton}
                                     disabled={status === "loading"}
                                 >
                                     {status === "loading" ? "Sending..." : "Send Message"}
                                 </button>
                                 {status === "error" && (
-                                    <p style={{ color: "red", fontSize: "0.875rem" }}>
-                                        Something went wrong. Please try again.
+                                    <p style={{ color: "#E76F51", fontSize: "0.9rem", marginTop: "1rem" }}>
+                                        Submission failed. Please try again.
                                     </p>
                                 )}
                             </form>
@@ -220,8 +192,6 @@ export default function ContactPage() {
                     </div>
                 </section>
             </main>
-
-            <Footer />
         </div>
     );
 }
