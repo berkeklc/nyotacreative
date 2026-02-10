@@ -29,7 +29,7 @@
                 "sedan",
                 "suv",
                 "van",
-                "4x4",
+                "offroad",
                 "luxury"
             ],
             "required": true

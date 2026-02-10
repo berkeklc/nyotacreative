@@ -876,6 +876,52 @@ export interface ApiProjectProject extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiRentalVehicleRentalVehicle
+  extends Struct.CollectionTypeSchema {
+  collectionName: 'rental_vehicles';
+  info: {
+    description: 'Self-drive rental vehicles with pricing and specs';
+    displayName: 'Rental Vehicle';
+    pluralName: 'rental-vehicles';
+    singularName: 'rental-vehicle';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    available: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<true>;
+    category: Schema.Attribute.Enumeration<
+      ['sedan', 'suv', 'van', 'offroad', 'luxury']
+    > &
+      Schema.Attribute.Required;
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    description: Schema.Attribute.Text;
+    featured: Schema.Attribute.Boolean & Schema.Attribute.DefaultTo<false>;
+    features: Schema.Attribute.Text;
+    gallery: Schema.Attribute.Media<'images', true>;
+    heroImage: Schema.Attribute.Media<'images'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::rental-vehicle.rental-vehicle'
+    > &
+      Schema.Attribute.Private;
+    name: Schema.Attribute.String & Schema.Attribute.Required;
+    pricePerDay: Schema.Attribute.Decimal & Schema.Attribute.Required;
+    pricePerWeek: Schema.Attribute.Decimal;
+    publishedAt: Schema.Attribute.DateTime;
+    seats: Schema.Attribute.Integer & Schema.Attribute.Required;
+    slug: Schema.Attribute.UID<'name'> & Schema.Attribute.Required;
+    transmission: Schema.Attribute.Enumeration<['automatic', 'manual']> &
+      Schema.Attribute.Required;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiServiceService extends Struct.CollectionTypeSchema {
   collectionName: 'services';
   info: {
@@ -1575,6 +1621,7 @@ declare module '@strapi/strapi' {
       'api::hotel.hotel': ApiHotelHotel;
       'api::inquiry.inquiry': ApiInquiryInquiry;
       'api::project.project': ApiProjectProject;
+      'api::rental-vehicle.rental-vehicle': ApiRentalVehicleRentalVehicle;
       'api::service.service': ApiServiceService;
       'api::team-member.team-member': ApiTeamMemberTeamMember;
       'api::tour.tour': ApiTourTour;
