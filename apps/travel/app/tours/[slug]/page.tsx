@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
     const tour = res.data?.[0];
 
     return {
-        title: tour ? `${tour.name} | Nyota Travel` : "Tour Detail",
+        title: tour ? `${tour.name} | RushZanzibar` : "Tour Detail",
         description: tour?.description ? String(tour.description).replace(/<[^>]*>/g, '').trim().slice(0, 160) : "",
     };
 }

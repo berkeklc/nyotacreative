@@ -15,7 +15,9 @@
             "type": "enumeration",
             "enum": [
                 "booking",
-                "contact"
+                "contact",
+                "transfer",
+                "car-rental"
             ],
             "required": true
         },
@@ -62,7 +64,8 @@
             "type": "enumeration",
             "enum": [
                 "travel",
-                "creative"
+                "creative",
+                "travel-rental"
             ],
             "required": true
         }

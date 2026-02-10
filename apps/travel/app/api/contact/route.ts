@@ -18,7 +18,6 @@ export async function POST(request: Request) {
         const body = await request.json() as Record<string, unknown>;
         const name = getText(body.name);
         const email = getText(body.email).toLowerCase();
-        const company = getText(body.company);
         const message = getText(body.message);
 
         if (!name || !email || !message) {
@@ -28,7 +27,7 @@ export async function POST(request: Request) {
             return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
         }
         if (!STRAPI_TOKEN) {
-            console.error("Contact API misconfiguration: STRAPI_API_TOKEN is missing");
+            console.error("Travel contact API misconfiguration: STRAPI_API_TOKEN is missing");
             return NextResponse.json({ error: "Service unavailable" }, { status: 500 });
         }
 
@@ -43,10 +42,9 @@ export async function POST(request: Request) {
                     type: "contact",
                     name,
                     email,
-                    company,
                     message,
                     status: "new",
-                    source: "creative",
+                    source: "travel",
                 },
             }),
             cache: "no-store",
@@ -54,7 +52,7 @@ export async function POST(request: Request) {
 
         if (!strapiResponse.ok) {
             const errorData = await strapiResponse.text();
-            console.error("Contact API failed to store inquiry:", strapiResponse.status, errorData);
+            console.error("Travel contact API failed to store inquiry:", strapiResponse.status, errorData);
             return NextResponse.json(
                 { error: "Unable to submit inquiry at the moment. Please try again shortly." },
                 { status: 502 }
@@ -63,10 +61,10 @@ export async function POST(request: Request) {
 
         return NextResponse.json({
             success: true,
-            message: "Thank you! We will be in touch shortly.",
+            message: "Thank you! Your inquiry has been received. We will contact you shortly.",
         });
     } catch (error) {
-        console.error("Contact API Error:", error);
+        console.error("Travel contact API error:", error);
         return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
     }
 }

@@ -814,7 +814,9 @@ export interface ApiInquiryInquiry extends Struct.CollectionTypeSchema {
     name: Schema.Attribute.String & Schema.Attribute.Required;
     phone: Schema.Attribute.String;
     publishedAt: Schema.Attribute.DateTime;
-    source: Schema.Attribute.Enumeration<['travel', 'creative']> &
+    source: Schema.Attribute.Enumeration<
+      ['travel', 'creative', 'travel-rental']
+    > &
       Schema.Attribute.Required;
     status: Schema.Attribute.Enumeration<
       ['new', 'contacted', 'converted', 'closed']
@@ -824,7 +826,9 @@ export interface ApiInquiryInquiry extends Struct.CollectionTypeSchema {
     tourTitle: Schema.Attribute.String;
     travelDate: Schema.Attribute.Date;
     travelers: Schema.Attribute.Integer;
-    type: Schema.Attribute.Enumeration<['booking', 'contact']> &
+    type: Schema.Attribute.Enumeration<
+      ['booking', 'contact', 'transfer', 'car-rental']
+    > &
       Schema.Attribute.Required;
     updatedAt: Schema.Attribute.DateTime;
     updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &

@@ -36,8 +36,6 @@ export async function fetchAPI(path: string, urlParamsObject = {}, options = {})
             `/api${path}`
         )}${queryString ? `?${queryString}` : ""}`;
 
-        console.log(`[Strapi] Fetching: ${requestUrl}`);
-
         // Trigger API call
         const response = await fetch(requestUrl, mergedOptions);
 

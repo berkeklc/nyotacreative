@@ -1,10 +1,27 @@
-import Link from "next/link";
 import styles from "./contact.module.css";
+import TravelContactForm from "../../components/TravelContactForm";
 
 export const metadata = {
     title: "Contact Us | RushZanzibar",
     description: "Get in touch with our Tanzanian travel experts for bespoke itinerary planning.",
 };
+
+const socialLinks = [
+    {
+        label: "Instagram",
+        href: "https://instagram.com/rushzanzibar",
+        icon: (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
+        ),
+    },
+    {
+        label: "X",
+        href: "https://x.com/rushzanzibar",
+        icon: (
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" /></svg>
+        ),
+    },
+];
 
 export default function ContactPage() {
     return (
@@ -38,7 +55,7 @@ export default function ContactPage() {
 
                             <div className={styles.contactMethod}>
                                 <span className={styles.methodLabel}>Phone / WhatsApp</span>
-                                <a href="https://wa.me/255794094733" target="_blank" className={styles.methodValue}>
+                                <a href="https://wa.me/255794094733" target="_blank" rel="noopener noreferrer" className={styles.methodValue}>
                                     +255 794 094 733
                                 </a>
                             </div>
@@ -59,35 +76,25 @@ export default function ContactPage() {
                             </div>
 
                             <div className={styles.socialLinks}>
-                                <a href="#" className={styles.socialLink} aria-label="Instagram">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5" /><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" /><line x1="17.5" x2="17.51" y1="6.5" y2="6.5" /></svg>
-                                </a>
-                                <a href="#" className={styles.socialLink} aria-label="Twitter">
-                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 4s-.7 2.1-2 3.4c1.6 10-9.4 17.3-18 11.6 2.2.1 4.4-.6 6-2C3 15.5.5 9.6 3 5c2.2 2.6 5.6 4.1 9 4-.9-4.2 4-6.6 7-3.8 1.1 0 3-1.2 3-1.2z" /></svg>
-                                </a>
+                                {socialLinks.map((item) => (
+                                    <a
+                                        key={item.label}
+                                        href={item.href}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className={styles.socialLink}
+                                        aria-label={item.label}
+                                    >
+                                        {item.icon}
+                                    </a>
+                                ))}
                             </div>
                         </div>
 
                         {/* Form Column */}
                         <div className={styles.formCard}>
                             <h2 className={styles.infoTitle}>Send us a Message</h2>
-                            <form>
-                                <div className={styles.formGroup}>
-                                    <label className={styles.label}>Full Name</label>
-                                    <input type="text" className={styles.input} placeholder="Your Name" />
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <label className={styles.label}>Email Address</label>
-                                    <input type="email" className={styles.input} placeholder="name@example.com" />
-                                </div>
-                                <div className={styles.formGroup}>
-                                    <label className={styles.label}>Message</label>
-                                    <textarea className={styles.textarea} placeholder="Tell us about your trip plans..."></textarea>
-                                </div>
-                                <button type="submit" className={styles.submitBtn}>
-                                    Send Inquiry
-                                </button>
-                            </form>
+                            <TravelContactForm />
                         </div>
                     </div>
                 </div>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import styles from "./about.module.css";
 
 export const metadata = {
-    title: "About Us | Nyota Travel",
+    title: "About Us | RushZanzibar",
     description: "Expert travel guides for Tanzania and Zanzibar. Learn more about our mission.",
 };
 
@@ -31,7 +31,7 @@ export default function AboutPage() {
             <section className={styles.section}>
                 <div className={styles.container}>
                     <p className={styles.introText}>
-                        Nyota Travel was founded on a simple principle: nobody knows Tanzania better than the people who call it home.
+                        RushZanzibar was founded on a simple principle: nobody knows Tanzania better than the people who call it home.
                         We aren't just a booking platform; we are your local advisors, your on-the-ground support, and your bridge to the wild heart of Africa.
                     </p>
 

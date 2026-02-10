@@ -1,23 +1,8 @@
-"use client";
-
-import { useState, useEffect } from "react";
 import Link from "next/link";
+import { notFound } from "next/navigation";
 import styles from "../../rentals.module.css";
 import RentalBookingForm from "../../../../components/RentalBookingForm";
-
-interface RentalVehicle {
-    name: string;
-    slug: string;
-    description: string;
-    category: string;
-    transmission: string;
-    seats: number;
-    pricePerDay: number;
-    pricePerWeek: number;
-    features: string[];
-    image: string | null;
-    available: boolean;
-}
+import { getVehicleBySlug } from "../../../../lib/rentals";
 
 const categoryIcons: Record<string, string> = {
     sedan: "🚗",
@@ -27,66 +12,16 @@ const categoryIcons: Record<string, string> = {
     luxury: "✨",
 };
 
-export default function VehicleDetailPage({ params }: { params: Promise<{ slug: string }> }) {
-    const [slug, setSlug] = useState<string>("");
-    const [vehicle, setVehicle] = useState<RentalVehicle | null>(null);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        params.then((p) => setSlug(p.slug));
-    }, [params]);
-
-    useEffect(() => {
-        if (!slug) return;
-
-        async function fetchVehicle() {
-            try {
-                const res = await fetch(`/api/rentals`);
-                if (res.ok) {
-                    const json = await res.json();
-                    const found = json.vehicles?.find((v: any) => v.slug === slug);
-                    if (found) {
-                        setVehicle({ ...found, description: found.description || "" });
-                        setLoading(false);
-                        return;
-                    }
-                }
-            } catch (err) {
-                console.error("Failed to fetch vehicle:", err);
-            }
-            setLoading(false);
-        }
-
-        fetchVehicle();
-    }, [slug]);
-
-    if (loading) {
-        return (
-            <div style={{ minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                <p>Loading vehicle details...</p>
-            </div>
-        );
-    }
+export default async function VehicleDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
+    const vehicle = await getVehicleBySlug(slug);
 
     if (!vehicle) {
-        return (
-            <div style={{ minHeight: "100vh", paddingTop: "120px", textAlign: "center" }}>
-                <div className="container">
-                    <h1>Vehicle Not Found</h1>
-                    <p style={{ marginTop: "1rem", color: "var(--color-slate)" }}>
-                        The vehicle you're looking for is not available.
-                    </p>
-                    <Link href="/rentals" className="btn btn-primary" style={{ marginTop: "2rem" }}>
-                        ← Back to Rentals
-                    </Link>
-                </div>
-            </div>
-        );
+        notFound();
     }
 
     return (
         <div style={{ backgroundColor: "#0f1923", minHeight: "100vh" }}>
-            {/* Hero */}
             <div
                 className={styles.detailHero}
                 style={{
@@ -98,12 +33,14 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
                 }}
             >
                 {!vehicle.image && (
-                    <div style={{
-                        position: "absolute",
-                        zIndex: 1,
-                        fontSize: "8rem",
-                        opacity: 0.15,
-                    }}>
+                    <div
+                        style={{
+                            position: "absolute",
+                            zIndex: 1,
+                            fontSize: "8rem",
+                            opacity: 0.15,
+                        }}
+                    >
                         {categoryIcons[vehicle.category] || "🚗"}
                     </div>
                 )}
@@ -124,10 +61,8 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
                 </div>
             </div>
 
-            {/* Body */}
             <div className={styles.detailBody}>
                 <div className={styles.detailMain}>
-                    {/* Specs */}
                     <div className={styles.detailSection}>
                         <h2 className={styles.detailSectionTitle}>📋 Vehicle Specifications</h2>
                         <div className={styles.specsGrid}>
@@ -156,7 +91,6 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
                         </div>
                     </div>
 
-                    {/* Description */}
                     <div className={styles.detailSection}>
                         <h2 className={styles.detailSectionTitle}>ℹ️ About This Vehicle</h2>
                         <div className={styles.detailDescription}>
@@ -164,12 +98,14 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
                         </div>
                     </div>
 
-                    {/* Features */}
                     <div className={styles.detailSection}>
                         <h2 className={styles.detailSectionTitle}>⭐ Features & Equipment</h2>
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
                             {vehicle.features.map((feature) => (
-                                <div key={feature} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "1rem", color: "var(--color-text-muted)" }}>
+                                <div
+                                    key={feature}
+                                    style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "1rem", color: "var(--color-text-muted)" }}
+                                >
                                     <span style={{ color: "var(--color-success)" }}>✓</span>
                                     <span>{feature}</span>
                                 </div>
@@ -177,7 +113,6 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
                         </div>
                     </div>
 
-                    {/* Rental Terms */}
                     <div className={styles.detailSection}>
                         <h2 className={styles.detailSectionTitle}>📜 Rental Terms</h2>
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
@@ -191,7 +126,10 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
                                 "24/7 roadside assistance",
                                 "Free delivery in city",
                             ].map((term) => (
-                                <div key={term} style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.95rem", color: "var(--color-text-muted)" }}>
+                                <div
+                                    key={term}
+                                    style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.95rem", color: "var(--color-text-muted)" }}
+                                >
                                     <span style={{ color: "var(--color-accent)" }}>•</span>
                                     <span>{term}</span>
                                 </div>
@@ -200,12 +138,16 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
                     </div>
                 </div>
 
-                {/* Sidebar — Booking */}
                 <div className={styles.sidebar}>
                     <div className={styles.bookingCard}>
                         <div className={styles.bookingCardHeader}>
-                            <div className={styles.bookingCardLabel} style={{ color: "var(--color-text-muted)" }}>Daily rate</div>
-                            <div className={styles.bookingCardPrice} style={{ color: "var(--color-accent)", fontSize: "2.5rem", fontWeight: "700", fontFamily: "var(--font-serif)" }}>
+                            <div className={styles.bookingCardLabel} style={{ color: "var(--color-text-muted)" }}>
+                                Daily rate
+                            </div>
+                            <div
+                                className={styles.bookingCardPrice}
+                                style={{ color: "var(--color-accent)", fontSize: "2.5rem", fontWeight: "700", fontFamily: "var(--font-serif)" }}
+                            >
                                 ${vehicle.pricePerDay}
                                 <span style={{ fontSize: "1rem", color: "var(--color-text-muted)", fontWeight: "400", marginLeft: "0.5rem" }}>/day</span>
                             </div>
@@ -216,11 +158,7 @@ export default function VehicleDetailPage({ params }: { params: Promise<{ slug: 
                             )}
                         </div>
                         <div className={styles.bookingCardBody}>
-                            <RentalBookingForm
-                                type="car-rental"
-                                itemTitle={vehicle.name}
-                                itemSlug={vehicle.slug}
-                            />
+                            <RentalBookingForm type="car-rental" itemTitle={vehicle.name} itemSlug={vehicle.slug} />
                         </div>
                     </div>
                 </div>

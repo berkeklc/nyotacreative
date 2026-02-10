@@ -2,7 +2,7 @@ import Link from "next/link";
 import styles from "../page.module.css";
 
 export const metadata = {
-    title: "Where to Stay in Tanzania | Nyota Travel",
+    title: "Where to Stay in Tanzania | RushZanzibar",
     description: "Expert advice on the best accommodations in Tanzania and Zanzibar, from luxury lodges to eco-retreats.",
 };
 

@@ -3,119 +3,138 @@ import styles from "../page.module.css";
 import { fetchAPI, getStrapiMedia } from "../../lib/strapi";
 
 export const metadata = {
-    title: "Tanzania Travel Guide 2026 | Nyota Travel",
+    title: "Tanzania Travel Guide 2026 | RushZanzibar",
     description: "Complete Tanzania travel guide. Discover Zanzibar, Serengeti, Kilimanjaro, Dar es Salaam and more.",
 };
 
-export default async function TanzaniaPage() {
-    // 1. Fetch Tanzania Destination data
-    const destinationRes = await fetchAPI("/destinations", {
-        filters: { slug: "tanzania" },
-        populate: ["heroImage", "quickFacts"]
+const FALLBACK_TANZANIA = {
+    name: "Tanzania",
+    slug: "tanzania",
+    heroImage: null,
+    quickFacts: {
+        language: "Swahili, English",
+        currency: "Tanzanian Shilling (TZS)",
+        bestTimeToVisit: "June to October",
+        population: "67M+",
+        timezone: "EAT (UTC+3)",
+        avgTemperature: "24°C - 31°C",
+    },
+};
+
+function normalizeText(value: unknown) {
+    if (typeof value !== "string") return "";
+    return value.trim().toLowerCase();
+}
+
+function unwrapRelation(relation: any): any[] {
+    if (!relation) return [];
+    if (Array.isArray(relation)) return relation;
+    if (Array.isArray(relation.data)) return relation.data;
+    if (relation.data) return [relation.data];
+    return [relation];
+}
+
+function relationCount(relation: any) {
+    if (Array.isArray(relation)) return relation.length;
+    if (Array.isArray(relation?.data)) return relation.data.length;
+    return 0;
+}
+
+function getMediaUrl(media: any) {
+    const directUrl = media?.url;
+    if (typeof directUrl === "string") return getStrapiMedia(directUrl);
+    const nestedUrl = media?.data?.attributes?.url;
+    if (typeof nestedUrl === "string") return getStrapiMedia(nestedUrl);
+    return null;
+}
+
+function cityIsInTanzania(city: any, tanzania: any) {
+    const tanzaniaSlug = normalizeText(tanzania?.slug);
+    const tanzaniaId = tanzania?.id != null ? String(tanzania.id) : "";
+    const relatedDestinations = unwrapRelation(city?.destination);
+
+    if (relatedDestinations.length === 0) return false;
+
+    return relatedDestinations.some((destination: any) => {
+        if (!destination) return false;
+
+        if (typeof destination === "string" || typeof destination === "number") {
+            const textValue = normalizeText(String(destination));
+            if (tanzaniaId && String(destination) === tanzaniaId) return true;
+            if (tanzaniaSlug && textValue === tanzaniaSlug) return true;
+            return textValue.includes("tanzania");
+        }
+
+        const destinationId = destination?.id != null ? String(destination.id) : "";
+        const destinationSlug = normalizeText(destination?.slug || destination?.attributes?.slug);
+        const destinationName = normalizeText(destination?.name || destination?.attributes?.name);
+
+        if (tanzaniaId && destinationId && destinationId === tanzaniaId) return true;
+        if (tanzaniaSlug && destinationSlug && destinationSlug === tanzaniaSlug) return true;
+        if (destinationSlug.includes("tanzania")) return true;
+        return destinationName.includes("tanzania");
     });
+}
 
-    const tanzania = destinationRes?.data?.[0];
-
-    // 2. Fetch cities separately with multiple fallback strategies
-    let cities: any[] = [];
-
-    // Strategy 1: Fetch cities by destination ID
-    if (tanzania?.id) {
-        const citiesRes1 = await fetchAPI("/cities", {
-            filters: { destination: { id: { $eq: tanzania.id } } },
-            populate: ["heroImage", "tours", "attractions"]
-        });
-        cities = citiesRes1?.data || [];
+export default async function TanzaniaPage() {
+    // Destination: strict slug -> name contains -> first matching from all
+    let tanzania: any = null;
+    const strictDestinationRes = await fetchAPI("/destinations", {
+        filters: { slug: { $eq: "tanzania" } },
+        populate: ["heroImage", "quickFacts"],
+        pagination: { limit: 1 },
+    });
+    const strictDestinationData = Array.isArray(strictDestinationRes?.data) ? strictDestinationRes.data : [];
+    if (strictDestinationData.length > 0) {
+        tanzania = strictDestinationData[0];
     }
 
-    // Strategy 2: Fetch cities by destination slug
-    if (cities.length === 0) {
-        const citiesRes2 = await fetchAPI("/cities", {
-            filters: { destination: { slug: { $eq: "tanzania" } } },
-            populate: ["heroImage", "tours", "attractions"]
+    if (!tanzania) {
+        const byNameDestinationRes = await fetchAPI("/destinations", {
+            filters: { name: { $containsi: "tanzania" } },
+            populate: ["heroImage", "quickFacts"],
+            pagination: { limit: 1 },
         });
-        cities = citiesRes2?.data || [];
-    }
-
-    // Strategy 3: Fetch all cities and filter client-side
-    if (cities.length === 0) {
-        const allCitiesRes = await fetchAPI("/cities", {
-            populate: ["heroImage", "tours", "attractions", "destination"]
-        });
-        const allCities = allCitiesRes?.data || [];
-        if (tanzania?.id) {
-            cities = allCities.filter((city: any) => {
-                const dest = city.destination;
-                if (!dest) return false;
-                // Handle both object and ID formats
-                if (typeof dest === 'object') {
-                    return dest.id === tanzania.id || dest.slug === "tanzania";
-                }
-                return dest === tanzania.id;
-            });
-        } else {
-            cities = allCities.filter((city: any) => {
-                const dest = city.destination;
-                if (!dest) return false;
-                if (typeof dest === 'object') {
-                    return dest.slug === "tanzania";
-                }
-                return false;
-            });
+        const byNameDestinationData = Array.isArray(byNameDestinationRes?.data) ? byNameDestinationRes.data : [];
+        if (byNameDestinationData.length > 0) {
+            tanzania = byNameDestinationData[0];
         }
     }
 
-    // Strategy 4: Try with populate object format (Strapi v4)
-    if (cities.length === 0 && tanzania?.id) {
-        const citiesRes4 = await fetchAPI("/cities", {
-            filters: { destination: tanzania.id },
-            populate: ["heroImage", "tours", "attractions"]
-        });
-        cities = citiesRes4?.data || [];
-    }
-
-    // Strategy 5: Last resort - fetch all cities without filter
-    if (cities.length === 0) {
-        const allCitiesRes = await fetchAPI("/cities", {
-            populate: ["heroImage", "tours", "attractions"]
-        });
-        cities = allCitiesRes?.data || [];
-    }
-
-    // Show empty state if destination not found
     if (!tanzania) {
-        return (
-            <div className={styles.page}>
-                <main style={{ minHeight: '80vh', display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column' }}>
-                    <h2>No destination data available</h2>
-                    <p>This destination is not available at the moment.</p>
-                    <Link href="/" className="btn btn-secondary" style={{ marginTop: '2rem' }}>Back to Home</Link>
-                </main>
-            </div>
-        );
+        const allDestinationsRes = await fetchAPI("/destinations", {
+            fields: ["name", "slug"],
+            pagination: { limit: 50 },
+        });
+        const allDestinations = Array.isArray(allDestinationsRes?.data) ? allDestinationsRes.data : [];
+        tanzania = allDestinations.find((destination: any) => {
+            const slug = normalizeText(destination?.slug);
+            const name = normalizeText(destination?.name);
+            return slug.includes("tanzania") || name.includes("tanzania");
+        }) || null;
     }
 
-    const destinationName = tanzania.name || "";
-    // Strip HTML from richtext description for display
-    const descriptionRaw = tanzania.description || "";
-    const description = descriptionRaw ? String(descriptionRaw).replace(/<[^>]*>/g, '').trim() : "";
-    const heroImage = getStrapiMedia(tanzania.heroImage?.url);
+    // Cities: filter by related destination when possible, otherwise keep all cities.
+    const citiesRes = await fetchAPI("/cities", {
+        populate: ["heroImage", "tours", "attractions", "destination"],
+        pagination: { limit: 100 },
+    });
+    const allCities = Array.isArray(citiesRes?.data) ? citiesRes.data : [];
+    const relatedCities = allCities.filter((city: any) => cityIsInTanzania(city, tanzania));
+    const cities = relatedCities.length > 0 ? relatedCities : allCities;
 
-    // Debug logging
-    console.log('[Tanzania Page] Destination:', destinationName);
-    console.log('[Tanzania Page] Cities found:', cities.length);
-    if (cities.length > 0) {
-        console.log('[Tanzania Page] First city:', cities[0]?.name);
-    }
+    // Keep the page online even when CMS is missing the "tanzania" destination record.
+    const tanzaniaData = tanzania || FALLBACK_TANZANIA;
+    const heroImage = getMediaUrl(tanzaniaData.heroImage);
 
-    const rawFacts = tanzania.quickFacts;
+    const rawFacts = tanzaniaData.quickFacts || {};
     const quickFacts = [
-        { label: "Language", value: rawFacts?.language || "" },
-        { label: "Currency", value: rawFacts?.currency || "" },
-        { label: "Best Time", value: rawFacts?.bestTimeToVisit || "" },
-        { label: "Population", value: rawFacts?.population || "" },
-        { label: "Timezone", value: rawFacts?.timezone || "" },
-        { label: "Avg Temperature", value: rawFacts?.avgTemperature || "" },
+        { label: "Language", value: rawFacts?.language || FALLBACK_TANZANIA.quickFacts.language },
+        { label: "Currency", value: rawFacts?.currency || FALLBACK_TANZANIA.quickFacts.currency },
+        { label: "Best Time", value: rawFacts?.bestTimeToVisit || FALLBACK_TANZANIA.quickFacts.bestTimeToVisit },
+        { label: "Population", value: rawFacts?.population || FALLBACK_TANZANIA.quickFacts.population },
+        { label: "Timezone", value: rawFacts?.timezone || FALLBACK_TANZANIA.quickFacts.timezone },
+        { label: "Avg Temperature", value: rawFacts?.avgTemperature || FALLBACK_TANZANIA.quickFacts.avgTemperature },
     ].filter(fact => fact.value); // Only show facts that have values from Strapi
 
     const displayCities = cities.map((c: any) => {
@@ -131,15 +150,13 @@ export default async function TanzaniaPage() {
             citySlug = c.name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
         }
 
-        console.log('[City]', c.name, 'slug:', citySlug);
-
         return {
             name: c.name || "",
             slug: citySlug,
             tagline: tagline,
-            attractions: Array.isArray(c.attractions) ? c.attractions.length : (typeof c.attractions === 'object' && c.attractions?.data ? c.attractions.data.length : 0),
-            tours: Array.isArray(c.tours) ? c.tours.length : (typeof c.tours === 'object' && c.tours?.data ? c.tours.data.length : 0),
-            image: getStrapiMedia(c.heroImage?.url)
+            attractions: relationCount(c.attractions),
+            tours: relationCount(c.tours),
+            image: getMediaUrl(c.heroImage)
         };
     });
 

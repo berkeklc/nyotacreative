@@ -3,7 +3,7 @@ import styles from "../page.module.css";
 import { fetchAPI, getStrapiMedia } from "../../lib/strapi";
 
 export const metadata = {
-    title: "Tours & Experiences | Nyota Travel",
+    title: "Tours & Experiences | RushZanzibar",
     description: "Book unforgettable safaris, beach getaways, and cultural tours in Tanzania and Zanzibar.",
 };
 

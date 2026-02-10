@@ -2,10 +2,44 @@ import { MetadataRoute } from "next";
 import { fetchAPI } from "../lib/strapi";
 
 const BASE_URL = "https://rushzanzibar.com";
+const PAGE_LIMIT = 100;
+
+interface SitemapItem {
+    slug?: string;
+    updatedAt?: string;
+}
+
+function toDate(value?: string) {
+    return value ? new Date(value).toISOString() : new Date().toISOString();
+}
+
+async function fetchAllItems(path: string): Promise<SitemapItem[]> {
+    const items: SitemapItem[] = [];
+    let start = 0;
+
+    while (true) {
+        const response = await fetchAPI(path, {
+            fields: ["slug", "updatedAt"],
+            pagination: { start, limit: PAGE_LIMIT },
+        });
+
+        const batch = Array.isArray(response?.data) ? (response.data as SitemapItem[]) : [];
+        if (batch.length === 0) {
+            break;
+        }
+
+        items.push(...batch);
+        if (batch.length < PAGE_LIMIT) {
+            break;
+        }
+        start += PAGE_LIMIT;
+    }
+
+    return items;
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    // Static routes
-    const routes = [
+    const staticRoutes = [
         "",
         "/about",
         "/contact",
@@ -23,69 +57,48 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: route === "" ? 1 : 0.8,
     }));
 
-    // Fetch dynamic routes
-    // 1. Cities (from /tanzania/[city])
-    let cities: any[] = [];
-    try {
-        const citiesRes = await fetchAPI("/cities", {
-            populate: ["destination"]
-        });
-        cities = citiesRes?.data || [];
-    } catch (error) {
-        console.error("Error fetching cities for sitemap:", error);
-    }
+    const [cities, tours, transferRoutes, vehicles] = await Promise.all([
+        fetchAllItems("/cities").catch(() => []),
+        fetchAllItems("/tours").catch(() => []),
+        fetchAllItems("/transfer-routes").catch(() => []),
+        fetchAllItems("/rental-vehicles").catch(() => []),
+    ]);
 
-    const cityRoutes = cities.map((city: any) => ({
-        url: `${BASE_URL}/tanzania/${city.slug}`,
-        lastModified: city.updatedAt || new Date().toISOString(),
-        changeFrequency: "weekly" as const,
-        priority: 0.8,
-    }));
+    const cityRoutes = cities
+        .filter((city) => typeof city.slug === "string" && city.slug.length > 0)
+        .map((city) => ({
+            url: `${BASE_URL}/tanzania/${city.slug}`,
+            lastModified: toDate(city.updatedAt),
+            changeFrequency: "weekly" as const,
+            priority: 0.8,
+        }));
 
-    // 2. Tours (from /tours/[slug])
-    let tours: any[] = [];
-    try {
-        const toursRes = await fetchAPI("/tours", {});
-        tours = toursRes?.data || [];
-    } catch (error) {
-        console.error("Error fetching tours for sitemap:", error);
-    }
+    const tourRoutes = tours
+        .filter((tour) => typeof tour.slug === "string" && tour.slug.length > 0)
+        .map((tour) => ({
+            url: `${BASE_URL}/tours/${tour.slug}`,
+            lastModified: toDate(tour.updatedAt),
+            changeFrequency: "weekly" as const,
+            priority: 0.7,
+        }));
 
-    const tourRoutes = tours.map((tour: any) => ({
-        url: `${BASE_URL}/tours/${tour.slug}`,
-        lastModified: tour.updatedAt || new Date().toISOString(),
-        changeFrequency: "weekly" as const,
-        priority: 0.7,
-    }));
-
-    // 3. Transfer routes & Rental vehicles
-    let transferRoutes: any[] = [];
-    let vehicleRoutes: any[] = [];
-    try {
-        const transfersRes = await fetchAPI("/transfer-routes", {});
-        const transfers = transfersRes?.data || [];
-        transferRoutes = transfers.map((t: any) => ({
-            url: `${BASE_URL}/rentals/transfers/${t.slug}`,
-            lastModified: t.updatedAt || new Date().toISOString(),
+    const transferSitemapRoutes = transferRoutes
+        .filter((route) => typeof route.slug === "string" && route.slug.length > 0)
+        .map((route) => ({
+            url: `${BASE_URL}/rentals/transfers/${route.slug}`,
+            lastModified: toDate(route.updatedAt),
             changeFrequency: "weekly" as const,
             priority: 0.6,
         }));
-    } catch {
-        // Content type may not exist yet
-    }
 
-    try {
-        const vehiclesRes = await fetchAPI("/rental-vehicles", {});
-        const vehicles = vehiclesRes?.data || [];
-        vehicleRoutes = vehicles.map((v: any) => ({
-            url: `${BASE_URL}/rentals/vehicles/${v.slug}`,
-            lastModified: v.updatedAt || new Date().toISOString(),
+    const vehicleRoutes = vehicles
+        .filter((vehicle) => typeof vehicle.slug === "string" && vehicle.slug.length > 0)
+        .map((vehicle) => ({
+            url: `${BASE_URL}/rentals/vehicles/${vehicle.slug}`,
+            lastModified: toDate(vehicle.updatedAt),
             changeFrequency: "weekly" as const,
             priority: 0.6,
         }));
-    } catch {
-        // Content type may not exist yet
-    }
 
-    return [...routes, ...cityRoutes, ...tourRoutes, ...transferRoutes, ...vehicleRoutes];
+    return [...staticRoutes, ...cityRoutes, ...tourRoutes, ...transferSitemapRoutes, ...vehicleRoutes];
 }

@@ -48,6 +48,7 @@ export async function getProjects() {
         populate: ["heroImage", "services"],
         sort: ["featured:desc", "completedAt:desc"],
         filters: { publishedAt: { $notNull: true } },
+        pagination: { limit: 100 },
     });
     return data?.data || [];
 }
@@ -66,6 +67,7 @@ export async function getServices() {
         populate: ["icon", "projects"],
         sort: ["order:asc"],
         filters: { publishedAt: { $notNull: true } },
+        pagination: { limit: 100 },
     });
     return data?.data || [];
 }
@@ -77,4 +79,3 @@ export async function getService(slug: string) {
     });
     return data?.data?.[0] || null;
 }
-

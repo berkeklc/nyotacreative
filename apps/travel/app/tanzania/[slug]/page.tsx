@@ -6,7 +6,7 @@ import { notFound } from "next/navigation";
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     return {
-        title: `${(slug || "").charAt(0).toUpperCase() + (slug || "").slice(1)} Travel Guide 2026 | Nyota Travel`,
+        title: `${(slug || "").charAt(0).toUpperCase() + (slug || "").slice(1)} Travel Guide 2026 | RushZanzibar`,
         description: `Complete guide to ${slug}. Discover the best beaches, history, and safari tours.`,
     };
 }
