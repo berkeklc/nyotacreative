@@ -1,10 +1,23 @@
 import qs from "qs";
 
-const DEFAULT_STRAPI_URL = "https://cms-production-219a.up.railway.app";
+const DEFAULT_STRAPI_PRODUCTION_URL = "https://cms-production-219a.up.railway.app";
+const DEFAULT_STRAPI_DEVELOPMENT_URL = "http://127.0.0.1:1337";
+
+function isHttpUrl(value: string) {
+    return /^https?:\/\//.test(value);
+}
+
+function resolveStrapiBaseUrl() {
+    const serverConfiguredUrl = process.env.STRAPI_API_URL?.trim() || process.env.STRAPI_URL?.trim() || "";
+    const publicConfiguredUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL?.trim() || "";
+
+    if (isHttpUrl(serverConfiguredUrl)) return serverConfiguredUrl;
+    if (isHttpUrl(publicConfiguredUrl)) return publicConfiguredUrl;
+    return process.env.NODE_ENV === "production" ? DEFAULT_STRAPI_PRODUCTION_URL : DEFAULT_STRAPI_DEVELOPMENT_URL;
+}
 
 export function getStrapiURL(path = "") {
-    const configuredBaseUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL?.trim() || "";
-    const baseUrl = /^https?:\/\//.test(configuredBaseUrl) ? configuredBaseUrl : DEFAULT_STRAPI_URL;
+    const baseUrl = resolveStrapiBaseUrl();
     // Remove trailing slash if present
     const cleanBase = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
     return `${cleanBase}${path}`;

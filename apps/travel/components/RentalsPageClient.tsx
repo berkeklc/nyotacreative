@@ -1,12 +1,20 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import styles from "../app/rentals/rentals.module.css";
 import type { TransferRoute, RentalVehicle } from "../lib/rentals";
 
 type TabType = "transfers" | "vehicles";
+
+function formatVehicleCategory(category: string) {
+    if (!category) return "";
+    return category
+        .split("-")
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
+}
 
 export default function RentalsPageClient({
     transfers,
@@ -16,6 +24,18 @@ export default function RentalsPageClient({
     vehicles: RentalVehicle[];
 }) {
     const [activeTab, setActiveTab] = useState<TabType>("transfers");
+    const contentRef = useRef<HTMLElement | null>(null);
+
+    const handleTabChange = (tab: TabType) => {
+        setActiveTab(tab);
+        if (typeof window === "undefined") return;
+        window.requestAnimationFrame(() => {
+            const content = contentRef.current;
+            if (!content) return;
+            const targetTop = content.getBoundingClientRect().top + window.scrollY - 88;
+            window.scrollTo({ top: Math.max(0, targetTop), behavior: "smooth" });
+        });
+    };
 
     return (
         <div className={styles.pageWrapper}>
@@ -34,13 +54,13 @@ export default function RentalsPageClient({
                     <div className={styles.tabsContainer}>
                         <button
                             className={`${styles.tabBtn} ${activeTab === "transfers" ? styles.tabActive : ""}`}
-                            onClick={() => setActiveTab("transfers")}
+                            onClick={() => handleTabChange("transfers")}
                         >
                             Chauffeur & Transfers
                         </button>
                         <button
                             className={`${styles.tabBtn} ${activeTab === "vehicles" ? styles.tabActive : ""}`}
-                            onClick={() => setActiveTab("vehicles")}
+                            onClick={() => handleTabChange("vehicles")}
                         >
                             Self-Drive Fleet
                         </button>
@@ -49,7 +69,7 @@ export default function RentalsPageClient({
             </section>
 
             {activeTab === "transfers" && (
-                <section className={styles.contentSection}>
+                <section className={styles.contentSection} ref={contentRef}>
                     <div className={styles.sectionHeader}>
                         <h2>Premium Transfers</h2>
                         <p>Relax in comfort with our professional chauffeur service. Fixed rates, reliable drivers.</p>
@@ -60,10 +80,19 @@ export default function RentalsPageClient({
                             <Link key={route.slug} href={`/rentals/transfers/${route.slug}`} className={styles.card}>
                                 <div className={styles.cardImageContainer}>
                                     <div
-                                        className={styles.cardImage}
-                                        style={{ backgroundImage: route.image ? `url(${route.image})` : undefined, backgroundColor: "#eee" }}
-                                    />
-                                    <div className={styles.cardOverlay} />
+                                        className={`${styles.cardImage} ${!route.image ? styles.cardImagePlaceholder : ""}`}
+                                        style={route.image ? { backgroundImage: `url(${route.image})` } : undefined}
+                                    >
+                                        {!route.image && (
+                                            <div className={styles.mediaPlaceholder}>
+                                                <span className={styles.mediaPlaceholderTag}>Transfer Route</span>
+                                                <strong>
+                                                    {route.pickupLocation} → {route.dropoffLocation}
+                                                </strong>
+                                            </div>
+                                        )}
+                                    </div>
+                                    {route.image && <div className={styles.cardOverlay} />}
                                     {route.featured && <span className={styles.cardBadge}>Popular</span>}
                                 </div>
                                 <div className={styles.cardContent}>
@@ -92,7 +121,7 @@ export default function RentalsPageClient({
             )}
 
             {activeTab === "vehicles" && (
-                <section className={styles.contentSection}>
+                <section className={styles.contentSection} ref={contentRef}>
                     <div className={styles.sectionHeader}>
                         <h2>Self-Drive Fleet</h2>
                         <p>Explore at your own pace with our fully equipped 4x4 vehicles.</p>
@@ -105,22 +134,26 @@ export default function RentalsPageClient({
                                 <Link key={vehicle.slug} href={`/rentals/vehicles/${vehicle.slug}`} className={styles.card}>
                                     <div className={styles.cardImageContainer}>
                                         <div
-                                            className={styles.cardImage}
-                                            style={{
-                                                backgroundImage: vehicle.image ? `url(${vehicle.image})` : undefined,
-                                                backgroundColor: "#eee",
-                                            }}
-                                        />
-                                        <div className={styles.cardOverlay} />
-                                        <span className={styles.cardBadge}>{vehicle.category}</span>
+                                            className={`${styles.cardImage} ${!vehicle.image ? styles.cardImagePlaceholder : ""}`}
+                                            style={vehicle.image ? { backgroundImage: `url(${vehicle.image})` } : undefined}
+                                        >
+                                            {!vehicle.image && (
+                                                <div className={styles.mediaPlaceholder}>
+                                                    <span className={styles.mediaPlaceholderTag}>Self-Drive</span>
+                                                    <strong>{formatVehicleCategory(vehicle.category) || vehicle.name}</strong>
+                                                </div>
+                                            )}
+                                        </div>
+                                        {vehicle.image && <div className={styles.cardOverlay} />}
+                                        <span className={styles.cardBadge}>{formatVehicleCategory(vehicle.category) || "Vehicle"}</span>
                                     </div>
                                     <div className={styles.cardContent}>
                                         <div className={styles.cardSubtitle}>Self-Drive</div>
                                         <h3 className={styles.cardTitle}>{vehicle.name}</h3>
 
                                         <div className={styles.cardSpecs}>
-                                            <span className={styles.specItem}>👤 {vehicle.seats} Seats</span>
-                                            <span className={styles.specItem}>⚙️ {vehicle.transmission}</span>
+                                            <span className={styles.specItem}>{vehicle.seats} Seats</span>
+                                            <span className={styles.specItem}>{formatVehicleCategory(vehicle.transmission)}</span>
                                         </div>
 
                                         <div className={styles.cardFooter}>

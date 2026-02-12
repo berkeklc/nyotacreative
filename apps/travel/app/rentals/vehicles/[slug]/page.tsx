@@ -4,13 +4,24 @@ import styles from "../../rentals.module.css";
 import RentalBookingForm from "../../../../components/RentalBookingForm";
 import { getVehicleBySlug } from "../../../../lib/rentals";
 
-const categoryIcons: Record<string, string> = {
-    sedan: "🚗",
-    suv: "🚙",
-    offroad: "🛻",
-    van: "🚐",
-    luxury: "✨",
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
+const categoryLabels: Record<string, string> = {
+    sedan: "Sedan",
+    suv: "SUV",
+    offroad: "Offroad",
+    van: "Van",
+    luxury: "Luxury",
 };
+
+function toTitleCase(value: string) {
+    if (!value) return "";
+    return value
+        .split("-")
+        .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+        .join(" ");
+}
 
 export default async function VehicleDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
@@ -33,15 +44,10 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                 }}
             >
                 {!vehicle.image && (
-                    <div
-                        style={{
-                            position: "absolute",
-                            zIndex: 1,
-                            fontSize: "8rem",
-                            opacity: 0.15,
-                        }}
-                    >
-                        {categoryIcons[vehicle.category] || "🚗"}
+                    <div className={styles.detailHeroPlaceholder} aria-hidden="true">
+                        <span className={styles.detailHeroPlaceholderLabel}>Self-Drive Fleet</span>
+                        <strong>{categoryLabels[vehicle.category] || toTitleCase(vehicle.category)}</strong>
+                        <small>Image coming soon</small>
                     </div>
                 )}
                 <div className="container">
@@ -55,7 +61,7 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                         </div>
                         <h1 className={styles.detailTitle}>{vehicle.name}</h1>
                         <p className={styles.detailSubtitle}>
-                            {vehicle.category.charAt(0).toUpperCase() + vehicle.category.slice(1)} • {vehicle.seats} Seats • {vehicle.transmission}
+                            {toTitleCase(vehicle.category)} • {vehicle.seats} Seats • {toTitleCase(vehicle.transmission)}
                         </p>
                     </div>
                 </div>
@@ -67,22 +73,22 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                         <h2 className={styles.detailSectionTitle}>Vehicle Specifications</h2>
                         <div className={styles.specsGrid}>
                             <div className={styles.specCard}>
-                                <div className={styles.specCardIcon}>👤</div>
+                                <div className={styles.specCardIcon}>SE</div>
                                 <div className={styles.specCardLabel}>Seats</div>
                                 <div className={styles.specCardValue}>{vehicle.seats}</div>
                             </div>
                             <div className={styles.specCard}>
-                                <div className={styles.specCardIcon}>⚙️</div>
+                                <div className={styles.specCardIcon}>TR</div>
                                 <div className={styles.specCardLabel}>Transmission</div>
-                                <div className={styles.specCardValue}>{vehicle.transmission}</div>
+                                <div className={styles.specCardValue}>{toTitleCase(vehicle.transmission)}</div>
                             </div>
                             <div className={styles.specCard}>
-                                <div className={styles.specCardIcon}>{categoryIcons[vehicle.category] || "🚗"}</div>
+                                <div className={styles.specCardIcon}>CT</div>
                                 <div className={styles.specCardLabel}>Category</div>
-                                <div className={styles.specCardValue}>{vehicle.category}</div>
+                                <div className={styles.specCardValue}>{categoryLabels[vehicle.category] || toTitleCase(vehicle.category)}</div>
                             </div>
                             <div className={styles.specCard}>
-                                <div className={styles.specCardIcon}>✅</div>
+                                <div className={styles.specCardIcon}>ST</div>
                                 <div className={styles.specCardLabel}>Status</div>
                                 <div className={`${styles.specCardValue} ${vehicle.available ? styles.specCardValueSuccess : styles.specCardValueMuted}`}>
                                     {vehicle.available ? "Available" : "Unavailable"}
@@ -110,26 +116,6 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                         </div>
                     </div>
 
-                    <div className={styles.detailSection}>
-                        <h2 className={styles.detailSectionTitle}>Rental Terms</h2>
-                        <div className={styles.termsGrid}>
-                            {[
-                                "Valid driving license required",
-                                "Minimum age: 23 years",
-                                "Security deposit required",
-                                "Fuel policy: full-to-full",
-                                "Unlimited mileage",
-                                "Basic insurance included",
-                                "24/7 roadside assistance",
-                                "Free delivery in city",
-                            ].map((term) => (
-                                <div key={term} className={styles.termItem}>
-                                    <span className={styles.termBullet}>•</span>
-                                    <span>{term}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
                 </div>
 
                 <div className={styles.sidebar}>

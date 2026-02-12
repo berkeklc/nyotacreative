@@ -28,9 +28,17 @@ export default function RentalBookingForm({
         message: "",
     });
     const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
+    const isInvalidReturnDate = type === "car-rental"
+        && Boolean(formData.date)
+        && Boolean(formData.returnDate)
+        && formData.returnDate < formData.date;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (isInvalidReturnDate) {
+            setStatus("error");
+            return;
+        }
         setStatus("loading");
 
         try {
@@ -131,6 +139,7 @@ export default function RentalBookingForm({
                         <input
                             id="rental-return-date"
                             type="date"
+                            min={formData.date || undefined}
                             value={formData.returnDate}
                             onChange={(e) => setFormData({ ...formData, returnDate: e.target.value })}
                         />
@@ -173,7 +182,7 @@ export default function RentalBookingForm({
             <button
                 type="submit"
                 className={styles.submitBtn}
-                disabled={status === "loading"}
+                disabled={status === "loading" || isInvalidReturnDate}
             >
                 {status === "loading"
                     ? "Sending..."
@@ -183,7 +192,9 @@ export default function RentalBookingForm({
             </button>
             {status === "error" && (
                 <p style={{ color: "red", fontSize: "0.85rem", marginTop: "0.75rem", textAlign: "center" }}>
-                    Something went wrong. Please try again or contact us via WhatsApp.
+                    {isInvalidReturnDate
+                        ? "Return date cannot be earlier than pickup date."
+                        : "Something went wrong. Please try again or contact us via WhatsApp."}
                 </p>
             )}
         </form>

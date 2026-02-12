@@ -48,6 +48,11 @@ function toFeatureList(value: unknown) {
     return [];
 }
 
+function toNumber(value: unknown) {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
+}
+
 function mapTransfer(item: Record<string, unknown>): TransferRoute {
     const heroImage = item.heroImage as { url?: string } | undefined;
     return {
@@ -58,8 +63,8 @@ function mapTransfer(item: Record<string, unknown>): TransferRoute {
         dropoffLocation: typeof item.dropoffLocation === "string" ? item.dropoffLocation : "",
         distance: typeof item.distance === "string" ? item.distance : "",
         duration: typeof item.duration === "string" ? item.duration : "",
-        price: Number(item.price || 0),
-        priceReturn: Number(item.priceReturn || 0),
+        price: toNumber(item.price),
+        priceReturn: toNumber(item.priceReturn),
         vehicleType: typeof item.vehicleType === "string" ? item.vehicleType : "",
         image: getStrapiMedia(heroImage?.url),
         featured: item.featured === true,
@@ -72,15 +77,15 @@ function mapVehicle(item: Record<string, unknown>): RentalVehicle {
         name: typeof item.name === "string" ? item.name : "",
         slug: typeof item.slug === "string" ? item.slug : "",
         description: typeof item.description === "string" ? item.description : "",
-        category: typeof item.category === "string" ? item.category : "sedan",
-        transmission: typeof item.transmission === "string" ? item.transmission : "manual",
-        seats: Number(item.seats || 4),
-        pricePerDay: Number(item.pricePerDay || 0),
-        pricePerWeek: Number(item.pricePerWeek || 0),
+        category: typeof item.category === "string" ? item.category : "",
+        transmission: typeof item.transmission === "string" ? item.transmission : "",
+        seats: toNumber(item.seats),
+        pricePerDay: toNumber(item.pricePerDay),
+        pricePerWeek: toNumber(item.pricePerWeek),
         features: toFeatureList(item.features),
         image: getStrapiMedia(heroImage?.url),
         featured: item.featured === true,
-        available: item.available !== false,
+        available: item.available === true,
     };
 }
 
@@ -91,12 +96,12 @@ export async function getRentalsData(): Promise<RentalsData> {
                 populate: ["heroImage"],
                 pagination: { limit: 50 },
                 sort: ["order:asc", "featured:desc"],
-            }),
+            }, { cache: "no-store", next: { revalidate: 0 } }),
             fetchAPI("/rental-vehicles", {
                 populate: ["heroImage"],
                 pagination: { limit: 50 },
                 sort: ["featured:desc", "pricePerDay:asc"],
-            }),
+            }, { cache: "no-store", next: { revalidate: 0 } }),
         ]);
 
         const transfersRaw = Array.isArray(transfersRes?.data) ? transfersRes.data : [];
@@ -118,7 +123,7 @@ export async function getTransferBySlug(slug: string): Promise<TransferRoute | n
             filters: { slug: { $eq: slug } },
             populate: ["heroImage"],
             pagination: { limit: 1 },
-        });
+        }, { cache: "no-store", next: { revalidate: 0 } });
 
         const transfer = Array.isArray(response?.data) ? response.data[0] : null;
         return transfer ? mapTransfer(transfer as Record<string, unknown>) : null;
@@ -134,7 +139,7 @@ export async function getVehicleBySlug(slug: string): Promise<RentalVehicle | nu
             filters: { slug: { $eq: slug } },
             populate: ["heroImage"],
             pagination: { limit: 1 },
-        });
+        }, { cache: "no-store", next: { revalidate: 0 } });
 
         const vehicle = Array.isArray(response?.data) ? response.data[0] : null;
         return vehicle ? mapVehicle(vehicle as Record<string, unknown>) : null;

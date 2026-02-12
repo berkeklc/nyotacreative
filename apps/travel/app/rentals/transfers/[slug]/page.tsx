@@ -4,6 +4,9 @@ import styles from "../../rentals.module.css";
 import RentalBookingForm from "../../../../components/RentalBookingForm";
 import { getTransferBySlug } from "../../../../lib/rentals";
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function TransferDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const { slug } = await params;
     const transfer = await getTransferBySlug(slug);
@@ -81,26 +84,6 @@ export default async function TransferDetailPage({ params }: { params: Promise<{
                         </div>
                     </div>
 
-                    <div className={styles.detailSection}>
-                        <h2 className={styles.detailSectionTitle}>What is Included</h2>
-                        <div className={styles.includedGrid}>
-                            {[
-                                "Professional driver",
-                                "Meet & greet at arrival",
-                                "Luggage assistance",
-                                "Air-conditioned vehicle",
-                                "Door-to-door service",
-                                "Free waiting time (30min)",
-                                "Child seat (on request)",
-                                "24/7 customer support",
-                            ].map((item) => (
-                                <div key={item} className={styles.includedItem}>
-                                    <span className={styles.includedCheck}>✓</span>
-                                    <span>{item}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
                 </div>
 
                 <div className={styles.sidebar}>

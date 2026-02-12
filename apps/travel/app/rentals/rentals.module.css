@@ -209,7 +209,55 @@
     height: 100%;
     background-size: cover;
     background-position: center;
+    position: relative;
     transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.cardImagePlaceholder {
+    background:
+        radial-gradient(circle at 14% 12%, rgba(255, 255, 255, 0.16) 0, rgba(255, 255, 255, 0) 48%),
+        linear-gradient(135deg, #24384d 0%, #1d2e3f 45%, #122131 100%);
+}
+
+.cardImagePlaceholder::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(140deg, rgba(255, 255, 255, 0.12) 0, rgba(255, 255, 255, 0) 32%),
+        repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.04) 0, rgba(255, 255, 255, 0.04) 2px, transparent 2px, transparent 10px);
+}
+
+.mediaPlaceholder {
+    position: absolute;
+    left: 1rem;
+    right: 1rem;
+    bottom: 1rem;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    border-radius: 0.9rem;
+    background: rgba(9, 16, 24, 0.58);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    backdrop-filter: blur(6px);
+    padding: 0.72rem 0.8rem;
+    color: #fff;
+}
+
+.mediaPlaceholderTag {
+    font-size: 0.66rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.78);
+    font-weight: 700;
+}
+
+.mediaPlaceholder strong {
+    font-size: 0.94rem;
+    line-height: 1.32;
+    letter-spacing: 0.01em;
+    color: #fff;
 }
 
 .card:hover .cardImage {
@@ -478,6 +526,40 @@
         linear-gradient(180deg, rgba(8, 15, 24, 0.35) 0%, rgba(8, 15, 24, 0.72) 62%, rgba(8, 15, 24, 0.86) 100%);
 }
 
+.detailHeroPlaceholder {
+    position: absolute;
+    z-index: 1;
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 1rem 1.1rem;
+    border-radius: 1rem;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(8, 15, 24, 0.28);
+    backdrop-filter: blur(6px);
+    color: rgba(255, 255, 255, 0.95);
+    text-align: center;
+}
+
+.detailHeroPlaceholderLabel {
+    font-size: 0.66rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: rgba(255, 255, 255, 0.76);
+}
+
+.detailHeroPlaceholder strong {
+    font-size: 1.28rem;
+    line-height: 1.15;
+}
+
+.detailHeroPlaceholder small {
+    font-size: 0.82rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
 .detailHeroContent {
     position: relative;
     z-index: 2;
@@ -649,7 +731,18 @@
 }
 
 .specCardIcon {
-    font-size: 1.1rem;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 999px;
+    border: 1px solid rgba(16, 24, 34, 0.16);
+    background: rgba(192, 90, 62, 0.12);
+    color: var(--detail-accent);
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    font-weight: 800;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
     margin-bottom: 0.3rem;
 }
 
