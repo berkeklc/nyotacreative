@@ -9,6 +9,11 @@ function isValidEmail(email: string) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+function isValidPhone(phone: string) {
+    const digits = phone.replace(/\D/g, "");
+    return digits.length >= 7;
+}
+
 function getText(value: unknown) {
     return typeof value === "string" ? value.trim() : "";
 }
@@ -18,13 +23,17 @@ export async function POST(request: Request) {
         const body = await request.json() as Record<string, unknown>;
         const name = getText(body.name);
         const email = getText(body.email).toLowerCase();
+        const phone = getText(body.phone);
         const message = getText(body.message);
 
-        if (!name || !email || !message) {
+        if (!name || !email || !phone || !message) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
         if (!isValidEmail(email)) {
             return NextResponse.json({ error: "Invalid email address" }, { status: 400 });
+        }
+        if (!isValidPhone(phone)) {
+            return NextResponse.json({ error: "Invalid phone number" }, { status: 400 });
         }
         if (!STRAPI_TOKEN) {
             console.error("Travel contact API misconfiguration: STRAPI_API_TOKEN is missing");
@@ -42,6 +51,7 @@ export async function POST(request: Request) {
                     type: "contact",
                     name,
                     email,
+                    phone,
                     message,
                     status: "new",
                     source: "travel",

@@ -9,6 +9,7 @@ export default function TravelContactForm() {
     const [formData, setFormData] = useState({
         name: "",
         email: "",
+        phone: "",
         message: "",
     });
     const [status, setStatus] = useState<FormStatus>("idle");
@@ -46,7 +47,7 @@ export default function TravelContactForm() {
                     ? payload.message
                     : "Thank you! Your inquiry has been received."
             );
-            setFormData({ name: "", email: "", message: "" });
+            setFormData({ name: "", email: "", phone: "", message: "" });
         } catch {
             setStatus("error");
             setResponseMessage("Unable to send your inquiry right now. Please try again.");
@@ -80,6 +81,20 @@ export default function TravelContactForm() {
                     placeholder="name@example.com"
                     value={formData.email}
                     onChange={(event) => setFormData((prev) => ({ ...prev, email: event.target.value }))}
+                    required
+                />
+            </div>
+            <div className={styles.formGroup}>
+                <label className={styles.label} htmlFor="contact-phone">
+                    Phone Number
+                </label>
+                <input
+                    id="contact-phone"
+                    type="tel"
+                    className={styles.input}
+                    placeholder="+255 7xx xxx xxx"
+                    value={formData.phone}
+                    onChange={(event) => setFormData((prev) => ({ ...prev, phone: event.target.value }))}
                     required
                 />
             </div>
