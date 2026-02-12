@@ -21,7 +21,6 @@ export default function TourPlannerForm({ tourOptions }: TourPlannerFormProps) {
         name: "",
         email: "",
         phone: "",
-        contactPreference: "whatsapp",
         date: "",
         travelers: "2",
         tourSlug: "",
@@ -43,7 +42,6 @@ export default function TourPlannerForm({ tourOptions }: TourPlannerFormProps) {
                 name: form.name.trim(),
                 email: form.email.trim(),
                 phone: form.phone.trim(),
-                contactPreference: form.contactPreference,
                 date: form.date,
                 travelers: Number(form.travelers) > 0 ? Number(form.travelers) : 1,
                 message: form.details.trim(),
@@ -79,7 +77,6 @@ export default function TourPlannerForm({ tourOptions }: TourPlannerFormProps) {
                 name: "",
                 email: "",
                 phone: "",
-                contactPreference: "whatsapp",
                 date: "",
                 travelers: "2",
                 tourSlug: "",
@@ -93,10 +90,15 @@ export default function TourPlannerForm({ tourOptions }: TourPlannerFormProps) {
 
     return (
         <form className={styles.plannerForm} onSubmit={handleSubmit}>
+            <div className={styles.formIntro}>
+                <strong>Simple Planner</strong>
+                <p>Fill only essentials. We will send your first route proposal quickly.</p>
+            </div>
+
             <div className={styles.formBlock}>
                 <div className={styles.formBlockHead}>
-                    <strong>Contact Details</strong>
-                    <span>Required for confirmation</span>
+                    <strong>How we reach you</strong>
+                    <span>Required</span>
                 </div>
 
                 <div className={styles.formTwoCols}>
@@ -117,52 +119,31 @@ export default function TourPlannerForm({ tourOptions }: TourPlannerFormProps) {
                         <input
                             id="planner-phone"
                             type="tel"
-                            placeholder="+255..."
+                            placeholder="+255 7xx xxx xxx"
                             value={form.phone}
                             onChange={(event) => setForm((prev) => ({ ...prev, phone: event.target.value }))}
                             required
                         />
                     </div>
                 </div>
-            </div>
 
-            <div className={styles.formRow}>
-                <label htmlFor="planner-email">Email Address</label>
-                <input
-                    id="planner-email"
-                    type="email"
-                    placeholder="name@example.com"
-                    value={form.email}
-                    onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
-                    required
-                />
-            </div>
-
-            <div className={styles.formRow}>
-                <label>Preferred Contact</label>
-                <div className={styles.contactMethodRow}>
-                    {[
-                        { value: "whatsapp", label: "WhatsApp" },
-                        { value: "phone", label: "Phone Call" },
-                        { value: "email", label: "Email" },
-                    ].map((option) => (
-                        <button
-                            key={option.value}
-                            type="button"
-                            className={`${styles.contactMethodBtn} ${form.contactPreference === option.value ? styles.contactMethodBtnActive : ""}`}
-                            onClick={() => setForm((prev) => ({ ...prev, contactPreference: option.value }))}
-                            aria-pressed={form.contactPreference === option.value}
-                        >
-                            {option.label}
-                        </button>
-                    ))}
+                <div className={styles.formRow}>
+                    <label htmlFor="planner-email">Email Address</label>
+                    <input
+                        id="planner-email"
+                        type="email"
+                        placeholder="name@example.com"
+                        value={form.email}
+                        onChange={(event) => setForm((prev) => ({ ...prev, email: event.target.value }))}
+                        required
+                    />
                 </div>
             </div>
 
             <div className={styles.formBlock}>
                 <div className={styles.formBlockHead}>
-                    <strong>Trip Basics</strong>
-                    <span>Tell us your timing and group size</span>
+                    <strong>Trip snapshot</strong>
+                    <span>Keep it short</span>
                 </div>
                 <div className={styles.formTwoCols}>
                     <div className={styles.formRow}>
@@ -172,20 +153,22 @@ export default function TourPlannerForm({ tourOptions }: TourPlannerFormProps) {
                             type="date"
                             value={form.date}
                             onChange={(event) => setForm((prev) => ({ ...prev, date: event.target.value }))}
-                            required
                         />
                     </div>
 
                     <div className={styles.formRow}>
                         <label htmlFor="planner-travelers">Travelers</label>
-                        <input
+                        <select
                             id="planner-travelers"
-                            type="number"
-                            min="1"
                             value={form.travelers}
                             onChange={(event) => setForm((prev) => ({ ...prev, travelers: event.target.value }))}
                             required
-                        />
+                        >
+                            <option value="2">1-2 people</option>
+                            <option value="4">3-4 people</option>
+                            <option value="6">5-6 people</option>
+                            <option value="8">7+ people</option>
+                        </select>
                     </div>
                 </div>
 
@@ -210,7 +193,7 @@ export default function TourPlannerForm({ tourOptions }: TourPlannerFormProps) {
                     <textarea
                         id="planner-details"
                         rows={3}
-                        placeholder="Budget range, interests, preferred pace, private/group preference..."
+                        placeholder="Budget, interests, or any special request..."
                         value={form.details}
                         onChange={(event) => setForm((prev) => ({ ...prev, details: event.target.value }))}
                     />
@@ -221,8 +204,14 @@ export default function TourPlannerForm({ tourOptions }: TourPlannerFormProps) {
                 {status === "loading" ? "Sending..." : "Send Planner Request"}
             </button>
 
+            <div className={styles.plannerNextSteps}>
+                <span>1. We review your request</span>
+                <span>2. We send best route options</span>
+                <span>3. You confirm and book</span>
+            </div>
+
             <p className={styles.formInlineHint}>
-                Your request goes directly to our local planning desk. We reply via your selected contact channel.
+                Your request goes directly to our local planning desk.
             </p>
 
             {status === "success" && <p className={styles.formSuccess}>{message}</p>}

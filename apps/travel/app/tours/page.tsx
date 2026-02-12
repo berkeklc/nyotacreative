@@ -149,11 +149,17 @@ export default async function ToursPage() {
             <section className={styles.hero}>
                 <div className={styles.heroGlow} />
                 <div className={`container ${styles.heroInner}`}>
-                    <h1>Find Better Tours Faster With A Cleaner Planning Flow</h1>
+                    <span className={styles.heroEyebrow}>Tanzania Tour Planning Desk</span>
+                    <h1>Plan Your Tour In One Simple Form</h1>
                     <p>
-                        Compare curated routes without noise, open one improved planner form, and confirm with a local
-                        advisor over WhatsApp in minutes.
+                        No long questionnaire. Compare routes, share essentials, and get a practical plan from local
+                        advisors quickly.
                     </p>
+                    <div className={styles.heroQuickStats}>
+                        <span>{tours.length} active tours</span>
+                        <span>{featuredCount} featured picks</span>
+                        <span>{minimumPrice ? `From ${formatPrice(minimumPrice)}` : "Custom budget plans"}</span>
+                    </div>
                     <div className={styles.heroActions}>
                         <a href="#tour-planner" className={`${styles.quickPlannerBtn} btn btn-primary`}>
                             Open Planner Form
@@ -175,10 +181,10 @@ export default async function ToursPage() {
                     <aside id="tour-planner" className={styles.plannerPanel}>
                         <div className={styles.plannerHead}>
                             <span>Planner Form</span>
-                            <h2>Build My Tour Plan</h2>
+                            <h2>Tell Us The Essentials</h2>
                             <p>
-                                Share core trip details once. Our team sends route options, timing, and budget-matched
-                                recommendations quickly.
+                                We ask only what is needed for your first proposal. You get route options, timing,
+                                and clear pricing guidance.
                             </p>
                         </div>
 

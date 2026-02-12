@@ -34,6 +34,21 @@
     max-width: 900px;
 }
 
+.heroEyebrow {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.36);
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.94);
+    font-size: 0.65rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    font-weight: 800;
+    padding: 0.34rem 0.66rem;
+    margin-bottom: 0.85rem;
+}
+
 .heroInner h1 {
     color: #fff;
     font-size: clamp(2rem, 5.4vw, 4.2rem);
@@ -56,6 +71,27 @@
     align-items: center;
     flex-wrap: wrap;
     gap: 0.72rem;
+}
+
+.heroQuickStats {
+    margin-top: 1.05rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.44rem;
+}
+
+.heroQuickStats span {
+    display: inline-flex;
+    align-items: center;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.92);
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    font-weight: 800;
+    padding: 0.3rem 0.56rem;
 }
 
 .quickPlannerBtn,
@@ -226,7 +262,30 @@
 .plannerForm {
     display: flex;
     flex-direction: column;
-    gap: 0.66rem;
+    gap: 0.72rem;
+}
+
+.formIntro {
+    border: 1px solid rgba(24, 21, 16, 0.08);
+    border-radius: 0.86rem;
+    background: linear-gradient(155deg, #fff 0%, #fbf7f0 100%);
+    padding: 0.62rem 0.68rem;
+}
+
+.formIntro strong {
+    display: block;
+    color: var(--tour-text);
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    font-weight: 800;
+    margin-bottom: 0.2rem;
+}
+
+.formIntro p {
+    color: var(--tour-muted);
+    font-size: 0.75rem;
+    line-height: 1.45;
 }
 
 .formBlock {
@@ -291,6 +350,7 @@
 
 .formRow textarea {
     resize: vertical;
+    min-height: 94px;
 }
 
 .formRow input:focus,
@@ -301,41 +361,26 @@
     box-shadow: 0 0 0 3px rgba(181, 74, 50, 0.15);
 }
 
-.contactMethodRow {
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 0.4rem;
-}
-
-.contactMethodBtn {
-    border: 1px solid rgba(24, 21, 16, 0.14);
-    background: #fff;
-    border-radius: 0.65rem;
-    font-size: 0.68rem;
-    color: #554f46;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    font-weight: 800;
-    padding: 0.52rem 0.5rem;
-    cursor: pointer;
-    transition: all 150ms ease;
-}
-
-.contactMethodBtn:hover {
-    border-color: rgba(181, 74, 50, 0.45);
-}
-
-.contactMethodBtnActive {
-    color: #fff;
-    border-color: transparent;
-    background: linear-gradient(135deg, var(--tour-accent) 0%, #8f3f2b 100%);
-    box-shadow: 0 8px 16px rgba(181, 74, 50, 0.25);
-}
-
 .formInlineHint {
     font-size: 0.72rem;
     color: #666056;
     line-height: 1.5;
+}
+
+.plannerNextSteps {
+    display: grid;
+    gap: 0.3rem;
+}
+
+.plannerNextSteps span {
+    display: block;
+    border-radius: 0.68rem;
+    border: 1px solid rgba(24, 21, 16, 0.11);
+    background: rgba(24, 21, 16, 0.03);
+    color: #5f584e;
+    font-size: 0.71rem;
+    line-height: 1.36;
+    padding: 0.44rem 0.52rem;
 }
 
 .plannerSubmitBtn {
@@ -710,8 +755,9 @@
         grid-template-columns: 1fr;
     }
 
-    .contactMethodRow {
-        grid-template-columns: 1fr;
+    .heroQuickStats {
+        flex-direction: column;
+        align-items: flex-start;
     }
 }
 

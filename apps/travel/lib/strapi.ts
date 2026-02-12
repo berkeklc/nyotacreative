@@ -2,25 +2,40 @@ import qs from "qs";
 
 const DEFAULT_STRAPI_PRODUCTION_URL = "https://cms-production-219a.up.railway.app";
 const DEFAULT_STRAPI_DEVELOPMENT_URL = "http://127.0.0.1:1337";
+let activeStrapiBaseUrl: string | null = null;
 
 function isHttpUrl(value: string) {
     return /^https?:\/\//.test(value);
 }
 
-function resolveStrapiBaseUrl() {
+function normalizeBaseUrl(value: string) {
+    return value.endsWith("/") ? value.slice(0, -1) : value;
+}
+
+function getCandidateStrapiBaseUrls() {
     const serverConfiguredUrl = process.env.STRAPI_API_URL?.trim() || process.env.STRAPI_URL?.trim() || "";
     const publicConfiguredUrl = process.env.NEXT_PUBLIC_STRAPI_API_URL?.trim() || "";
+    const defaultByEnv = process.env.NODE_ENV === "production"
+        ? DEFAULT_STRAPI_PRODUCTION_URL
+        : DEFAULT_STRAPI_DEVELOPMENT_URL;
+    const uniqueUrls = new Set<string>();
 
-    if (isHttpUrl(serverConfiguredUrl)) return serverConfiguredUrl;
-    if (isHttpUrl(publicConfiguredUrl)) return publicConfiguredUrl;
-    return process.env.NODE_ENV === "production" ? DEFAULT_STRAPI_PRODUCTION_URL : DEFAULT_STRAPI_DEVELOPMENT_URL;
+    for (const candidate of [serverConfiguredUrl, publicConfiguredUrl, defaultByEnv, DEFAULT_STRAPI_PRODUCTION_URL]) {
+        if (isHttpUrl(candidate)) {
+            uniqueUrls.add(normalizeBaseUrl(candidate));
+        }
+    }
+
+    return Array.from(uniqueUrls);
+}
+
+function getPreferredStrapiBaseUrl() {
+    if (activeStrapiBaseUrl) return activeStrapiBaseUrl;
+    return getCandidateStrapiBaseUrls()[0] || normalizeBaseUrl(DEFAULT_STRAPI_PRODUCTION_URL);
 }
 
 export function getStrapiURL(path = "") {
-    const baseUrl = resolveStrapiBaseUrl();
-    // Remove trailing slash if present
-    const cleanBase = baseUrl.endsWith("/") ? baseUrl.slice(0, -1) : baseUrl;
-    return `${cleanBase}${path}`;
+    return `${getPreferredStrapiBaseUrl()}${path}`;
 }
 
 export function getStrapiMedia(url: string | null | undefined) {
@@ -30,41 +45,59 @@ export function getStrapiMedia(url: string | null | undefined) {
     return getStrapiURL(url);
 }
 
-export async function fetchAPI(path: string, urlParamsObject = {}, options = {}) {
-    try {
-        const token = process.env.STRAPI_API_TOKEN?.trim();
-        if (!token) {
-            console.error("STRAPI_API_TOKEN is missing in environment variables!");
+function buildFetchOptions(options: RequestInit, token: string, includeAuth: boolean): RequestInit {
+    const additionalHeaders = options.headers && typeof options.headers === "object"
+        ? options.headers
+        : {};
+    return {
+        ...options,
+        headers: {
+            "Content-Type": "application/json",
+            ...(includeAuth && token ? { Authorization: `Bearer ${token}` } : {}),
+            ...additionalHeaders,
+        },
+    };
+}
+
+export async function fetchAPI(path: string, urlParamsObject = {}, options: RequestInit = {}) {
+    const token = process.env.STRAPI_API_TOKEN?.trim() || "";
+    const queryString = qs.stringify(urlParamsObject);
+    const candidates = getCandidateStrapiBaseUrls();
+    let lastError = "Unknown error";
+
+    for (const baseUrl of candidates) {
+        const requestUrl = `${baseUrl}/api${path}${queryString ? `?${queryString}` : ""}`;
+
+        try {
+            const authorizedResponse = await fetch(
+                requestUrl,
+                buildFetchOptions(options, token, true)
+            );
+
+            if (authorizedResponse.ok) {
+                activeStrapiBaseUrl = baseUrl;
+                return await authorizedResponse.json();
+            }
+
+            if ((authorizedResponse.status === 401 || authorizedResponse.status === 403) && token) {
+                const anonymousResponse = await fetch(
+                    requestUrl,
+                    buildFetchOptions(options, token, false)
+                );
+                if (anonymousResponse.ok) {
+                    activeStrapiBaseUrl = baseUrl;
+                    return await anonymousResponse.json();
+                }
+                lastError = `${anonymousResponse.status} ${anonymousResponse.statusText}`;
+                continue;
+            }
+
+            lastError = `${authorizedResponse.status} ${authorizedResponse.statusText}`;
+        } catch (error) {
+            lastError = error instanceof Error ? error.message : "Network error";
         }
-
-        // Merge default and user options
-        const mergedOptions = {
-            headers: {
-                "Content-Type": "application/json",
-                ...(token ? { Authorization: `Bearer ${token}` } : {}),
-            },
-            ...options,
-        };
-
-        // Build request URL
-        const queryString = qs.stringify(urlParamsObject);
-        const requestUrl = `${getStrapiURL(
-            `/api${path}`
-        )}${queryString ? `?${queryString}` : ""}`;
-
-        // Trigger API call
-        const response = await fetch(requestUrl, mergedOptions);
-
-        // Handle response
-        if (!response.ok) {
-            console.error(`Strapi fetch failed: ${response.status} ${response.statusText}`);
-            return { data: null, error: response.statusText };
-        }
-
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error("[Strapi] Fetch Error:", error);
-        return { data: null, error: "Internal Fetch Error" };
     }
+
+    console.error(`[Strapi] Fetch Error (${path}):`, lastError);
+    return { data: null, error: lastError };
 }

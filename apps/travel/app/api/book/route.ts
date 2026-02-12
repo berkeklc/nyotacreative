@@ -13,36 +13,18 @@ function getText(value: unknown) {
     return typeof value === "string" ? value.trim() : "";
 }
 
-function normalizeContactPreference(value: string) {
-    const normalized = value.toLowerCase();
-    if (normalized === "whatsapp" || normalized === "phone" || normalized === "email") {
-        return normalized;
-    }
-    return "whatsapp";
-}
-
-function toContactPreferenceLabel(value: string) {
-    if (value === "phone") return "Phone Call";
-    if (value === "email") return "Email";
-    return "WhatsApp";
-}
-
 export async function POST(request: Request) {
     try {
         const body = await request.json() as Record<string, unknown>;
         const name = getText(body.name);
         const email = getText(body.email).toLowerCase();
         const phone = getText(body.phone);
-        const contactPreference = normalizeContactPreference(getText(body.contactPreference));
         const tourSlug = getText(body.tourSlug);
         const tourTitle = getText(body.tourTitle);
         const date = getText(body.date);
         const message = getText(body.message);
         const travelersRaw = Number(body.travelers);
         const travelers = Number.isFinite(travelersRaw) && travelersRaw > 0 ? Math.floor(travelersRaw) : 1;
-        const normalizedMessage = [message, `Preferred contact: ${toContactPreferenceLabel(contactPreference)}`]
-            .filter(Boolean)
-            .join("\n\n");
 
         if (!name || !email || !phone || !tourSlug) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
@@ -71,7 +53,7 @@ export async function POST(request: Request) {
                     tourTitle,
                     travelDate: date || null,
                     travelers,
-                    message: normalizedMessage,
+                    message,
                     status: "new",
                     source: "travel",
                 },

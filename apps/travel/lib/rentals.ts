@@ -89,23 +89,54 @@ function mapVehicle(item: Record<string, unknown>): RentalVehicle {
     };
 }
 
+function getTransfersQuery(extra: Record<string, unknown> = {}) {
+    return {
+        ...extra,
+        populate: ["heroImage"],
+        pagination: { limit: 50 },
+        sort: ["order:asc", "featured:desc"],
+    };
+}
+
+function getVehiclesQuery(extra: Record<string, unknown> = {}) {
+    return {
+        ...extra,
+        populate: ["heroImage"],
+        pagination: { limit: 50 },
+        sort: ["featured:desc", "pricePerDay:asc"],
+    };
+}
+
 export async function getRentalsData(): Promise<RentalsData> {
     try {
         const [transfersRes, vehiclesRes] = await Promise.all([
-            fetchAPI("/transfer-routes", {
-                populate: ["heroImage"],
-                pagination: { limit: 50 },
-                sort: ["order:asc", "featured:desc"],
-            }, { cache: "no-store", next: { revalidate: 0 } }),
-            fetchAPI("/rental-vehicles", {
-                populate: ["heroImage"],
-                pagination: { limit: 50 },
-                sort: ["featured:desc", "pricePerDay:asc"],
-            }, { cache: "no-store", next: { revalidate: 0 } }),
+            fetchAPI("/transfer-routes", getTransfersQuery(), { cache: "no-store", next: { revalidate: 0 } }),
+            fetchAPI("/rental-vehicles", getVehiclesQuery(), { cache: "no-store", next: { revalidate: 0 } }),
         ]);
 
-        const transfersRaw = Array.isArray(transfersRes?.data) ? transfersRes.data : [];
-        const vehiclesRaw = Array.isArray(vehiclesRes?.data) ? vehiclesRes.data : [];
+        let transfersRaw = Array.isArray(transfersRes?.data) ? transfersRes.data : [];
+        let vehiclesRaw = Array.isArray(vehiclesRes?.data) ? vehiclesRes.data : [];
+
+        // If drafts are present but not published, fall back to draft query.
+        if (transfersRaw.length === 0) {
+            const transfersDraftRes = await fetchAPI(
+                "/transfer-routes",
+                getTransfersQuery({ status: "draft" }),
+                { cache: "no-store", next: { revalidate: 0 } }
+            );
+            const draftTransfersRaw = Array.isArray(transfersDraftRes?.data) ? transfersDraftRes.data : [];
+            if (draftTransfersRaw.length > 0) transfersRaw = draftTransfersRaw;
+        }
+
+        if (vehiclesRaw.length === 0) {
+            const vehiclesDraftRes = await fetchAPI(
+                "/rental-vehicles",
+                getVehiclesQuery({ status: "draft" }),
+                { cache: "no-store", next: { revalidate: 0 } }
+            );
+            const draftVehiclesRaw = Array.isArray(vehiclesDraftRes?.data) ? vehiclesDraftRes.data : [];
+            if (draftVehiclesRaw.length > 0) vehiclesRaw = draftVehiclesRaw;
+        }
 
         return {
             transfers: transfersRaw.map((item: Record<string, unknown>) => mapTransfer(item)),
@@ -119,13 +150,22 @@ export async function getRentalsData(): Promise<RentalsData> {
 
 export async function getTransferBySlug(slug: string): Promise<TransferRoute | null> {
     try {
-        const response = await fetchAPI("/transfer-routes", {
+        let response = await fetchAPI("/transfer-routes", {
             filters: { slug: { $eq: slug } },
             populate: ["heroImage"],
             pagination: { limit: 1 },
         }, { cache: "no-store", next: { revalidate: 0 } });
 
-        const transfer = Array.isArray(response?.data) ? response.data[0] : null;
+        let transfer = Array.isArray(response?.data) ? response.data[0] : null;
+        if (!transfer) {
+            response = await fetchAPI("/transfer-routes", {
+                status: "draft",
+                filters: { slug: { $eq: slug } },
+                populate: ["heroImage"],
+                pagination: { limit: 1 },
+            }, { cache: "no-store", next: { revalidate: 0 } });
+            transfer = Array.isArray(response?.data) ? response.data[0] : null;
+        }
         return transfer ? mapTransfer(transfer as Record<string, unknown>) : null;
     } catch (error) {
         console.error("Transfer fetch failed:", error);
@@ -135,13 +175,22 @@ export async function getTransferBySlug(slug: string): Promise<TransferRoute | n
 
 export async function getVehicleBySlug(slug: string): Promise<RentalVehicle | null> {
     try {
-        const response = await fetchAPI("/rental-vehicles", {
+        let response = await fetchAPI("/rental-vehicles", {
             filters: { slug: { $eq: slug } },
             populate: ["heroImage"],
             pagination: { limit: 1 },
         }, { cache: "no-store", next: { revalidate: 0 } });
 
-        const vehicle = Array.isArray(response?.data) ? response.data[0] : null;
+        let vehicle = Array.isArray(response?.data) ? response.data[0] : null;
+        if (!vehicle) {
+            response = await fetchAPI("/rental-vehicles", {
+                status: "draft",
+                filters: { slug: { $eq: slug } },
+                populate: ["heroImage"],
+                pagination: { limit: 1 },
+            }, { cache: "no-store", next: { revalidate: 0 } });
+            vehicle = Array.isArray(response?.data) ? response.data[0] : null;
+        }
         return vehicle ? mapVehicle(vehicle as Record<string, unknown>) : null;
     } catch (error) {
         console.error("Vehicle fetch failed:", error);
