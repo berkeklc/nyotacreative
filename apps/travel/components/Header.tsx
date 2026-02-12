@@ -6,20 +6,31 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import styles from "./Header.module.css";
 
+const NAV_LINKS = [
+    { href: "/tanzania", label: "Destinations" },
+    { href: "/tours", label: "Tours" },
+    { href: "/rentals", label: "Transfers & Cars" },
+    { href: "/guides", label: "Guides" },
+    { href: "/hotels", label: "Hotels" },
+];
+
 export default function Header() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const pathname = usePathname();
 
-    // Determine theme based on path
     useEffect(() => {
-        let theme = 'default';
-        if (pathname.includes('/tanzania/zanzibar') || pathname.includes('beach')) {
-            theme = 'beach';
-        } else if (pathname.includes('/tanzania') || pathname.includes('safari')) {
-            theme = 'safari';
+        let theme = "default";
+        if (pathname.startsWith("/tanzania/zanzibar") || pathname.includes("beach")) {
+            theme = "beach";
+        } else if (pathname.startsWith("/tanzania") || pathname.includes("safari")) {
+            theme = "safari";
         }
-        document.documentElement.setAttribute('data-theme', theme);
+        document.documentElement.setAttribute("data-theme", theme);
+    }, [pathname]);
+
+    useEffect(() => {
+        setIsMenuOpen(false);
     }, [pathname]);
 
     useEffect(() => {
@@ -30,54 +41,110 @@ export default function Header() {
         return () => window.removeEventListener("scroll", handleScroll);
     }, []);
 
-    const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
+    useEffect(() => {
+        document.body.style.overflow = isMenuOpen ? "hidden" : "";
+        return () => {
+            document.body.style.overflow = "";
+        };
+    }, [isMenuOpen]);
+
+    const toggleMenu = () => setIsMenuOpen((prev) => !prev);
+
+    const isActive = (href: string) => pathname === href || (href !== "/" && pathname.startsWith(`${href}/`));
 
     return (
-        <header className={`${styles.header} ${isScrolled ? styles.headerScrolled : ''}`}>
-            <nav className={styles.nav} aria-label="Main Navigation">
-                {/* Left - Logo */}
-                <Link href="/" className={styles.logo}>
+        <header className={`${styles.header} ${isScrolled ? styles.headerScrolled : ""}`}>
+            <nav className={styles.nav} aria-label="Main Navigation Bar">
+                <Link href="/" className={styles.brand}>
                     <Image
                         src="/logo-rush-zanzibar.png"
                         alt="Rush Zanzibar"
-                        width={100}
-                        height={100}
+                        width={56}
+                        height={56}
                         priority
-                        style={{
-                            borderRadius: "50%",
-                            objectFit: "cover",
-                        }}
+                        className={styles.brandLogo}
                     />
+                    <span className={styles.brandText}>
+                        <strong>Rush Zanzibar</strong>
+                        <small>Transfers, Tours, and Rentals</small>
+                    </span>
                 </Link>
 
-                {/* Center - Nav Links */}
-                <div className={`${styles.navLinks} ${isMenuOpen ? styles.mobileOpen : ""}`}>
-                    <Link href="/tanzania" onClick={() => setIsMenuOpen(false)}>Tanzania</Link>
-                    <Link href="/tanzania/zanzibar" onClick={() => setIsMenuOpen(false)}>Zanzibar</Link>
-                    <Link href="/tours" onClick={() => setIsMenuOpen(false)}>Tours</Link>
-                    <Link href="/rentals" onClick={() => setIsMenuOpen(false)}>Rentals</Link>
-                    <Link href="/guides" onClick={() => setIsMenuOpen(false)}>Guides</Link>
-                    <Link href="/hotels" onClick={() => setIsMenuOpen(false)}>Hotels</Link>
+                <div className={styles.navLinks}>
+                    {NAV_LINKS.map((item) => (
+                        <Link
+                            key={item.href}
+                            href={item.href}
+                            className={isActive(item.href) ? styles.navLinkActive : ""}
+                        >
+                            {item.label}
+                        </Link>
+                    ))}
                 </div>
 
-                {/* Right - Actions */}
                 <div className={styles.navActions}>
-                    <button className={styles.langSwitch} aria-label="Switch Language">EN</button>
-                    <Link href="/tours" className={styles.bookBtn}>
-                        Book Now
+                    <Link href="/rentals" className={styles.transportBtn}>
+                        Compare Transport
+                    </Link>
+                    <Link href="/contact" className={styles.bookBtn}>
+                        Plan My Trip
                     </Link>
                 </div>
 
-                {/* Mobile menu toggle */}
                 <button
                     className={styles.menuToggle}
                     onClick={toggleMenu}
-                    aria-label={isMenuOpen ? "Close Menu" : "Open Menu"}
+                    aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                     aria-expanded={isMenuOpen}
+                    aria-controls="mobile-navigation-panel"
                 >
-                    {isMenuOpen ? "✕" : "☰"}
+                    <span className={styles.menuLine} />
+                    <span className={styles.menuLine} />
+                    <span className={styles.menuLine} />
                 </button>
             </nav>
+
+            <button
+                type="button"
+                className={`${styles.mobileBackdrop} ${isMenuOpen ? styles.mobileBackdropOpen : ""}`}
+                onClick={() => setIsMenuOpen(false)}
+                aria-label="Close mobile navigation"
+            />
+
+            <div
+                id="mobile-navigation-panel"
+                className={`${styles.mobilePanel} ${isMenuOpen ? styles.mobilePanelOpen : ""}`}
+                aria-hidden={!isMenuOpen}
+            >
+                <div className={styles.mobilePanelHeader}>
+                    <span>Menu</span>
+                    <button type="button" onClick={() => setIsMenuOpen(false)} aria-label="Close navigation panel">
+                        Close
+                    </button>
+                </div>
+
+                <div className={styles.mobileNavLinks}>
+                    {NAV_LINKS.map((item) => (
+                        <Link
+                            key={`mobile-${item.href}`}
+                            href={item.href}
+                            onClick={() => setIsMenuOpen(false)}
+                            className={isActive(item.href) ? styles.mobileNavLinkActive : ""}
+                        >
+                            {item.label}
+                        </Link>
+                    ))}
+                </div>
+
+                <div className={styles.mobileActions}>
+                    <Link href="/rentals" onClick={() => setIsMenuOpen(false)} className={styles.mobileTransportBtn}>
+                        Transfers & Car Rentals
+                    </Link>
+                    <Link href="/contact" onClick={() => setIsMenuOpen(false)} className={styles.mobileBookBtn}>
+                        Talk to a Planner
+                    </Link>
+                </div>
+            </div>
         </header>
     );
 }

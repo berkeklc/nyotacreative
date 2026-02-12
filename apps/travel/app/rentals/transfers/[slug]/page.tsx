@@ -13,7 +13,7 @@ export default async function TransferDetailPage({ params }: { params: Promise<{
     }
 
     return (
-        <div style={{ backgroundColor: "#0f1923", minHeight: "100vh" }}>
+        <div className={styles.detailPage}>
             <div
                 className={styles.detailHero}
                 style={{
@@ -28,7 +28,7 @@ export default async function TransferDetailPage({ params }: { params: Promise<{
                             <span>›</span>
                             <Link href="/rentals">Transfers</Link>
                             <span>›</span>
-                            <span style={{ color: "white" }}>{transfer.name}</span>
+                            <span className={styles.detailBreadcrumbCurrent}>{transfer.name}</span>
                         </div>
                         <h1 className={styles.detailTitle}>{transfer.name}</h1>
                         <p className={styles.detailSubtitle}>
@@ -41,7 +41,7 @@ export default async function TransferDetailPage({ params }: { params: Promise<{
             <div className={styles.detailBody}>
                 <div className={styles.detailMain}>
                     <div className={styles.detailSection}>
-                        <h2 className={styles.detailSectionTitle}>📍 Route Details</h2>
+                        <h2 className={styles.detailSectionTitle}>Route Details</h2>
                         <div className={styles.routeInfoGrid}>
                             <div className={styles.routeInfoCard}>
                                 <span className={styles.routeInfoIcon}>🛫</span>
@@ -75,15 +75,15 @@ export default async function TransferDetailPage({ params }: { params: Promise<{
                     </div>
 
                     <div className={styles.detailSection}>
-                        <h2 className={styles.detailSectionTitle}>ℹ️ About This Transfer</h2>
+                        <h2 className={styles.detailSectionTitle}>About This Transfer</h2>
                         <div className={styles.detailDescription}>
                             <p>{transfer.description}</p>
                         </div>
                     </div>
 
                     <div className={styles.detailSection}>
-                        <h2 className={styles.detailSectionTitle}>✅ What is Included</h2>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                        <h2 className={styles.detailSectionTitle}>What is Included</h2>
+                        <div className={styles.includedGrid}>
                             {[
                                 "Professional driver",
                                 "Meet & greet at arrival",
@@ -94,11 +94,8 @@ export default async function TransferDetailPage({ params }: { params: Promise<{
                                 "Child seat (on request)",
                                 "24/7 customer support",
                             ].map((item) => (
-                                <div
-                                    key={item}
-                                    style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "1rem", color: "var(--color-text-muted)" }}
-                                >
-                                    <span style={{ color: "var(--color-success)" }}>✓</span>
+                                <div key={item} className={styles.includedItem}>
+                                    <span className={styles.includedCheck}>✓</span>
                                     <span>{item}</span>
                                 </div>
                             ))}
@@ -109,21 +106,14 @@ export default async function TransferDetailPage({ params }: { params: Promise<{
                 <div className={styles.sidebar}>
                     <div className={styles.bookingCard}>
                         <div className={styles.bookingCardHeader}>
-                            <div className={styles.bookingCardLabel} style={{ color: "var(--color-text-muted)" }}>
-                                One-way transfer
-                            </div>
-                            <div
-                                className={styles.bookingCardPrice}
-                                style={{ color: "var(--color-accent)", fontSize: "2.5rem", fontWeight: "700", fontFamily: "var(--font-serif)" }}
-                            >
+                            <div className={styles.bookingCardLabel}>One-way transfer</div>
+                            <div className={styles.bookingCardPrice}>
                                 ${transfer.price}
-                                <span style={{ fontSize: "1rem", color: "var(--color-text-muted)", fontWeight: "400", marginLeft: "0.5rem" }}>
-                                    per vehicle
-                                </span>
+                                <span className={styles.bookingCardUnit}>per vehicle</span>
                             </div>
                             {transfer.priceReturn > 0 && (
-                                <div style={{ fontSize: "0.9rem", color: "var(--color-text-muted)", marginTop: "0.5rem" }}>
-                                    Return: <span style={{ color: "white" }}>${transfer.priceReturn}</span>
+                                <div className={styles.bookingCardReturn}>
+                                    Return: <span className={styles.bookingCardReturnValue}>${transfer.priceReturn}</span>
                                 </div>
                             )}
                         </div>

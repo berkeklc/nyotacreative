@@ -21,7 +21,7 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
     }
 
     return (
-        <div style={{ backgroundColor: "#0f1923", minHeight: "100vh" }}>
+        <div className={styles.detailPage}>
             <div
                 className={styles.detailHero}
                 style={{
@@ -51,7 +51,7 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                             <span>›</span>
                             <Link href="/rentals">Self-Drive</Link>
                             <span>›</span>
-                            <span style={{ color: "white" }}>{vehicle.name}</span>
+                            <span className={styles.detailBreadcrumbCurrent}>{vehicle.name}</span>
                         </div>
                         <h1 className={styles.detailTitle}>{vehicle.name}</h1>
                         <p className={styles.detailSubtitle}>
@@ -64,7 +64,7 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
             <div className={styles.detailBody}>
                 <div className={styles.detailMain}>
                     <div className={styles.detailSection}>
-                        <h2 className={styles.detailSectionTitle}>📋 Vehicle Specifications</h2>
+                        <h2 className={styles.detailSectionTitle}>Vehicle Specifications</h2>
                         <div className={styles.specsGrid}>
                             <div className={styles.specCard}>
                                 <div className={styles.specCardIcon}>👤</div>
@@ -84,7 +84,7 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                             <div className={styles.specCard}>
                                 <div className={styles.specCardIcon}>✅</div>
                                 <div className={styles.specCardLabel}>Status</div>
-                                <div className={styles.specCardValue} style={{ color: vehicle.available ? "var(--color-success)" : "red" }}>
+                                <div className={`${styles.specCardValue} ${vehicle.available ? styles.specCardValueSuccess : styles.specCardValueMuted}`}>
                                     {vehicle.available ? "Available" : "Unavailable"}
                                 </div>
                             </div>
@@ -92,21 +92,18 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                     </div>
 
                     <div className={styles.detailSection}>
-                        <h2 className={styles.detailSectionTitle}>ℹ️ About This Vehicle</h2>
+                        <h2 className={styles.detailSectionTitle}>About This Vehicle</h2>
                         <div className={styles.detailDescription}>
                             <p>{vehicle.description}</p>
                         </div>
                     </div>
 
                     <div className={styles.detailSection}>
-                        <h2 className={styles.detailSectionTitle}>⭐ Features & Equipment</h2>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))", gap: "1rem" }}>
+                        <h2 className={styles.detailSectionTitle}>Features & Equipment</h2>
+                        <div className={styles.includedGrid}>
                             {vehicle.features.map((feature) => (
-                                <div
-                                    key={feature}
-                                    style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "1rem", color: "var(--color-text-muted)" }}
-                                >
-                                    <span style={{ color: "var(--color-success)" }}>✓</span>
+                                <div key={feature} className={styles.includedItem}>
+                                    <span className={styles.includedCheck}>✓</span>
                                     <span>{feature}</span>
                                 </div>
                             ))}
@@ -114,8 +111,8 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                     </div>
 
                     <div className={styles.detailSection}>
-                        <h2 className={styles.detailSectionTitle}>📜 Rental Terms</h2>
-                        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))", gap: "1rem" }}>
+                        <h2 className={styles.detailSectionTitle}>Rental Terms</h2>
+                        <div className={styles.termsGrid}>
                             {[
                                 "Valid driving license required",
                                 "Minimum age: 23 years",
@@ -126,11 +123,8 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                                 "24/7 roadside assistance",
                                 "Free delivery in city",
                             ].map((term) => (
-                                <div
-                                    key={term}
-                                    style={{ display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.95rem", color: "var(--color-text-muted)" }}
-                                >
-                                    <span style={{ color: "var(--color-accent)" }}>•</span>
+                                <div key={term} className={styles.termItem}>
+                                    <span className={styles.termBullet}>•</span>
                                     <span>{term}</span>
                                 </div>
                             ))}
@@ -141,19 +135,14 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                 <div className={styles.sidebar}>
                     <div className={styles.bookingCard}>
                         <div className={styles.bookingCardHeader}>
-                            <div className={styles.bookingCardLabel} style={{ color: "var(--color-text-muted)" }}>
-                                Daily rate
-                            </div>
-                            <div
-                                className={styles.bookingCardPrice}
-                                style={{ color: "var(--color-accent)", fontSize: "2.5rem", fontWeight: "700", fontFamily: "var(--font-serif)" }}
-                            >
+                            <div className={styles.bookingCardLabel}>Daily rate</div>
+                            <div className={styles.bookingCardPrice}>
                                 ${vehicle.pricePerDay}
-                                <span style={{ fontSize: "1rem", color: "var(--color-text-muted)", fontWeight: "400", marginLeft: "0.5rem" }}>/day</span>
+                                <span className={styles.bookingCardUnit}>/day</span>
                             </div>
                             {vehicle.pricePerWeek > 0 && (
-                                <div style={{ fontSize: "0.9rem", color: "var(--color-text-muted)", marginTop: "0.5rem" }}>
-                                    Weekly: <span style={{ color: "white" }}>${vehicle.pricePerWeek}/week</span>
+                                <div className={styles.bookingCardReturn}>
+                                    Weekly: <span className={styles.bookingCardReturnValue}>${vehicle.pricePerWeek}/week</span>
                                 </div>
                             )}
                         </div>

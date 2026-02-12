@@ -6,7 +6,7 @@ import TourPlannerForm from "../../components/TourPlannerForm";
 export const metadata = {
     title: "Tours & Experiences | RushZanzibar",
     description:
-        "Browse Tanzania and Zanzibar tours, chat instantly on WhatsApp, or submit one quick form for a custom itinerary.",
+        "Explore premium Tanzania and Zanzibar tours. Compare routes quickly, send one planner form, and confirm with local advisors.",
 };
 
 const WHATSAPP_PHONE = "255794094733";
@@ -35,8 +35,8 @@ function stripHtml(value: string) {
 
 function toSnippet(description: string) {
     const text = stripHtml(description);
-    if (!text) return "Curated by local experts with flexible pacing and personalized planning support.";
-    return `${text.slice(0, 96)}${text.length > 96 ? "..." : ""}`;
+    if (!text) return "Curated by local experts with smooth timing, balanced pacing, and flexible private planning.";
+    return `${text.slice(0, 120)}${text.length > 120 ? "..." : ""}`;
 }
 
 function parseDurationDays(duration: string) {
@@ -51,6 +51,30 @@ function parseDurationDays(duration: string) {
 
 function formatPrice(value: number) {
     return `$${value.toLocaleString("en-US")}`;
+}
+
+function normalizeDifficulty(value: string) {
+    if (!value) return "Moderate";
+    const normalized = value.toLowerCase();
+    if (normalized.includes("easy")) return "Easy";
+    if (normalized.includes("hard") || normalized.includes("advanced")) return "Challenging";
+    if (normalized.includes("medium")) return "Moderate";
+    return value;
+}
+
+function getTourSignal(tour: TourCardData, index: number) {
+    const difficulty = normalizeDifficulty(tour.difficulty).toLowerCase();
+    if (difficulty === "easy") return "Family Friendly";
+    if (difficulty === "challenging") return "Adventure Ready";
+    if (tour.featured) return "Local Favorite";
+    if (tour.city) return `${tour.city} Highlight`;
+    return index % 2 === 0 ? "Flexible Schedule" : "Private Option Ready";
+}
+
+function getRouteSummary(tour: TourCardData) {
+    const cityText = tour.city ? `${tour.city} route` : "Signature route";
+    const difficultyText = normalizeDifficulty(tour.difficulty);
+    return `${cityText} · ${difficultyText} pace`;
 }
 
 export default async function ToursPage() {
@@ -125,46 +149,23 @@ export default async function ToursPage() {
             <section className={styles.hero}>
                 <div className={styles.heroGlow} />
                 <div className={`container ${styles.heroInner}`}>
-                    <span className={styles.heroBadge}>Tour Planner 2026</span>
-                    <h1>Find The Right Tour Fast, Then Book In Minutes</h1>
+                    <h1>Find Better Tours Faster With A Cleaner Planning Flow</h1>
                     <p>
-                        No complex category maze. Compare the best active routes, chat instantly on WhatsApp, or fill one
-                        short form and get your custom itinerary from our advisors.
+                        Compare curated routes without noise, open one improved planner form, and confirm with a local
+                        advisor over WhatsApp in minutes.
                     </p>
                     <div className={styles.heroActions}>
+                        <a href="#tour-planner" className={`${styles.quickPlannerBtn} btn btn-primary`}>
+                            Open Planner Form
+                        </a>
                         <a
                             href={`https://wa.me/${WHATSAPP_PHONE}?text=${WHATSAPP_TEXT}`}
                             target="_blank"
                             rel="noopener noreferrer"
                             className={styles.whatsAppHeroBtn}
                         >
-                            WhatsApp Now
+                            Chat on WhatsApp
                         </a>
-                        <a href="#tour-planner" className={`${styles.quickPlannerBtn} btn btn-primary`}>
-                            Open Quick Planner
-                        </a>
-                        <Link href="/contact" className={`${styles.advisorBtn} btn btn-secondary`}>
-                            Talk To Advisor
-                        </Link>
-                    </div>
-                    <div className={styles.heroHint}>
-                        <span>Response in under 24h</span>
-                        <span>Local ground team in Tanzania</span>
-                        <span>Custom private and group plans</span>
-                    </div>
-                    <div className={styles.heroStatStrip}>
-                        <article>
-                            <span>Live Tours</span>
-                            <strong>{tours.length}</strong>
-                        </article>
-                        <article>
-                            <span>Featured</span>
-                            <strong>{featuredCount}</strong>
-                        </article>
-                        <article>
-                            <span>Starting From</span>
-                            <strong>{minimumPrice ? formatPrice(minimumPrice) : "Custom"}</strong>
-                        </article>
                     </div>
                 </div>
             </section>
@@ -173,12 +174,27 @@ export default async function ToursPage() {
                 <div className={`container ${styles.layout}`}>
                     <aside id="tour-planner" className={styles.plannerPanel}>
                         <div className={styles.plannerHead}>
-                            <span>Quick Inquiry</span>
-                            <h2>Plan My Tour</h2>
+                            <span>Planner Form</span>
+                            <h2>Build My Tour Plan</h2>
                             <p>
-                                Fill this once. We will align route, dates, and budget quickly, then send your final
-                                recommendation.
+                                Share core trip details once. Our team sends route options, timing, and budget-matched
+                                recommendations quickly.
                             </p>
+                        </div>
+
+                        <div className={styles.plannerFactRow}>
+                            <article className={styles.plannerFactCard}>
+                                <strong>1 Form</strong>
+                                <span>Single submission</span>
+                            </article>
+                            <article className={styles.plannerFactCard}>
+                                <strong>Local Team</strong>
+                                <span>Tanzania-based advisors</span>
+                            </article>
+                            <article className={styles.plannerFactCard}>
+                                <strong>Fast Reply</strong>
+                                <span>Usually within 24h</span>
+                            </article>
                         </div>
 
                         <a
@@ -189,8 +205,8 @@ export default async function ToursPage() {
                         >
                             <span className={styles.plannerWhatsAppIcon}>WA</span>
                             <span className={styles.plannerWhatsAppText}>
-                                <strong>Need instant help?</strong>
-                                <span>Tap here for live WhatsApp support.</span>
+                                <strong>Prefer instant chat?</strong>
+                                <span>Open WhatsApp support while you fill the form.</span>
                             </span>
                         </a>
 
@@ -202,10 +218,10 @@ export default async function ToursPage() {
                     <div className={styles.listPanel}>
                         <div className={styles.listHeader}>
                             <div>
-                                <h2>Active Tours</h2>
+                                <h2>Tour Collection</h2>
                                 <p>
-                                    Featured routes are prioritized first, then all available tours sorted for faster
-                                    scanning.
+                                    Featured routes appear first. Every card is optimized for quick comparison by
+                                    duration, location, pace, and starting budget.
                                 </p>
                                 {hasFetchError && (
                                     <p className={styles.dataWarning}>
@@ -215,13 +231,13 @@ export default async function ToursPage() {
                                 )}
                             </div>
                             <Link href="/contact" className={`${styles.helpChoosingBtn} btn btn-accent`}>
-                                Need Help Choosing?
+                                Talk To Advisor
                             </Link>
                         </div>
 
                         <div className={styles.statsRow}>
                             <article className={styles.statCard}>
-                                <span>Total Tours</span>
+                                <span>Active Tours</span>
                                 <strong>{tours.length}</strong>
                             </article>
                             <article className={styles.statCard}>
@@ -229,38 +245,20 @@ export default async function ToursPage() {
                                 <strong>{featuredCount}</strong>
                             </article>
                             <article className={styles.statCard}>
-                                <span>From</span>
+                                <span>Starting From</span>
                                 <strong>{minimumPrice ? formatPrice(minimumPrice) : "Custom"}</strong>
                             </article>
                             <article className={styles.statCard}>
-                                <span>Strongest Hub</span>
+                                <span>Top Hub</span>
                                 <strong>{strongestCity}</strong>
-                            </article>
-                        </div>
-
-                        <div className={styles.flowRow}>
-                            <article className={styles.flowCard}>
-                                <span>1</span>
-                                <strong>Pick A Route</strong>
-                                <p>Compare current tours quickly by duration, city, and starting budget.</p>
-                            </article>
-                            <article className={styles.flowCard}>
-                                <span>2</span>
-                                <strong>Send One Form</strong>
-                                <p>Share dates, travelers, and contact preference once. We handle the rest.</p>
-                            </article>
-                            <article className={styles.flowCard}>
-                                <span>3</span>
-                                <strong>Confirm On WhatsApp</strong>
-                                <p>Receive your final routing and operational details via your chosen channel.</p>
                             </article>
                         </div>
 
                         {tours.length > 0 ? (
                             <div className={styles.toursGrid}>
-                                {tours.map((tour) => (
+                                {tours.map((tour, index) => (
                                     <article key={tour.slug} className={styles.tourCard}>
-                                        <Link href={`/tours/${tour.slug}`}>
+                                        <Link href={`/tours/${tour.slug}`} className={styles.tourImageLink}>
                                             <div
                                                 className={styles.tourImage}
                                                 style={{
@@ -273,20 +271,28 @@ export default async function ToursPage() {
                                         </Link>
 
                                         <div className={styles.tourBody}>
-                                            <div className={styles.tourMeta}>
-                                                <span>{tour.duration || avgDays}</span>
+                                            <div className={styles.tourMetaTop}>
+                                                <span className={styles.tourDuration}>{tour.duration || avgDays}</span>
                                                 {tour.city && <span className={styles.tourCity}>{tour.city}</span>}
+                                                <span className={styles.tourDifficulty}>{normalizeDifficulty(tour.difficulty)}</span>
                                             </div>
                                             <h3>
                                                 <Link href={`/tours/${tour.slug}`}>{tour.title}</Link>
                                             </h3>
                                             <p>{toSnippet(tour.description)}</p>
+                                            <div className={styles.tourSignalRow}>
+                                                <span className={styles.tourSignalPrimary}>{getTourSignal(tour, index)}</span>
+                                                <span className={styles.tourSignalSecondary}>{getRouteSummary(tour)}</span>
+                                            </div>
                                             <div className={styles.tourFooter}>
-                                                <span className={styles.tourPrice}>
-                                                    From <strong>{tour.price > 0 ? formatPrice(tour.price) : "Custom"}</strong>
-                                                </span>
+                                                <div className={styles.tourPriceWrap}>
+                                                    <span className={styles.tourPriceLabel}>From</span>
+                                                    <span className={styles.tourPriceValue}>
+                                                        {tour.price > 0 ? formatPrice(tour.price) : "Custom"}
+                                                    </span>
+                                                </div>
                                                 <Link href={`/tours/${tour.slug}`} className={styles.tourDetailBtn}>
-                                                    View Details
+                                                    View Tour
                                                 </Link>
                                             </div>
                                         </div>
