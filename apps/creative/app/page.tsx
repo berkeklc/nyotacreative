@@ -54,7 +54,7 @@ export default async function Home() {
       title: p.title,
       category: p.services?.map((s: any) => s.name).join(" / ") || p.industry || "Project",
       description: p.excerpt || "",
-      image: getStrapiMedia(p.heroImage?.url) || "/projects/placeholder.jpg",
+      image: getStrapiMedia(p.heroImage?.url, p.updatedAt || p.heroImage?.updatedAt) || "/projects/placeholder.jpg",
       slug: p.slug,
     }))
     : fallbackProjects;

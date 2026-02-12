@@ -4,6 +4,8 @@ import styles from "../page.module.css";
 import { getProjects, getStrapiMedia } from "@/lib/strapi";
 import Footer from "@/components/Footer";
 
+export const revalidate = 60;
+
 export const metadata = {
     title: "Our Work | Nyota Creative",
     description: "Explore our portfolio of branding, design, and software projects.",
@@ -46,7 +48,10 @@ export default async function WorkPage() {
 
                     <div className={styles.projectsGrid} style={{ marginTop: "3rem" }}>
                         {projects.map((project: any, index: number) => {
-                            const heroImageUrl = getStrapiMedia(project.heroImage?.url);
+                            const heroImageUrl = getStrapiMedia(
+                                project.heroImage?.url,
+                                project.updatedAt || project.heroImage?.updatedAt
+                            );
                             const serviceNames = project.services?.map((s: any) => s.name).join(" / ") || project.industry;
 
                             return (

@@ -643,46 +643,41 @@
     color: var(--detail-title);
 }
 
-.routeInfoGrid {
+.routeInfoList {
+    margin: 0;
+    padding: 0;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.72rem;
+    gap: 0.5rem;
 }
 
-.routeInfoCard {
-    border-radius: 0.95rem;
-    border: 1px solid rgba(16, 24, 34, 0.12);
-    background: linear-gradient(160deg, #fff 0%, #f8f3ea 100%);
-    padding: 0.74rem 0.78rem;
-    display: flex;
-    align-items: center;
-    gap: 0.62rem;
+.routeInfoItem {
+    margin: 0;
+    display: grid;
+    grid-template-columns: minmax(130px, 180px) minmax(0, 1fr);
+    gap: 0.65rem;
+    align-items: baseline;
+    border-bottom: 1px dashed rgba(16, 24, 34, 0.18);
+    padding-bottom: 0.44rem;
 }
 
-.routeInfoIcon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 999px;
-    background: rgba(192, 90, 62, 0.12);
-    color: var(--detail-accent);
-    font-size: 1rem;
+.routeInfoItem:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
 }
 
 .routeInfoLabel {
+    margin: 0;
     font-size: 0.66rem;
     text-transform: uppercase;
     letter-spacing: 0.11em;
     font-weight: 700;
     color: var(--detail-muted);
-    margin-bottom: 0.15rem;
 }
 
 .routeInfoValue {
-    font-size: 0.94rem;
-    line-height: 1.38;
+    margin: 0;
+    font-size: 0.96rem;
+    line-height: 1.42;
     color: var(--detail-text);
     font-weight: 700;
 }
@@ -717,36 +712,30 @@
     font-weight: 800;
 }
 
-.specsGrid {
+.specsList {
+    margin: 0;
+    padding: 0;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 0.72rem;
+    gap: 0.5rem;
 }
 
-.specCard {
-    border-radius: 0.95rem;
-    border: 1px solid rgba(16, 24, 34, 0.12);
-    background: linear-gradient(160deg, #fff 0%, #f8f3ea 100%);
-    padding: 0.74rem 0.76rem;
+.specItemRow {
+    margin: 0;
+    display: grid;
+    grid-template-columns: minmax(130px, 180px) minmax(0, 1fr);
+    gap: 0.65rem;
+    align-items: baseline;
+    border-bottom: 1px dashed rgba(16, 24, 34, 0.18);
+    padding-bottom: 0.44rem;
 }
 
-.specCardIcon {
-    width: 2rem;
-    height: 2rem;
-    border-radius: 999px;
-    border: 1px solid rgba(16, 24, 34, 0.16);
-    background: rgba(192, 90, 62, 0.12);
-    color: var(--detail-accent);
-    font-size: 0.64rem;
-    letter-spacing: 0.1em;
-    font-weight: 800;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0.3rem;
+.specItemRow:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
 }
 
 .specCardLabel {
+    margin: 0;
     font-size: 0.66rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
@@ -756,10 +745,11 @@
 }
 
 .specCardValue {
+    margin: 0;
     color: var(--detail-title);
     font-weight: 700;
-    font-size: 0.93rem;
-    line-height: 1.35;
+    font-size: 0.95rem;
+    line-height: 1.42;
 }
 
 .specCardValueSuccess {
@@ -962,8 +952,8 @@
         padding: 0.9rem 0.88rem;
     }
 
-    .routeInfoGrid,
-    .specsGrid,
+    .routeInfoItem,
+    .specItemRow,
     .formRow {
         grid-template-columns: 1fr;
     }

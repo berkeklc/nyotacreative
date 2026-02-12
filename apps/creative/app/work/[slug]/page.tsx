@@ -5,6 +5,8 @@ import styles from "../../page.module.css";
 import { getProject, getProjects, getStrapiMedia } from "@/lib/strapi";
 import Footer from "@/components/Footer";
 
+export const revalidate = 60;
+
 export async function generateStaticParams() {
     const projects = await getProjects();
     return projects.map((project: any) => ({ slug: project.slug }));
@@ -32,7 +34,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
         notFound();
     }
 
-    const heroImageUrl = getStrapiMedia(project.heroImage?.url);
+    const heroImageUrl = getStrapiMedia(
+        project.heroImage?.url,
+        project.updatedAt || project.heroImage?.updatedAt
+    );
     const galleryImages = project.gallery || [];
     const services = project.services || [];
 
@@ -177,7 +182,10 @@ export default async function ProjectDetailPage({ params }: { params: Promise<{ 
                         <h2 style={{ marginBottom: "2rem" }}>Gallery</h2>
                         <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "1.5rem" }}>
                             {galleryImages.map((img: any, index: number) => {
-                                const imageUrl = getStrapiMedia(img.url);
+                                const imageUrl = getStrapiMedia(
+                                    img.url,
+                                    img.updatedAt || project.updatedAt
+                                );
                                 if (!imageUrl) return null;
                                 return (
                                     <div

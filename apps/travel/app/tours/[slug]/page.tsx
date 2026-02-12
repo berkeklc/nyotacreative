@@ -119,6 +119,8 @@ export default async function TourPage({ params }: { params: Promise<{ slug: str
     const whatsAppMessage = encodeURIComponent(
         `Hi RushZanzibar, I want to book ${title || "this tour"}. Please share details.`
     );
+    const displayPrice = price > 0 ? `$${price}` : "Custom Quote";
+    const displayPace = difficulty || "All levels";
 
     return (
         <div className={styles.tourPage}>
@@ -152,9 +154,24 @@ export default async function TourPage({ params }: { params: Promise<{ slug: str
                             {difficulty && <span>{difficulty}</span>}
                         </div>
                         <p className={styles.heroLead}>
-                            Build your plan in one step, then confirm directly with our operations desk on WhatsApp or your
-                            preferred channel.
+                            Share your dates and interests once. Our team sends the best route plan with clear timing and
+                            practical pricing before you confirm.
                         </p>
+
+                        <div className={styles.heroInfoStrip}>
+                            <article>
+                                <span>Starting From</span>
+                                <strong>{displayPrice}</strong>
+                            </article>
+                            <article>
+                                <span>Route Pace</span>
+                                <strong>{displayPace}</strong>
+                            </article>
+                            <article>
+                                <span>Advisor Reply</span>
+                                <strong>Usually under 24h</strong>
+                            </article>
+                        </div>
 
                         <div className={styles.heroActions}>
                             <a
@@ -177,25 +194,6 @@ export default async function TourPage({ params }: { params: Promise<{ slug: str
                         <div className={styles.overview}>
                             <h2>Overview</h2>
                             <p>{description || "Tour details will be shared by our advisor shortly."}</p>
-
-                            <div className={styles.keyFacts}>
-                                <article>
-                                    <span>Duration</span>
-                                    <strong>{duration || "Flexible"}</strong>
-                                </article>
-                                <article>
-                                    <span>Destination</span>
-                                    <strong>{city || "Tanzania"}</strong>
-                                </article>
-                                <article>
-                                    <span>Difficulty</span>
-                                    <strong>{difficulty || "All levels"}</strong>
-                                </article>
-                                <article>
-                                    <span>From</span>
-                                    <strong>{price > 0 ? `$${price}` : "Custom"}</strong>
-                                </article>
-                            </div>
 
                             {highlights.length > 0 && (
                                 <>

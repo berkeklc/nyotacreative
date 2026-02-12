@@ -71,30 +71,26 @@ export default async function VehicleDetailPage({ params }: { params: Promise<{ 
                 <div className={styles.detailMain}>
                     <div className={styles.detailSection}>
                         <h2 className={styles.detailSectionTitle}>Vehicle Specifications</h2>
-                        <div className={styles.specsGrid}>
-                            <div className={styles.specCard}>
-                                <div className={styles.specCardIcon}>SE</div>
-                                <div className={styles.specCardLabel}>Seats</div>
-                                <div className={styles.specCardValue}>{vehicle.seats}</div>
+                        <dl className={styles.specsList}>
+                            <div className={styles.specItemRow}>
+                                <dt className={styles.specCardLabel}>Seats</dt>
+                                <dd className={styles.specCardValue}>{vehicle.seats}</dd>
                             </div>
-                            <div className={styles.specCard}>
-                                <div className={styles.specCardIcon}>TR</div>
-                                <div className={styles.specCardLabel}>Transmission</div>
-                                <div className={styles.specCardValue}>{toTitleCase(vehicle.transmission)}</div>
+                            <div className={styles.specItemRow}>
+                                <dt className={styles.specCardLabel}>Transmission</dt>
+                                <dd className={styles.specCardValue}>{toTitleCase(vehicle.transmission)}</dd>
                             </div>
-                            <div className={styles.specCard}>
-                                <div className={styles.specCardIcon}>CT</div>
-                                <div className={styles.specCardLabel}>Category</div>
-                                <div className={styles.specCardValue}>{categoryLabels[vehicle.category] || toTitleCase(vehicle.category)}</div>
+                            <div className={styles.specItemRow}>
+                                <dt className={styles.specCardLabel}>Category</dt>
+                                <dd className={styles.specCardValue}>{categoryLabels[vehicle.category] || toTitleCase(vehicle.category)}</dd>
                             </div>
-                            <div className={styles.specCard}>
-                                <div className={styles.specCardIcon}>ST</div>
-                                <div className={styles.specCardLabel}>Status</div>
-                                <div className={`${styles.specCardValue} ${vehicle.available ? styles.specCardValueSuccess : styles.specCardValueMuted}`}>
+                            <div className={styles.specItemRow}>
+                                <dt className={styles.specCardLabel}>Status</dt>
+                                <dd className={`${styles.specCardValue} ${vehicle.available ? styles.specCardValueSuccess : styles.specCardValueMuted}`}>
                                     {vehicle.available ? "Available" : "Unavailable"}
-                                </div>
+                                </dd>
                             </div>
-                        </div>
+                        </dl>
                     </div>
 
                     <div className={styles.detailSection}>

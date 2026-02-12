@@ -27,7 +27,7 @@ const EXPERIENCE_CONFIG: Record<ActiveExperience, ExperienceUiConfig> = {
         gradient: "linear-gradient(135deg, rgba(30, 107, 140, 0.92) 0%, rgba(14, 74, 99, 0.85) 100%)",
         railLabel: "Coastal Route Planner",
         railText: "Compare coastal routes with clear duration and budget signals before booking.",
-        rentHint: "Professional private transfer and self-drive rental support across coastal hotels, ferry points, and airports.",
+        rentHint: "Private transfers and self-drive support for coastal hotels, ferry points, and airports.",
         guideLabel: "Coastal Briefings",
         guideText: "From tidal patterns to quiet bays, these reads keep your beach days smooth.",
         destinationLabel: "Coastal Stops",
@@ -38,7 +38,7 @@ const EXPERIENCE_CONFIG: Record<ActiveExperience, ExperienceUiConfig> = {
         gradient: "linear-gradient(135deg, rgba(61, 107, 79, 0.94) 0%, rgba(42, 74, 54, 0.86) 100%)",
         railLabel: "Safari Route Planner",
         railText: "Review wildlife routes with practical timing, budget, and category clarity.",
-        rentHint: "Dedicated transfer and rent-a-car operations for airport pickups, lodge drops, and intercity movement.",
+        rentHint: "Dedicated transfer and rental desk for airport pickups, lodge drops, and intercity movement.",
         guideLabel: "Field Notes",
         guideText: "Planning windows, migration timing, and route advice from local operations.",
         destinationLabel: "Safari Gateways",
@@ -49,7 +49,7 @@ const EXPERIENCE_CONFIG: Record<ActiveExperience, ExperienceUiConfig> = {
         gradient: "linear-gradient(135deg, rgba(212, 133, 58, 0.95) 0%, rgba(166, 101, 40, 0.86) 100%)",
         railLabel: "City Route Planner",
         railText: "Sort urban routes by duration, budget, and experience theme in one clean rail.",
-        rentHint: "City transfer desk and self-drive fleet for airport links, business rides, and flexible daily rental.",
+        rentHint: "City transfer desk and self-drive fleet for airport links, business rides, and daily rental flexibility.",
         guideLabel: "City Intelligence",
         guideText: "Neighborhoods, food routes, and culture-focused tips for efficient city days.",
         destinationLabel: "Culture Anchors",
@@ -62,7 +62,7 @@ const DEFAULT_CONFIG: ExperienceUiConfig = {
     gradient: "linear-gradient(135deg, rgba(181, 74, 50, 0.92) 0%, rgba(148, 61, 40, 0.85) 100%)",
     railLabel: "Routes-First Planner",
     railText: "Compare signature routes side-by-side with clear duration, price, and category context.",
-    rentHint: "Ground Mobility Desk for private transfer services and fully supported self-drive rentals.",
+    rentHint: "Ground mobility desk for private transfers and fully supported self-drive rentals.",
     guideLabel: "Local Planning Notes",
     guideText: "Curated reads from local experts to help shape timing, pacing, and route decisions.",
     destinationLabel: "Popular Destinations",
@@ -150,15 +150,6 @@ function parseDurationMinutes(duration: string) {
     }
 
     return Number.isFinite(total) && total > 0 ? Math.round(total) : null;
-}
-
-function formatDurationMinutes(totalMinutes: number | null) {
-    if (!totalMinutes) return "Flexible";
-    if (totalMinutes < 60) return `${totalMinutes} min`;
-    const hours = Math.floor(totalMinutes / 60);
-    const minutes = totalMinutes % 60;
-    if (minutes === 0) return `${hours}h`;
-    return `${hours}h ${minutes}m`;
 }
 
 function formatMoney(value: number) {
@@ -266,54 +257,11 @@ export default function HomePageClient({ initialData }: { initialData: HomePageD
     const extraTransferCount = Math.max(prioritizedTransfers.length - sidebarTransfers.length, 0);
     const sliderTours = prioritizedTours.slice(0, 8);
 
-    const transferSnapshot = useMemo(() => {
+    const transferEntryFare = useMemo(() => {
         const pricedTransfers = prioritizedTransfers.filter((transfer) => transfer.price > 0);
-        const entryFare = pricedTransfers.length
-            ? Math.min(...pricedTransfers.map((transfer) => transfer.price))
-            : null;
-        const fastestTransferMinutes = prioritizedTransfers
-            .map((transfer) => parseDurationMinutes(transfer.duration || ""))
-            .filter((value): value is number => value !== null)
-            .sort((a, b) => a - b)[0] ?? null;
-        const servicePoints = new Set(
-            prioritizedTransfers.flatMap((transfer) => [transfer.pickupLocation, transfer.dropoffLocation].filter(Boolean))
-        ).size;
-
-        return {
-            routeCount: prioritizedTransfers.length,
-            entryFare: entryFare ? formatMoney(entryFare) : "Quote",
-            fastestRide: formatDurationMinutes(fastestTransferMinutes),
-            servicePoints: servicePoints > 0 ? `${servicePoints}+ points` : "Island-wide",
-        };
+        const entryFare = pricedTransfers.length ? Math.min(...pricedTransfers.map((transfer) => transfer.price)) : null;
+        return entryFare ? formatMoney(entryFare) : "Quote";
     }, [prioritizedTransfers]);
-
-    const tourStats = useMemo(() => {
-        const pricedTours = sliderTours.filter((tour) => tour.price > 0);
-        const averagePrice = pricedTours.length
-            ? Math.round(pricedTours.reduce((sum, tour) => sum + tour.price, 0) / pricedTours.length)
-            : null;
-
-        const durationDays = sliderTours
-            .map((tour) => parseDurationDays(tour.duration || ""))
-            .filter((value): value is number => value !== null);
-        const averageDays = durationDays.length
-            ? Number((durationDays.reduce((sum, value) => sum + value, 0) / durationDays.length).toFixed(1))
-            : null;
-
-        const categoryCounts = sliderTours.reduce<Record<string, number>>((acc, tour) => {
-            const category = tour.category ? titleCase(tour.category.replace("-", " ")) : "General";
-            acc[category] = (acc[category] || 0) + 1;
-            return acc;
-        }, {});
-        const topCategory = Object.entries(categoryCounts).sort((a, b) => b[1] - a[1])[0]?.[0] || "Signature";
-
-        return {
-            total: sliderTours.length,
-            averagePrice: averagePrice ? formatMoney(averagePrice) : "Custom",
-            averageDays: averageDays ? `${averageDays} days` : "Flexible",
-            topCategory,
-        };
-    }, [sliderTours]);
 
     useEffect(() => {
         const element = sliderViewportRef.current;
@@ -399,12 +347,15 @@ export default function HomePageClient({ initialData }: { initialData: HomePageD
                     <div className={styles.transferZone} ref={transferZoneRef}>
                         <div className={styles.transferIntro}>
                             <div className={styles.transferIntroTopRow}>
-                                <div>
+                                <div className={styles.transferIntroLead}>
                                     <span className={styles.transferIntroLabel}>
                                         Ground Mobility Services
                                     </span>
-                                    <h3 className={styles.transferIntroTitle}>Private Transfers & Rent A Car Desk</h3>
-                                    <p className={styles.transferIntroText}>{activeConfig.rentHint}</p>
+                                    <h3 className={styles.transferIntroTitle}>Private Transfers & Self-Drive Desk</h3>
+                                    <p className={styles.transferIntroText}>
+                                        {activeConfig.rentHint} Compare routes, duration, and starting fares in one clear
+                                        flow before booking.
+                                    </p>
                                 </div>
                                 {selectedExperience && (
                                     <button
@@ -416,23 +367,10 @@ export default function HomePageClient({ initialData }: { initialData: HomePageD
                                     </button>
                                 )}
                             </div>
-                            <div className={styles.transferSnapshotRow}>
-                                <article className={styles.transferSnapshotItem}>
-                                    <strong>{transferSnapshot.routeCount}</strong>
-                                    <span>Live routes</span>
-                                </article>
-                                <article className={styles.transferSnapshotItem}>
-                                    <strong>{transferSnapshot.fastestRide}</strong>
-                                    <span>Fastest ride</span>
-                                </article>
-                                <article className={styles.transferSnapshotItem}>
-                                    <strong>{transferSnapshot.entryFare}</strong>
-                                    <span>Entry fare</span>
-                                </article>
-                                <article className={styles.transferSnapshotItem}>
-                                    <strong>{transferSnapshot.servicePoints}</strong>
-                                    <span>Service coverage</span>
-                                </article>
+                            <div className={styles.transferPillRow}>
+                                <span className={styles.transferPill}>Licensed local chauffeurs</span>
+                                <span className={styles.transferPill}>Insured self-drive fleet</span>
+                                <span className={styles.transferPill}>Quick WhatsApp assistance</span>
                             </div>
                         </div>
 
@@ -440,22 +378,22 @@ export default function HomePageClient({ initialData }: { initialData: HomePageD
                             <div className={styles.transferServicesColumn}>
                                 <article className={`${styles.mobilityServiceCard} ${styles.mobilityServiceTransfer}`}>
                                     <div className={styles.mobilityServiceHeader}>
-                                        <span className={styles.mobilityServiceType}>Private Chauffeur Transfers</span>
+                                        <span className={styles.mobilityServiceType}>Private Driver Transfers</span>
                                         <strong className={styles.mobilityServiceHighlight}>Airport / Hotel / Ferry / City</strong>
                                     </div>
                                     <p className={styles.mobilityServiceText}>
-                                        Point-to-point transfer operations with licensed local drivers and dispatch
-                                        control for arrivals, departures, and intercity moves.
+                                        Best for direct point-to-point rides with professional drivers and dispatch-backed
+                                        coordination.
                                     </p>
                                     <ul className={styles.mobilityServiceList}>
-                                        <li>Flight tracking and delay-aware pickup coordination</li>
-                                        <li>Meet and greet with name-board on airport arrivals</li>
-                                        <li>Fixed transparent fares and 24/7 operations support</li>
+                                        <li>Flight tracking with delay-aware pickup timing</li>
+                                        <li>Transparent fixed fare before confirmation</li>
+                                        <li>One-way and return booking support</li>
                                     </ul>
                                     <div className={styles.mobilityServiceFooter}>
-                                        <span>From {transferSnapshot.entryFare}</span>
+                                        <span>Starts at {transferEntryFare}</span>
                                         <Link href="/rentals" className={styles.mobilityOptionLink}>
-                                            Explore Transfer Routes
+                                            View Transfer Options
                                         </Link>
                                     </div>
                                 </article>
@@ -466,18 +404,17 @@ export default function HomePageClient({ initialData }: { initialData: HomePageD
                                         <strong className={styles.mobilityServiceHighlight}>Daily / Weekly / Long Stay</strong>
                                     </div>
                                     <p className={styles.mobilityServiceText}>
-                                        Professional rent-a-car service with insured vehicles, category-based pricing,
-                                        and optional delivery to airport or hotel locations.
+                                        Best for flexible schedules when you prefer to drive independently at your own pace.
                                     </p>
                                     <ul className={styles.mobilityServiceList}>
-                                        <li>Automatic and manual fleet options by budget tier</li>
-                                        <li>Flexible pickup and return points across key zones</li>
-                                        <li>Roadside support and quick replacement workflow</li>
+                                        <li>Automatic and manual vehicles across budget tiers</li>
+                                        <li>Airport or hotel pickup and return support</li>
+                                        <li>Roadside backup and quick replacement workflow</li>
                                     </ul>
                                     <div className={styles.mobilityServiceFooter}>
-                                        <span>Insured and maintained fleet</span>
+                                        <span>Insured fleet with local support</span>
                                         <Link href="/rentals" className={styles.mobilityOptionLink}>
-                                            Browse Rental Fleet
+                                            View Rental Fleet
                                         </Link>
                                     </div>
                                 </article>
@@ -485,10 +422,10 @@ export default function HomePageClient({ initialData }: { initialData: HomePageD
 
                             <div className={styles.rentsPanel}>
                                 <div className={styles.rentsPanelHeader}>
-                                    <span>Live Transfer Routes</span>
-                                    <h3>Most booked point-to-point services</h3>
+                                    <span>Live Route Board</span>
+                                    <h3>Popular transfer pairs right now</h3>
                                     <p className={styles.rentsPanelNote}>
-                                        Real route pairs with current duration and starting fare visibility.
+                                        See current route duration and starting fare before opening full details.
                                     </p>
                                 </div>
                                 {prioritizedTransfers.length > 0 ? (
@@ -569,25 +506,6 @@ export default function HomePageClient({ initialData }: { initialData: HomePageD
 
                         {sliderTours.length > 0 ? (
                             <>
-                                <div className={styles.tourMetaStrip}>
-                                    <article className={styles.tourMetaChip}>
-                                        <span>Routes Live Now</span>
-                                        <strong>{tourStats.total}</strong>
-                                    </article>
-                                    <article className={styles.tourMetaChip}>
-                                        <span>Typical Duration</span>
-                                        <strong>{tourStats.averageDays}</strong>
-                                    </article>
-                                    <article className={styles.tourMetaChip}>
-                                        <span>Typical Budget</span>
-                                        <strong>{tourStats.averagePrice}</strong>
-                                    </article>
-                                    <article className={styles.tourMetaChip}>
-                                        <span>Leading Theme</span>
-                                        <strong>{tourStats.topCategory}</strong>
-                                    </article>
-                                </div>
-
                                 <div className={styles.tourSliderShell}>
                                     <div className={styles.tourSliderViewport} ref={sliderViewportRef}>
                                         <div

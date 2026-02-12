@@ -183,7 +183,10 @@ export default async function ServiceDetailPage({ params }: { params: Promise<{ 
                         <h2 style={{ marginBottom: "2rem" }}>Related Projects</h2>
                         <div className={styles.projectsGrid}>
                             {relatedProjects.slice(0, 3).map((project: any) => {
-                                const heroImageUrl = getStrapiMedia(project.heroImage?.url);
+                                const heroImageUrl = getStrapiMedia(
+                                    project.heroImage?.url,
+                                    project.updatedAt || project.heroImage?.updatedAt
+                                );
                                 return (
                                     <article key={project.slug} className={styles.projectCard}>
                                         <div className={styles.projectImage}>

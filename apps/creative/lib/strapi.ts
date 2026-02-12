@@ -1,24 +1,97 @@
 import qs from "qs";
 
+type StrapiFetchOptions = RequestInit & {
+    next?: {
+        revalidate?: number;
+        tags?: string[];
+    };
+};
+
+const DEFAULT_STRAPI_URL = "https://cms-production-219a.up.railway.app";
+const STRAPI_CACHE_TAG = "strapi";
+
+function parseRevalidateSeconds(value: string | undefined, fallback: number) {
+    if (!value) return fallback;
+    const parsedValue = Number(value);
+    if (!Number.isFinite(parsedValue) || parsedValue < 0) return fallback;
+    return Math.floor(parsedValue);
+}
+
+const DEFAULT_REVALIDATE_SECONDS = parseRevalidateSeconds(
+    process.env.STRAPI_REVALIDATE_SECONDS,
+    60
+);
+
+function getBaseStrapiURL() {
+    const rawBaseUrl = (
+        process.env.STRAPI_API_URL ||
+        process.env.STRAPI_URL ||
+        process.env.NEXT_PUBLIC_STRAPI_API_URL ||
+        DEFAULT_STRAPI_URL
+    ).trim();
+
+    return rawBaseUrl.endsWith("/") ? rawBaseUrl.slice(0, -1) : rawBaseUrl;
+}
+
 export function getStrapiURL(path = "") {
-    return `${process.env.NEXT_PUBLIC_STRAPI_API_URL || "https://cms-production-219a.up.railway.app"
-        }${path}`;
+    return `${getBaseStrapiURL()}${path}`;
 }
 
-export function getStrapiMedia(url: string | null | undefined) {
+function appendVersionQuery(url: string, versionToken?: string | number | null) {
+    if (versionToken === null || versionToken === undefined || versionToken === "") return url;
+    const separator = url.includes("?") ? "&" : "?";
+    return `${url}${separator}v=${encodeURIComponent(String(versionToken))}`;
+}
+
+export function getStrapiMedia(
+    url: string | null | undefined,
+    versionToken?: string | number | null
+) {
     if (!url) return null;
-    if (url.startsWith("http") || url.startsWith("//")) return url;
-    return getStrapiURL(url);
+    const mediaUrl = url.startsWith("http") || url.startsWith("//")
+        ? url
+        : getStrapiURL(url);
+    return appendVersionQuery(mediaUrl, versionToken);
 }
 
-export async function fetchAPI(path: string, urlParamsObject = {}, options = {}) {
+function buildNextOptions(options: StrapiFetchOptions) {
+    const nextOptions = options.next || {};
+    const optionTags = Array.isArray(nextOptions.tags) ? nextOptions.tags : [];
+    const tags = Array.from(new Set([STRAPI_CACHE_TAG, ...optionTags]));
+
+    if (options.cache === "no-store") {
+        return {
+            ...nextOptions,
+            tags,
+        };
+    }
+
+    return {
+        ...nextOptions,
+        revalidate: typeof nextOptions.revalidate === "number"
+            ? nextOptions.revalidate
+            : DEFAULT_REVALIDATE_SECONDS,
+        tags,
+    };
+}
+
+export async function fetchAPI(
+    path: string,
+    urlParamsObject = {},
+    options: StrapiFetchOptions = {}
+) {
     try {
+        const token = process.env.STRAPI_API_TOKEN;
+        const headers = new Headers(options.headers);
+        headers.set("Content-Type", "application/json");
+        if (token) {
+            headers.set("Authorization", `Bearer ${token}`);
+        }
+
         const mergedOptions = {
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${process.env.STRAPI_API_TOKEN}`,
-            },
             ...options,
+            headers,
+            next: buildNextOptions(options),
         };
 
         const queryString = qs.stringify(urlParamsObject);
@@ -29,7 +102,7 @@ export async function fetchAPI(path: string, urlParamsObject = {}, options = {})
         const response = await fetch(requestUrl, mergedOptions);
 
         if (!response.ok) {
-            console.error(response.statusText);
+            console.error(`Strapi request failed (${response.status}): ${response.statusText}`);
             console.warn("Strapi fetch failed, returning null");
             return { data: null };
         }

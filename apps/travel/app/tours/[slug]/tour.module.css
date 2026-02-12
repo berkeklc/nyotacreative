@@ -5,7 +5,7 @@
 
 .hero {
     position: relative;
-    min-height: 60vh;
+    min-height: 66vh;
     display: flex;
     align-items: flex-end;
     overflow: hidden;
@@ -22,15 +22,16 @@
     inset: 0;
     z-index: 1;
     background:
-        radial-gradient(circle at 15% 20%, rgba(181, 74, 50, 0.25) 0%, transparent 40%),
-        linear-gradient(180deg, rgba(0, 0, 0, 0.22) 0%, rgba(0, 0, 0, 0.72) 100%);
+        radial-gradient(circle at 12% 14%, rgba(181, 74, 50, 0.34) 0%, transparent 38%),
+        radial-gradient(circle at 90% 18%, rgba(196, 146, 42, 0.24) 0%, transparent 40%),
+        linear-gradient(180deg, rgba(0, 0, 0, 0.16) 0%, rgba(0, 0, 0, 0.78) 100%);
 }
 
 .heroContent {
     position: relative;
     z-index: 2;
     width: 100%;
-    padding-bottom: 2.9rem;
+    padding-bottom: 3rem;
 }
 
 .breadcrumb {
@@ -54,15 +55,19 @@
     font-weight: 700;
     color: rgba(255, 255, 255, 0.9);
     margin-bottom: 0.9rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    background: rgba(255, 255, 255, 0.12);
+    padding: 0.34rem 0.66rem;
 }
 
 .heroContent h1 {
     color: #fff;
-    font-size: clamp(2.3rem, 6vw, 4.2rem);
-    line-height: 1.05;
-    letter-spacing: -0.02em;
+    font-size: clamp(2.35rem, 6vw, 4.35rem);
+    line-height: 1.02;
+    letter-spacing: -0.025em;
     max-width: 900px;
-    margin-bottom: 0.85rem;
+    margin-bottom: 0.9rem;
 }
 
 .heroMetaRow {
@@ -75,21 +80,57 @@
 
 .heroMetaRow span {
     font-size: 0.72rem;
-    font-weight: 700;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.09em;
     color: rgba(255, 255, 255, 0.95);
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    backdrop-filter: blur(3px);
     border-radius: 999px;
-    padding: 0.32rem 0.62rem;
+    padding: 0.34rem 0.64rem;
 }
 
 .heroLead {
     color: rgba(255, 255, 255, 0.88);
-    max-width: 62ch;
-    font-size: 0.95rem;
-    line-height: 1.6;
+    max-width: 64ch;
+    font-size: 0.96rem;
+    line-height: 1.63;
+    margin-bottom: 1.05rem;
+}
+
+.heroInfoStrip {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.55rem;
     margin-bottom: 1rem;
+    max-width: 880px;
+}
+
+.heroInfoStrip article {
+    border-radius: 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(4px);
+    padding: 0.58rem 0.65rem;
+}
+
+.heroInfoStrip span {
+    display: block;
+    color: rgba(255, 255, 255, 0.78);
+    font-size: 0.6rem;
+    text-transform: uppercase;
+    letter-spacing: 0.11em;
+    font-weight: 700;
+    margin-bottom: 0.2rem;
+}
+
+.heroInfoStrip strong {
+    display: block;
+    color: #fff;
+    font-size: 0.96rem;
+    line-height: 1.25;
+    letter-spacing: -0.01em;
 }
 
 .heroActions {
@@ -161,35 +202,6 @@
     color: #494843;
     font-size: 1rem;
     line-height: 1.8;
-}
-
-.keyFacts {
-    margin-top: 1.1rem;
-    display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 0.55rem;
-}
-
-.keyFacts article {
-    border: 1px solid rgba(0, 0, 0, 0.08);
-    border-radius: 0.8rem;
-    padding: 0.62rem;
-    background: linear-gradient(180deg, #fff 0%, #faf8f3 100%);
-}
-
-.keyFacts span {
-    display: block;
-    font-size: 0.62rem;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: #6f6d67;
-    font-weight: 700;
-    margin-bottom: 0.2rem;
-}
-
-.keyFacts strong {
-    font-size: 0.92rem;
-    color: #24211d;
 }
 
 .includesGrid {
@@ -525,6 +537,10 @@
         min-height: 56vh;
     }
 
+    .heroInfoStrip {
+        grid-template-columns: 1fr 1fr;
+    }
+
     .heroActions {
         flex-direction: column;
         align-items: stretch;
@@ -539,7 +555,6 @@
         font-size: 0.9rem;
     }
 
-    .keyFacts,
     .includesGrid {
         grid-template-columns: 1fr;
     }
@@ -557,6 +572,12 @@
     }
 
     .relatedGrid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 620px) {
+    .heroInfoStrip {
         grid-template-columns: 1fr;
     }
 }

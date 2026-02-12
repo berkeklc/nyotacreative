@@ -45,36 +45,24 @@ export default async function TransferDetailPage({ params }: { params: Promise<{
                 <div className={styles.detailMain}>
                     <div className={styles.detailSection}>
                         <h2 className={styles.detailSectionTitle}>Route Details</h2>
-                        <div className={styles.routeInfoGrid}>
-                            <div className={styles.routeInfoCard}>
-                                <span className={styles.routeInfoIcon}>🛫</span>
-                                <div>
-                                    <div className={styles.routeInfoLabel}>Pickup</div>
-                                    <div className={styles.routeInfoValue}>{transfer.pickupLocation}</div>
-                                </div>
+                        <dl className={styles.routeInfoList}>
+                            <div className={styles.routeInfoItem}>
+                                <dt className={styles.routeInfoLabel}>Pickup</dt>
+                                <dd className={styles.routeInfoValue}>{transfer.pickupLocation}</dd>
                             </div>
-                            <div className={styles.routeInfoCard}>
-                                <span className={styles.routeInfoIcon}>📍</span>
-                                <div>
-                                    <div className={styles.routeInfoLabel}>Drop-off</div>
-                                    <div className={styles.routeInfoValue}>{transfer.dropoffLocation}</div>
-                                </div>
+                            <div className={styles.routeInfoItem}>
+                                <dt className={styles.routeInfoLabel}>Drop-off</dt>
+                                <dd className={styles.routeInfoValue}>{transfer.dropoffLocation}</dd>
                             </div>
-                            <div className={styles.routeInfoCard}>
-                                <span className={styles.routeInfoIcon}>⏱️</span>
-                                <div>
-                                    <div className={styles.routeInfoLabel}>Duration</div>
-                                    <div className={styles.routeInfoValue}>{transfer.duration}</div>
-                                </div>
+                            <div className={styles.routeInfoItem}>
+                                <dt className={styles.routeInfoLabel}>Duration</dt>
+                                <dd className={styles.routeInfoValue}>{transfer.duration}</dd>
                             </div>
-                            <div className={styles.routeInfoCard}>
-                                <span className={styles.routeInfoIcon}>📏</span>
-                                <div>
-                                    <div className={styles.routeInfoLabel}>Distance</div>
-                                    <div className={styles.routeInfoValue}>{transfer.distance}</div>
-                                </div>
+                            <div className={styles.routeInfoItem}>
+                                <dt className={styles.routeInfoLabel}>Distance</dt>
+                                <dd className={styles.routeInfoValue}>{transfer.distance}</dd>
                             </div>
-                        </div>
+                        </dl>
                     </div>
 
                     <div className={styles.detailSection}>

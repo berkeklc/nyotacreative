@@ -131,19 +131,6 @@ export default async function ToursPage() {
         ? `${(durations.reduce((sum, value) => sum + value, 0) / durations.length).toFixed(1)} days`
         : "Flexible";
 
-    const topCities = tours
-        .map((tour) => tour.city)
-        .filter((city): city is string => Boolean(city))
-        .reduce<Record<string, number>>((acc, city) => {
-            acc[city] = (acc[city] || 0) + 1;
-            return acc;
-        }, {});
-
-    const strongestCity =
-        Object.entries(topCities)
-            .sort((a, b) => b[1] - a[1])
-            .map(([city]) => city)[0] || "Tanzania";
-
     return (
         <div className={styles.page}>
             <section className={styles.hero}>
@@ -161,8 +148,8 @@ export default async function ToursPage() {
                         <span>{minimumPrice ? `From ${formatPrice(minimumPrice)}` : "Custom budget plans"}</span>
                     </div>
                     <div className={styles.heroActions}>
-                        <a href="#tour-planner" className={`${styles.quickPlannerBtn} btn btn-primary`}>
-                            Open Planner Form
+                        <a href="#tour-planner-modal" className={`${styles.quickPlannerBtn} btn btn-primary`}>
+                            Get My Tour Plan
                         </a>
                         <a
                             href={`https://wa.me/${WHATSAPP_PHONE}?text=${WHATSAPP_TEXT}`}
@@ -178,50 +165,7 @@ export default async function ToursPage() {
 
             <section className={styles.mainSection}>
                 <div className={`container ${styles.layout}`}>
-                    <aside id="tour-planner" className={styles.plannerPanel}>
-                        <div className={styles.plannerHead}>
-                            <span>Planner Form</span>
-                            <h2>Tell Us The Essentials</h2>
-                            <p>
-                                We ask only what is needed for your first proposal. You get route options, timing,
-                                and clear pricing guidance.
-                            </p>
-                        </div>
-
-                        <div className={styles.plannerFactRow}>
-                            <article className={styles.plannerFactCard}>
-                                <strong>1 Form</strong>
-                                <span>Single submission</span>
-                            </article>
-                            <article className={styles.plannerFactCard}>
-                                <strong>Local Team</strong>
-                                <span>Tanzania-based advisors</span>
-                            </article>
-                            <article className={styles.plannerFactCard}>
-                                <strong>Fast Reply</strong>
-                                <span>Usually within 24h</span>
-                            </article>
-                        </div>
-
-                        <a
-                            href={`https://wa.me/${WHATSAPP_PHONE}?text=${WHATSAPP_TEXT}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={styles.plannerWhatsApp}
-                        >
-                            <span className={styles.plannerWhatsAppIcon}>WA</span>
-                            <span className={styles.plannerWhatsAppText}>
-                                <strong>Prefer instant chat?</strong>
-                                <span>Open WhatsApp support while you fill the form.</span>
-                            </span>
-                        </a>
-
-                        <div className={styles.plannerBody}>
-                            <TourPlannerForm tourOptions={plannerOptions} />
-                        </div>
-                    </aside>
-
-                    <div className={styles.listPanel}>
+                    <div id="tour-collection" className={styles.listPanel}>
                         <div className={styles.listHeader}>
                             <div>
                                 <h2>Tour Collection</h2>
@@ -241,29 +185,13 @@ export default async function ToursPage() {
                             </Link>
                         </div>
 
-                        <div className={styles.statsRow}>
-                            <article className={styles.statCard}>
-                                <span>Active Tours</span>
-                                <strong>{tours.length}</strong>
-                            </article>
-                            <article className={styles.statCard}>
-                                <span>Featured</span>
-                                <strong>{featuredCount}</strong>
-                            </article>
-                            <article className={styles.statCard}>
-                                <span>Starting From</span>
-                                <strong>{minimumPrice ? formatPrice(minimumPrice) : "Custom"}</strong>
-                            </article>
-                            <article className={styles.statCard}>
-                                <span>Top Hub</span>
-                                <strong>{strongestCity}</strong>
-                            </article>
-                        </div>
-
                         {tours.length > 0 ? (
                             <div className={styles.toursGrid}>
                                 {tours.map((tour, index) => (
-                                    <article key={tour.slug} className={styles.tourCard}>
+                                    <article
+                                        key={tour.slug}
+                                        className={`${styles.tourCard} ${tour.featured ? styles.tourCardFeatured : ""}`}
+                                    >
                                         <Link href={`/tours/${tour.slug}`} className={styles.tourImageLink}>
                                             <div
                                                 className={styles.tourImage}
@@ -277,15 +205,20 @@ export default async function ToursPage() {
                                         </Link>
 
                                         <div className={styles.tourBody}>
-                                            <div className={styles.tourMetaTop}>
-                                                <span className={styles.tourDuration}>{tour.duration || avgDays}</span>
-                                                {tour.city && <span className={styles.tourCity}>{tour.city}</span>}
-                                                <span className={styles.tourDifficulty}>{normalizeDifficulty(tour.difficulty)}</span>
+                                            <div className={styles.tourCardHead}>
+                                                <div className={styles.tourMetaTop}>
+                                                    <span className={styles.tourDuration}>{tour.duration || avgDays}</span>
+                                                    {tour.city && <span className={styles.tourCity}>{tour.city}</span>}
+                                                    <span className={styles.tourDifficulty}>{normalizeDifficulty(tour.difficulty)}</span>
+                                                </div>
+                                                <span className={styles.tourCardIndex}>
+                                                    {String(index + 1).padStart(2, "0")}
+                                                </span>
                                             </div>
                                             <h3>
                                                 <Link href={`/tours/${tour.slug}`}>{tour.title}</Link>
                                             </h3>
-                                            <p>{toSnippet(tour.description)}</p>
+                                            <p className={styles.tourCardSnippet}>{toSnippet(tour.description)}</p>
                                             <div className={styles.tourSignalRow}>
                                                 <span className={styles.tourSignalPrimary}>{getTourSignal(tour, index)}</span>
                                                 <span className={styles.tourSignalSecondary}>{getRouteSummary(tour)}</span>
@@ -322,6 +255,31 @@ export default async function ToursPage() {
                     </div>
                 </div>
             </section>
+
+            <div id="tour-planner-modal" className={styles.plannerModal}>
+                <a href="#tour-collection" className={styles.plannerModalBackdrop} aria-label="Close planner form" />
+                <div
+                    className={`${styles.plannerPanel} ${styles.plannerModalDialog}`}
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby="tour-planner-modal-title"
+                >
+                    <div className={styles.plannerHead}>
+                        <div className={styles.plannerHeadTop}>
+                            <span>Trip Planner</span>
+                            <a href="#tour-collection" className={styles.plannerModalClose} aria-label="Close planner form">
+                                Close
+                            </a>
+                        </div>
+                        <h2 id="tour-planner-modal-title">Share Your Dates, Get A Smart Route</h2>
+                        <p>A real planner reviews your request and sends clear options you can compare fast.</p>
+                    </div>
+
+                    <div className={styles.plannerBody}>
+                        <TourPlannerForm tourOptions={plannerOptions} />
+                    </div>
+                </div>
+            </div>
         </div>
     );
 }
